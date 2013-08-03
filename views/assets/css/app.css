@@ -1,0 +1,22 @@
+body {
+	background-color: #f1f1f1;
+	padding:20px;
+}
+::selection {
+	background: rgba(0,140,248,0.8);
+	color:white;
+	text-shadow:none;
+}
+.well .section {
+	background: rgba(0, 0, 0, 0.1);
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-box-shadow: rgba(0, 0, 0, 0.1) 0 1px 5px inset, #fff 0 1px 0;
+	-moz-box-shadow: rgba(0, 0, 0, 0.1) 0 1px 5px inset, #fff 0 1px 0;
+	box-shadow: rgba(0, 0, 0, 0.1) 0 1px 5px inset, #fff 0 1px 0;
+}
+.signup-container input[type="text"], .signup-container input[type="password"] {
+	height:40px !important;
+	width:100%;
+}

@@ -1,0 +1,62 @@
+<html>
+<head>
+<?php require_once "head.html"; ?>	
+</head>
+<body>
+	<div class="container" style="width:825px; margin:0 auto;">
+		<div class="span10">
+			<div style='margin:0 auto;background:url("/views/assets/images/taylor_logo_small.png") no-repeat;width: 144px;height:128px;margin-bottom:20px;'></div>
+			<div style="width:350px;font-size:18px;margin:0 auto; text-align:center; margin-bottom: 20px;color:rgba(0,0,0,0.6);text-shadow:0 1px rgba(255,255,255,0.4); font-weight: bold;"><?=contest_name?></div>
+		</div>
+		<div class="row">
+			<div class="span6" style="max-width:350px;max-height:500px;">
+				<div class="well section" style="max-width:350px;">
+					<form method="post" accept-charset="utf-8">
+						<fieldset class="signup-container" >
+							<input type="text" name="teamnumber" placeholder="Team Number" tabindex="1">
+							<input type="password" name="password" placeholder="Password" tabindex="1">
+							<button type="submit" class="btn btn-block btn-success" id="sign" tabindex="5" style="height:40px;" data-loading-text="Signing In...">Sign In</button>
+						</fieldset>
+					</form>
+				</div>
+				<div class="alert alert-info" style="height:260px;">
+				  <h4>Welcome!</h4>
+				  Using this control panel, you can submit problems, clarifications and more. Please be familiar with the rules. All activity is being logged, and anti-tamper systems are in place. Please do not put us in a situation where you/your team would be disqualified. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. 
+				</div>
+			</div>
+			<!-- <div style="width:350px;font-size:18px;margin:0 auto; text-align:center; margin-bottom: 20px;color:rgba(0,0,0,0.6);text-shadow:0 1px rgba(255,255,255,0.4); font-weight: bold;">- or -</div> -->
+			<div class="span6" style="max-width:350px;">
+				<div class="well section span6" style="max-width:350px;">
+					<form method="post" accept-charset="utf-8">
+						<fieldset class="signup-container" >
+							<input type="text" name="teamnumber" placeholder="Team Number" tabindex="1">
+							<input type="password" name="password" placeholder="Password" tabindex="1">
+							<div class="btn-group" data-toggle="buttons-radio" style="margin-bottom: 10px;width:100%;height:40px;">				
+								<button type="button" class="btn btn-success" style="width:50%;height:40px;">Novice</button>
+								<button type="button" class="btn btn-success" style="width:50%;height:40px;">Advanced</button>
+							</div>
+							<select name="school" id="school" style="width:100%;height: 40px;">
+								<option value="null">School Name</option>
+								<option value="Cinco Ranch">Cinco Ranch</option>
+								<option value="Cy Woods">Cy Woods</option>
+								<option value="Seven Lakes">Seven Lakes</option>
+							</select>
+							<select name="team" id="team" style="width:100%;height: 40px;">
+								<option value="null">Number of Team Members</option>
+								<option value="1">1 Team Member</option>
+								<option value="2">2 Team Members</option>
+								<option value="3">3 Team Members</option>
+							</select>
+							<input type="text" name="member1" placeholder="Member 1 Name" tabindex="1">
+							<input type="text" name="member2" placeholder="Member 2 Name" tabindex="1">
+							<input type="text" name="member1" placeholder="Member 3 Name" tabindex="1">
+							<button type="submit" class="btn btn-block btn-success" id="sign" tabindex="5" style="height:40px;" data-loading-text="Signing Up...">Sign Up</button>
+						</fieldset>
+					</form>
+				</div>	
+			</div>		
+		</div>
+	</div>
+<?php require_once "js.html"; ?>
+</body>
+</html>
