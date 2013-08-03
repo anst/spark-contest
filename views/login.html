@@ -10,6 +10,10 @@
 		</div>
 		<div class="row">
 			<div class="col-lg-6" style="">
+				<div class="alert alert-info" style="">
+					<h4>Welcome!</h4>
+					Using this control panel, you can submit problems, clarifications and more. Please be familiar with the rules. All activity is being logged, and anti-tamper systems are in place. Please do not put us in a situation where you/your team would be disqualified. 
+				</div>
 				<div class="well section" style="">
 					<form method="post" accept-charset="utf-8">
 						<fieldset class="signup-container" >
@@ -19,10 +23,6 @@
 						</fieldset>
 					</form>
 				</div>
-				<div class="alert alert-info" style="">
-				  <h4>Welcome!</h4>
-				  Using this control panel, you can submit problems, clarifications and more. Please be familiar with the rules. All activity is being logged, and anti-tamper systems are in place. Please do not put us in a situation where you/your team would be disqualified. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. 
-				</div>
 			</div>
 			<!-- <div style="width:350px;font-size:18px;margin:0 auto; text-align:center; margin-bottom: 20px;color:rgba(0,0,0,0.6);text-shadow:0 1px rgba(255,255,255,0.4); font-weight: bold;">- or -</div> -->
 			<div class="col-lg-6" style="">
@@ -31,7 +31,7 @@
 						<fieldset class="signup-container" >
 							<div class="form-group"><input type="text" name="teamnumber" placeholder="Team Number" tabindex="1" class="form-control"></div>
 							<div class="form-group"><input type="password" name="password" placeholder="Password" tabindex="1" class="form-control"></div>
-							<div class="btn-group" data-toggle="buttons" style="margin-bottom: 15px;width:100%;">				
+							<div class="btn-group" data-toggle="buttons" style="margin-bottom: 15px;width:100%;">			
 								<label class="btn btn-success" style="width:50%;height:40px;">
 									<input type="radio" name="options" id="novice"> Novice
 								</label>
@@ -51,9 +51,9 @@
 								<option value="2">2 Team Members</option>
 								<option value="3">3 Team Members</option>
 							</select></div>
-							<div class="form-group"><input type="text" name="member1" placeholder="Member 1 Name" tabindex="1" class="form-control"></div>
-							<div class="form-group"><input type="text" name="member2" placeholder="Member 2 Name" tabindex="1" class="form-control"></div>
-							<div class="form-group"><input type="text" name="member1" placeholder="Member 3 Name" tabindex="1" class="form-control"></div>
+							<div class="form-group"><input type="text" name="member1" id="member1" placeholder="Member 1 Name" tabindex="1" class="form-control" style="display:none"></div>
+							<div class="form-group"><input type="text" name="member2" id="member2" placeholder="Member 2 Name" tabindex="1" class="form-control" style="display:none"></div>
+							<div class="form-group"><input type="text" name="member3" id="member3" placeholder="Member 3 Name" tabindex="1" class="form-control" style="display:none"></div>
 							<button type="submit" class="btn btn-block btn-success" id="sign" tabindex="5" style="height:40px;" data-loading-text="Signing Up...">Sign Up</button>
 						</fieldset>
 					</form>
