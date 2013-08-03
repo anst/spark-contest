@@ -1,5 +1,5 @@
 # generated log files
-logs/
+logs/*
 
 # Windows image file caches
 Thumbs.db
