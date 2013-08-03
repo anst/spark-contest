@@ -21,20 +21,21 @@ $panel->route('/', function($panel) { //index router, check for login
 	]);
 });
 $panel->route('/api/<string>', function($panel, $api_query) {
+	header('Content-Type: application/json');
 	if($api_query==="login") {
 
 	}
 	else if($api_query==="compile") {
 		$processname = md5(time() . getmypid() .rand(1,10));
-		$data = "public class HelloWorld{public static void main(String []args){System.out.println(\"Hello World\\n## ###\\n$$$\");}}";
+		$data = "public class HelloWorld{public static void main(String []args){System.out.println(\"Hello World\\n## ###\"); try{Thread.sleep(100);}catch(Exception e){}}}";
 		$inputs = "";
 		$args = "";
-		$data .= "\n";
-		$data=preg_replace('/(\r\n|\r|\n)/s',"\n",$data);
+		$data = preg_replace('/(\r\n|\r|\n)/s',"\n",$data);
 
-		proc_safety();
+		$proccess_safety = proc_safety();
+		if($proccess_safety!=="Success") return returnApiMessage(["query"=>$api_query,"error"=>$proccess_safety]);
+
 		register_shutdown_function('shutdown'); //before call to exit(), execute shutdown()
-
 		$source = preg_split("/(\n|;)/",$data);
 		$package = "";
 		$class = "";
@@ -58,8 +59,12 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 		  echo "Error - Packages are not allowed";
 		  exit(0);
 		}
-
-		compileProgram("/tmp/$processname/$class" . ".java", "/tmp/$processname/", "/tmp/$processname/$class" . ".class", $class, $inputs, $args, $processname, $data);
+		$compiled = compileProgram("/tmp/$processname/$class" . ".java", "/tmp/$processname/", "/tmp/$processname/$class" . ".class", $class, $inputs, $args, $processname, $data);
+		echo returnApiMessage([
+				"query"=>$api_query,
+				"response"=>$compiled
+			]
+		);
 	}
 	//echo returnApiMessage(["query"=>$api_query]);
 });
