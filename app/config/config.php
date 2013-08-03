@@ -6,7 +6,7 @@
 
 //---------- APP INFO ------------------//	
 $APP_NAME = "THS Control Panel";        
-$APP_VERSION = "0.01";                  
+$APP_VERSION = "3.00 alpha";                  
 $APP_AUTHOR = "Andy Sturzu, Chufan Liang";            
 
 //---------- DATABASE CONFIG ------------------//	
