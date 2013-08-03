@@ -20,7 +20,9 @@ $panel->route('/', function($panel) { //index router, check for login
 		"contest_name"=>contest_name,
 	]);
 });
-
+$panel->route('/api/<string>', function($panel, $api_query) {
+	echo $api_query;
+});
 $panel->run();
 
 ?>
