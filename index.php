@@ -21,7 +21,7 @@ $panel->route('/', function($panel) { //index router, check for login
 	]);
 });
 $panel->route('/api/<string>', function($panel, $api_query) {
-	header('Content-Type: application/json');
+	header('Content-Type: application/json'); //we're returning JSON data
 	if($api_query==="login") {
 
 	}
@@ -65,6 +65,8 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 				"response"=>$compiled
 			]
 		);
+		//if($compiled['exec']["output"]=="Hello World\n## ###\n")
+		//	echo "YUUUUS";
 	}
 	//echo returnApiMessage(["query"=>$api_query]);
 });

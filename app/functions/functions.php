@@ -45,13 +45,15 @@ function proc_exec($cmd, $inputs, $type) {
         $stdout = '';
         while(!feof($out) && !proc_timeout($starttime)){ 
            $stdout = fgets($out, 128); 
-           $output .= nl2br(htmlentities($stdout));
+           //$output .= nl2br(htmlentities($stdout));
+           $output .= $stdout;
         }    
         fclose($out);
         $stderr = '';
         while(!feof($err) && !proc_timeout($starttime)){ 
            $stderr = fgets($err, 128); 
-           $output .=  nl2br(htmlentities($stderr));
+           //$output .=  nl2br(htmlentities($stderr));
+           $output .= $stdout;
         }
         $error = false;
         $error_message = "";
@@ -74,10 +76,10 @@ function proc_exec($cmd, $inputs, $type) {
     }
 }
 function proc_safety() {
-	$max_proc_count = exec("ulimit -u"); //stop abuse of compilation, limit processes
+	$max_proc_count = exec("/bin/bash -c \"ulimit -u 2>&1\""); //stop abuse of compilation, limit processes
 	$processes = array();
 
-	exec("ps -fhu andy| grep /tmp/| awk -F/ '{print $3}'", $processes); //change username to allow ps to work
+	exec("/bin/bash -c \"ps -fhu ".  get_current_user() ." | grep /tmp/| awk -F/ '{print $3} 2>&1'\"", $processes); //change username to allow ps to work
 	if(count($processes) > ($max_proc_count - 20)) {
 	   return "Please try in a moment, server is overloaded.";
 	   exit(0);
