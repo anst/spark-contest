@@ -68,4 +68,30 @@ function proc_exec($cmd, $inputs) {
         $retval = proc_close($process);
     }
 }
+function proc_safety() {
+	$max_proc_count = exec("ulimit -u"); //stop abuse of compilation, limit processes
+	$processes = array();
+
+	exec("ps -fhu andy| grep /tmp/| awk -F/ '{print $3}'", $processes); //change username to allow ps to work
+	if(count($processes) > ($max_proc_count - 20)) {
+	   echo "Pleasse try in a moment, server is overloaded.";
+	   exit(0);
+	}
+	try{ //check if we've run out of memory, update the amount of memory needed to run
+	  ini_set('memory_limit', (ini_get('memory_limit')+1).'M');
+	} catch(Exception $e){
+	    throw new Exception('Out of memory, try again.');
+	}
+}
+function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $args, $processname, $data) {
+	@mkdir($sourcedir, 0755, true);
+	$outputfile = "$classfile";
+	chdir("/tmp/$processname");
+	$handle = fopen($sourcefile, 'w+');
+	fwrite($handle, $data); 
+	fclose($handle);
+	proc_exec("javac -cp . {$sourcefile} 2>&1", $inputs);
+	proc_exec("java -classpath $sourcedir $class $args", $inputs);
+	exec("rm -rf /tmp/$processname*");//remove directory subject to change
+}
 ?>
