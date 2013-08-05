@@ -57,6 +57,12 @@ $("#upload").click(function() {
 		readBlob(0, 0);
 	}
 });
+window.onbeforeunload = function() {$('.btn').button('reset');}
+function onCompileResubmit() {
+	$('#compile').button('reset');
+	$('#upload').button('reset');
+	window.location.reload();	
+}
 $('#compile').click(function(){
 	$('#compile').button('loading');
     var code = 'code='+encodeURIComponent($('#code').val());
@@ -68,7 +74,7 @@ $('#compile').click(function(){
         	$("#byte_content").fadeOut(0);
         	$("#compile_legend").fadeOut(0);
         	var d = eval('('+data+')');
-        	if(d.success=="true") {
+        	if(d.compile.success=="true"&&d.exec.success=="true") {
         		$("#output").text(d.exec.output);
 	    		prettyPrint();
 	    		$('#compile').fadeOut(0);
@@ -81,8 +87,6 @@ $('#compile').click(function(){
 	        	$("#resubmit").fadeIn(600);
 	        	$("#output").fadeOut(0);
 	        	$("#compile_danger_alert").fadeIn(600).append(d.error);
-	        	$('#compile').button('reset');
-	        	$('#upload').button('reset');
         	}
 	        	
         }

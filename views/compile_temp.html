@@ -24,14 +24,16 @@
 								<button type="button" class="close" data-dismiss="alert">&times;</button>
 								<strong>Error!</strong>
 							</div>
+							<legend></legend>
 							<pre id="output" class="prettyprint linenums"></pre>
 						</div>
 						<fieldset class="form-container" >
-							<div class="form-group"><input type="file" id="files" accept="text/plain"></div>
+							<div class="form-group"><input type="file" id="files" accept="text/plain"><br><legend></legend></div>
 							<textarea name="code" id="code" cols="30" rows="10" style="display:none"></textarea>
+
 							<button type="button" class="btn btn-block btn-default" id="upload" tabindex="5" style="" data-loading-text="Uploading...">Upload</button>
 							<button type="button" class="btn btn-block btn-success" id="compile" tabindex="5" style="display:none" data-loading-text="Judging...">Judge</button>
-							<button type="button" class="btn btn-block btn-primary" id="resubmit" tabindex="5" style="display:none" data-loading-text="Resubmitting..." onClick="window.location.reload()">Resubmit</button>
+							<button type="button" class="btn btn-block btn-primary" id="resubmit" tabindex="5" style="display:none" data-loading-text="Resubmitting..." onClick="onCompileResubmit()">Resubmit</button>
 						</fieldset>
 					</form>
 				</div>
