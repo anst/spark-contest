@@ -57,7 +57,7 @@ $("#upload").click(function() {
 		readBlob(0, 0);
 	}
 });
-window.onbeforeunload = function() {$('.btn').button('reset');}
+window.onbeforeunload = function() {$('.btn').button('reset'); $('form').each(function() { this.reset() });}
 function onCompileResubmit() {
 	$('#compile').button('reset');
 	$('#upload').button('reset');
@@ -74,7 +74,7 @@ $('#compile').click(function(){
         	$("#byte_content").fadeOut(0);
         	$("#compile_legend").fadeOut(0);
         	var d = eval('('+data+')');
-        	if(d.compile.success=="true"&&d.exec.success=="true") {
+        	if(d.compile!=undefined&&d.exec!=undefined&&d.compile.success=="true"&&d.exec.success=="true") {
         		$("#output").text(d.exec.output);
 	    		prettyPrint();
 	    		$('#compile').fadeOut(0);
@@ -86,6 +86,7 @@ $('#compile').click(function(){
 	        	$("#output_container").fadeIn(600);
 	        	$("#resubmit").fadeIn(600);
 	        	$("#output").fadeOut(0);
+	        	$("#error_divider").fadeOut(0);
 	        	$("#compile_danger_alert").fadeIn(600).append(d.error);
         	}
 	        	
