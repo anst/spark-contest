@@ -20,12 +20,12 @@ $panel->route('/', function($panel) { //index router, check for login
 		"contest_name"=>contest_name,
 	]);
 });
-$panel->route('/compile', function($panel) {
+$panel->route('/compile/', function($panel) {
 	return $panel->render("compile_temp.html",[
 		"title"=>title,
 		"contest_name"=>contest_name,
 	]);
-});
+}, array('GET'));
 $panel->route('/api/<string>', function($panel, $api_query) {
 	#header('Content-Type: application/json'); //we're returning JSON data
 	if($api_query==="login") {
@@ -43,7 +43,7 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 		$proccess_safety = proc_safety();
 		if($proccess_safety!=="Success") return returnApiMessage(["error"=>$proccess_safety]);
 
-		register_shutdown_function('shutdown'); //before call to exit(), execute shutdown()
+		#register_shutdown_function('shutdown'); //before call to exit(), execute shutdown()
 		$source = preg_split("/(\n|;)/",$data);
 		$package = "";
 		$class = "";
@@ -81,7 +81,7 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 		//	echo "YUUUUS";
 	}
 	//echo returnApiMessage(["query"=>$api_query]);
-});
+},array('GET','POST'));
 $panel->run();
 
 ?>
