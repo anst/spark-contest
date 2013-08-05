@@ -72,7 +72,7 @@ function proc_exec($cmd, $inputs, $type) {
            sleep(1);
         }
         $retval = proc_close($process);
-        return $error?["error"=>$error_message]:["success"=>"true", "type"=>$type, "id"=>"lolwut", "timestamp"=>date("Y-m-d H:i:s"), "time"=>round(microtime(true)-$starttime,2), "output"=>$output];
+        return $error?["success"=>"false","error"=>$error_message]:["success"=>"true", "type"=>$type, "id"=>"lolwut", "timestamp"=>date("Y-m-d H:i:s"), "time"=>round(microtime(true)-$starttime,2), "output"=>$output];
     }
 }
 function proc_safety() {

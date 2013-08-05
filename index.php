@@ -27,13 +27,13 @@ $panel->route('/compile', function($panel) {
 	]);
 });
 $panel->route('/api/<string>', function($panel, $api_query) {
-	header('Content-Type: application/json'); //we're returning JSON data
+	#header('Content-Type: application/json'); //we're returning JSON data
 	if($api_query==="login") {
 
 	}
 	else if($api_query==="compile") {
 		$processname = md5(time() . getmypid() .rand(1,10)); //change this to md5(TeamNumber+Timestamp+rand(1,10000))
-		$data = "public class HelloWorld{public static void main(String []args){System.out.println(\"Hello World\\n## ###\"); try{Thread.sleep(100);}catch(Exception e){}}}";
+		$data = $_POST['code'];
 		$inputs = "";
 		$args = "";
 		$data = preg_replace('/(\r\n|\r|\n)/s',"\n",$data);

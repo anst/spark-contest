@@ -17,3 +17,8 @@ body {
 	-moz-box-shadow: rgba(0, 0, 0, 0.1) 0 1px 5px inset, #fff 0 1px 0;
 	box-shadow: rgba(0, 0, 0, 0.1) 0 1px 5px inset, #fff 0 1px 0;
 }
+pre.prettyprint{
+    width: auto;
+    overflow: auto;
+    max-height: 400px;
+}

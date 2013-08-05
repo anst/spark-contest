@@ -37,9 +37,11 @@ function readBlob() {
       if (evt.target.readyState == FileReader.DONE) {
       	$("#byte_content").fadeIn(600);
         $("#byte_content").text(evt.target.result);
+        $("#code").val(evt.target.result);
         prettyPrint();
-        $("#upload").fadeOut(600);
-        $("#compile").fadeIn(600);
+        $("#files").fadeOut(0);
+        $("#upload").fadeOut(0);
+        $("#compile").fadeIn(0);
       }
     };
 
@@ -47,5 +49,30 @@ function readBlob() {
     reader.readAsBinaryString(blob);
 }
 $("#upload").click(function() {
-	readBlob(0, 0);
+	var ext = $('#files').val().split('.').pop().toLowerCase();
+	if($.inArray(ext, ['java']) == -1) {
+		alert('Only Java files are supported!');
+	} else {
+		readBlob(0, 0);
+	}
 });
+$('#compile').click(function(){
+    var code = 'code='+$('#code').val();
+    $.ajax({
+        type: "POST",
+        url: "/api/compile",
+        data: code,
+        success: function(data){
+        	$("#byte_content").fadeOut(0);
+        	$("#compile_legend").fadeOut(0);
+        	$("#output").text(eval('('+data+')').success.exec.output);
+    		prettyPrint();
+        	$("#output_container").fadeIn(600);
+        }
+     });
+});
+/*!function ($) {
+    $(function(){
+    	window.prettyPrint && prettyPrint()
+    })
+}(window.jQuery)*/

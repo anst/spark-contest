@@ -11,14 +11,20 @@
 		<div class="row">
 			<div class="col-lg-12" style="">
 				<div class="well section" style="">
-					<legend>Compile</legend>
-					<!-- <form method="post" accept-charset="utf-8"></form> -->
+					<legend id="compile_legend">Compile</legend>
+					<form method="post" name="compile" id="compile_form" action="#" accept-charset="utf-8">
 						<pre id="byte_content" class="prettyprint linenums" style="display:none;"></pre>
-						<fieldset class="signup-container" >
-							<div class="form-group"><input type="file" id="files"></div>
-							<button class="btn btn-block btn-default" id="upload" tabindex="5" style="" data-loading-text="Uploading...">Upload</button>
-							<button type="submit" class="btn btn-block btn-success" id="compile" tabindex="5" style="display:none" data-loading-text="Compile...">Compile</button>
+						<div id="output_container" style="display:none;">
+							<legend>Results</legend>
+							<pre id="output" class="prettyprint linenums"></pre>
+						</div>
+						<fieldset class="form-container" >
+							<div class="form-group"><input type="file" id="files" accept="text/plain"></div>
+							<textarea name="code" id="code" cols="30" rows="10" style="display:none"></textarea>
+							<button type="button" class="btn btn-block btn-default" id="upload" tabindex="5" style="" data-loading-text="Uploading...">Upload</button>
+							<button type="button" class="btn btn-block btn-success" id="compile" tabindex="5" style="display:none" data-loading-text="Judging...">Judge</button>
 						</fieldset>
+					</form>
 				</div>
 			</div>
 			<!-- <div style="width:350px;font-size:18px;margin:0 auto; text-align:center; margin-bottom: 20px;color:rgba(0,0,0,0.6);text-shadow:0 1px rgba(255,255,255,0.4); font-weight: bold;">- or -</div> -->
