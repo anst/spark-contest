@@ -75,22 +75,6 @@ function proc_exec($cmd, $inputs, $type) {
         return $error?["success"=>"false","error"=>$error_message]:["success"=>"true", "type"=>$type, "id"=>"lolwut", "timestamp"=>date("Y-m-d H:i:s"), "time"=>round(microtime(true)-$starttime,2), "output"=>$output];
     }
 }
-function proc_safety() {
-	$max_proc_count = exec("/bin/bash -c \"ulimit -u 2>&1\""); //stop abuse of compilation, limit processes
-	$processes = array();
-
-	exec("/bin/bash -c \"ps -fhu ".  get_current_user() ." | grep /tmp/| awk -F/ '{print $3} 2>&1'\"", $processes); //change username to allow ps to work
-	if(count($processes) > ($max_proc_count - 20)) {
-	   return "Please try in a moment, server is overloaded.";
-	   exit(0);
-	}
-	try{ //check if we've run out of memory, update the amount of memory needed to run
-	  ini_set('memory_limit', (ini_get('memory_limit')+1).'M');
-	} catch(Exception $e){
-	    throw new Exception('Out of memory, try again.');
-	}
-	return "Success";
-}
 function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $args, $processname, $data) {
 	@mkdir($sourcedir, 0755, true);
 	$outputfile = "$classfile";
@@ -101,6 +85,24 @@ function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $a
 	$compile_data = proc_exec("javac -cp . {$sourcefile} 2>&1", $inputs, "compile");
 	$exec_data = proc_exec("java -classpath $sourcedir $class $args", $inputs, "execute");
 	exec("rm -rf /tmp/$processname*");//remove directory subject to change
-	return ["compile"=>$compile_data,"exec"=>$exec_data];
+	if($compile_data["success"]==="true"&&$exec_data["success"]==="true") return ["compile"=>$compile_data,"exec"=>$exec_data];
+	else if ($compile_data["success"]==="false") return ["success"=>"false", "error"=>"Unknown error!"];
+	else return ["success"=>"false", "error"=>$exec_data["error"]];
 }
+function proc_safety() {
+	$max_proc_count = exec("/bin/bash -c \"ulimit -u 2>&1\""); //stop abuse of compilation, limit processes
+	$processes = array();
+
+	exec("/bin/bash -c \"ps -fhu ".  get_current_user() ." | grep /tmp/| awk -F/ '{print $3} 2>&1'\"", $processes); //change username to allow ps to work
+	if(count($processes) > ($max_proc_count - 20)) {
+	   return "Please try in a moment, server is overloaded.";
+	}
+	try{ //check if we've run out of memory, update the amount of memory needed to run
+	  ini_set('memory_limit', (ini_get('memory_limit')+1).'M');
+	} catch(Exception $e){
+	    return "Server out of memory, please try again in a little bit.";
+	}
+	return "Success";
+}
+
 ?>

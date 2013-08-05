@@ -65,8 +65,9 @@ $('#compile').click(function(){
         success: function(data){
         	$("#byte_content").fadeOut(0);
         	$("#compile_legend").fadeOut(0);
-        	$("#output").text(eval('('+data+')').success.exec.output);
+        	$("#output").text(eval('('+data+')').exec.output);
     		prettyPrint();
+    		$('#compile').fadeOut(0);
         	$("#output_container").fadeIn(600);
         }
      });

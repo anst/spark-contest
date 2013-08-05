@@ -56,20 +56,25 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 				$class = trim($matches[3]);
 			}
 		}
-
-		if(!strlen($class) ){
-			echo "Error - At least one public class is required";
-			exit(0);
+		$classerror = false;
+		$packageerror = false;
+		if(!strlen($class)) $classerror = true;
+		if(strlen($package)) $packageerror = true;
+		$compiled = ($classerror||$packageerror)?FALSE:compileProgram("/tmp/$processname/$class" . ".java", "/tmp/$processname/", "/tmp/$processname/$class" . ".class", $class, $inputs, $args, $processname, $data);
+		if($classerror) {
+			echo returnApiMessage([
+					"success"=>"false",
+					"error"=>"Error - At least one public class is required"
+				]
+			);
+		} else if ($packageerror) {
+			echo returnApiMessage([
+					"success"=>"false",
+					"error"=>"Error - Packages are not allowed"
+				]
+			);
 		}
-		else if(strlen($package)) {
-			echo "Error - Packages are not allowed";
-			exit(0);
-		}
-		$compiled = compileProgram("/tmp/$processname/$class" . ".java", "/tmp/$processname/", "/tmp/$processname/$class" . ".class", $class, $inputs, $args, $processname, $data);
-		echo returnApiMessage([
-				"success"=>$compiled
-			]
-		);
+		else echo returnApiMessage($compiled);
 		//if($compiled['exec']["output"]=="Hello World\n## ###\n")
 		//	echo "YUUUUS";
 	}
