@@ -32,6 +32,7 @@ function proc_exec($cmd, $inputs, $type) {
     $process = proc_open($cmd, $descriptorspec, $pipes, NULL, $_ENV);
     $starttime = microtime(true);
     if (is_resource($process)) {
+      
         list($in, $out, $err) = $pipes;
         stream_set_blocking( $in, true ); 
         stream_set_blocking( $out, false ); 

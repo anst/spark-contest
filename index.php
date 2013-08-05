@@ -21,6 +21,7 @@ $panel->route('/', function($panel) { //index router, check for login
 	]);
 });
 $panel->route('/compile', function($panel) {
+	http_response_code(200);
 	return $panel->render("compile_temp.html",[
 		"title"=>title,
 		"contest_name"=>contest_name,
@@ -28,6 +29,7 @@ $panel->route('/compile', function($panel) {
 });
 $panel->route('/api/<string>', function($panel, $api_query) {
 	#header('Content-Type: application/json'); //we're returning JSON data
+	http_response_code(200);
 	if($api_query==="login") {
 
 	}
