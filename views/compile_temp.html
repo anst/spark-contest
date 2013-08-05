@@ -3,7 +3,7 @@
 <?php require_once "head.html"; ?>	
 </head>
 <body>
-	<div class="container" style="width:825px; margin:0 auto;">
+	<div class="container">
 		<div class="col-lg-12">
 			<div onClick="window.location = '/';" style='margin:0 auto;background:url("/views/assets/images/taylor_logo_small.png") no-repeat;width: 144px;height:128px;margin-bottom:20px;cursor:pointer'></div>
 			<div style="width:350px;font-size:18px;margin:0 auto; text-align:center; margin-bottom: 20px;color:rgba(0,0,0,0.6);text-shadow:0 1px rgba(255,255,255,0.4); font-weight: bold;"><?=contest_name?></div>
@@ -18,11 +18,11 @@
 							<legend>Results</legend>
 							<div class="alert alert-success" id="compile_success_alert" style="display:none">
 								<button type="button" class="close" data-dismiss="alert">&times;</button>
-								<strong>Success!</strong>
+								<strong>Success - </strong>
 							</div>
 							<div class="alert alert-danger" id="compile_danger_alert" style="display:none">
 								<button type="button" class="close" data-dismiss="alert">&times;</button>
-								<strong>Error!</strong>
+								<strong>Error - </strong>
 							</div>
 							<legend id="error_divider"></legend>
 							<pre id="output" class="prettyprint linenums"></pre>
