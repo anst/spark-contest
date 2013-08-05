@@ -23,14 +23,10 @@ pre.prettyprint{
     max-height: 400px;
 }
 textarea:focus, select:focus, input[type="text"]:focus, input[type="password"]:focus, input[type="datetime"]:focus, input[type="datetime-local"]:focus, input[type="date"]:focus, input[type="month"]:focus, input[type="time"]:focus, input[type="week"]:focus, input[type="number"]:focus, input[type="email"]:focus, input[type="url"]:focus, input[type="search"]:focus, input[type="tel"]:focus, input[type="color"]:focus, .uneditable-input:focus {
-	border-color: rgba(82, 168, 236, 0.8) !important;
+	border-color: rgba(82, 168, 236, 0.9) !important;
 	outline: 0 !important;
 	outline: thin dotted \9 !important;
-	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 2px rgba(82,168,236,.8) !important;
-	-moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 2px rgba(82,168,236,.8) !important;
-	box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 2px rgba(82,168,236,.8) !important;
-}
-.btn:active {
-	box-shadow:1px 0px 0px inset rgba(255,255,255,0.8)!important;
-	border:1px solid rgba(0,0,0,0.14);
+	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 2px rgba(82,168,236,1) !important;
+	-moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 2px rgba(82,168,236,1) !important;
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 2px rgba(82,168,236,1) !important;
 }

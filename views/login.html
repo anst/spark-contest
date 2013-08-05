@@ -13,7 +13,7 @@
 	</noscript>
 	<div class="container" style="width:825px; margin:0 auto;">
 		<div class="col-lg-12">
-			<div style='margin:0 auto;background:url("/views/assets/images/taylor_logo_small.png") no-repeat;width: 144px;height:128px;margin-bottom:20px;'></div>
+			<div onClick="window.location = '/';" style='margin:0 auto;background:url("/views/assets/images/taylor_logo_small.png") no-repeat;width: 144px;height:128px;margin-bottom:20px;cursor:pointer'></div>
 			<div style="width:350px;font-size:18px;margin:0 auto; text-align:center; margin-bottom: 20px;color:rgba(0,0,0,0.6);text-shadow:0 1px rgba(255,255,255,0.4); font-weight: bold;"><?=contest_name?></div>
 		</div>
 		<div class="row">
@@ -32,6 +32,7 @@
 						<fieldset class="signup-container" >
 							<div class="form-group"><input type="text" name="teamnumber" class="form-control" placeholder="Team Number" tabindex="1"></div>
 							<div class="form-group"><input type="password" name="password" class="form-control" placeholder="Password" tabindex="1"></div>
+							<div class="form-group"><legend></legend></div>
 							<button type="submit" class="btn btn-block btn-success" id="sign" tabindex="5" style="height:40px;" data-loading-text="Signing In...">Sign In</button>
 						</fieldset>
 					</form>
@@ -45,6 +46,7 @@
 						<fieldset class="signup-container" >
 							<div class="form-group"><input type="text" name="teamnumber" placeholder="Team Number" tabindex="1" class="form-control"></div>
 							<div class="form-group"><input type="password" name="password" placeholder="Password" tabindex="1" class="form-control"></div>
+							<div class="form-group"><legend></legend></div>
 							<div class="btn-group" data-toggle="buttons" style="margin-bottom: 15px;width:100%;">			
 								<label class="btn btn-success" style="width:50%;height:40px;">
 									<input type="radio" name="options" id="novice"> Novice
@@ -53,6 +55,7 @@
 									<input type="radio" name="options" id="advanced"> Advanced
 								</label>
 							</div>
+							<div class="form-group"><legend></legend></div>
 							<div class="form-group"><select name="school" id="school" class="form-control">
 								<option value="null">School Name</option>
 								<option value="Cinco Ranch">Cinco Ranch</option>
@@ -68,6 +71,7 @@
 							<div class="form-group"><input type="text" name="member1" id="member1" placeholder="Member 1 Name" tabindex="1" class="form-control" style="display:none"></div>
 							<div class="form-group"><input type="text" name="member2" id="member2" placeholder="Member 2 Name" tabindex="1" class="form-control" style="display:none"></div>
 							<div class="form-group"><input type="text" name="member3" id="member3" placeholder="Member 3 Name" tabindex="1" class="form-control" style="display:none"></div>
+							<div class="form-group"><legend></legend></div>
 							<button type="submit" class="btn btn-block btn-success" id="sign" tabindex="5" style="height:40px;" data-loading-text="Signing Up...">Sign Up</button>
 						</fieldset>
 					</form>

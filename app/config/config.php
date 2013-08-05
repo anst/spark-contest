@@ -17,7 +17,7 @@ define('pw', '');
 
 //---------- CONTEST CONFIG ------------------//
 define('title', "Taylor High School Computer Science Contest 2013");
-define('contest_name', "Taylor Computer Science Contest 2013");
+define('contest_name', "THS Computer Science Contest 2013");
 define('maximum_pizza_order', 50);
 
 ?>
