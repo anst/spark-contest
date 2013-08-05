@@ -9,6 +9,9 @@ function isLoggedIn() {
 function returnApiMessage($message) {
 	return json_encode($message);
 }
+function startsWith($haystack, $needle){
+  return !strncmp($haystack, $needle, strlen($needle));
+}
 function shutdown() { //terminate program, print the errors
    $last_error = error_get_last();
    if( $last_error != NULL ){
@@ -53,7 +56,7 @@ function proc_exec($cmd, $inputs, $type) {
         while(!feof($err) && !proc_timeout($starttime)){ 
            $stderr = fgets($err, 128); 
            //$output .=  nl2br(htmlentities($stderr));
-           $output .= $stdout;
+           $output .= $stderr;
         }
         $error = false;
         $error_message = "";
@@ -82,12 +85,20 @@ function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $a
 	$handle = fopen($sourcefile, 'w+');
 	fwrite($handle, $data); 
 	fclose($handle);
+	$compile_error = false;
+	$runtime_error = false;
 	$compile_data = proc_exec("javac -cp . {$sourcefile} 2>&1", $inputs, "compile");
+	if($compile_data["output"]!="") $compile_error = true; 
 	$exec_data = proc_exec("java -classpath $sourcedir $class $args", $inputs, "execute");
+  if ($exec_data["success"]==="false") return ["success"=>"false", "error"=>"Timeout error!"];
+  if(preg_match("/.?Exception in thread \"[\d\w]+\" [\d\w]+\.?.+\.?\n\t[\d\w]{2}\s[\d\w]+\.[\d\w]+\([\d\w]+\.?[\d\w]+:\d+\)/",$exec_data["output"])==1) $runtime_error = true;
 	exec("rm -rf /tmp/$processname*");//remove directory subject to change
-	if($compile_data["success"]==="true"&&$exec_data["success"]==="true") return ["compile"=>$compile_data,"exec"=>$exec_data];
-	else if ($compile_data["success"]==="false") return ["success"=>"false", "error"=>"Unknown error!"];
-	else return ["success"=>"false", "error"=>$exec_data["error"]];
+	if($compile_data["success"]==="true"&&$exec_data["success"]==="true"&&$compile_error==false&&$runtime_error==false) return ["success"=>"true","compile"=>$compile_data,"exec"=>$exec_data];
+	else if ($compile_error) return ["success"=>"false", "error"=>"Compile error!"];
+	else if ($runtime_error) return ["success"=>"false", "error"=>"Runtime error!"];
+  else if ($exec_data["success"]==="false") return ["success"=>"false", "error"=>"Timeout error!"];
+  else return ["success"=>"false", "error"=>"Unknown error, something huge has gone wrong!"];
+
 }
 function proc_safety() {
 	$max_proc_count = exec("/bin/bash -c \"ulimit -u 2>&1\""); //stop abuse of compilation, limit processes

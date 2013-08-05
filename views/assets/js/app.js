@@ -53,11 +53,13 @@ $("#upload").click(function() {
 	if($.inArray(ext, ['java']) == -1) {
 		alert('Only Java files are supported!');
 	} else {
+		$('#upload').button('loading');
 		readBlob(0, 0);
 	}
 });
 $('#compile').click(function(){
-    var code = 'code='+$('#code').val();
+	$('#compile').button('loading');
+    var code = 'code='+encodeURIComponent($('#code').val());
     $.ajax({
         type: "POST",
         url: "/api/compile",
@@ -65,10 +67,24 @@ $('#compile').click(function(){
         success: function(data){
         	$("#byte_content").fadeOut(0);
         	$("#compile_legend").fadeOut(0);
-        	$("#output").text(eval('('+data+')').exec.output);
-    		prettyPrint();
-    		$('#compile').fadeOut(0);
-        	$("#output_container").fadeIn(600);
+        	var d = eval('('+data+')');
+        	if(d.success=="true") {
+        		$("#output").text(d.exec.output);
+	    		prettyPrint();
+	    		$('#compile').fadeOut(0);
+	        	$("#output_container").fadeIn(600);
+	        	$("#resubmit").fadeIn(600);
+	        	$("#compile_success_alert").fadeIn(600).append("Your program ran for " + parseFloat(d.exec.time) + "s.");
+        	} else {
+        		$('#compile').fadeOut(0);
+	        	$("#output_container").fadeIn(600);
+	        	$("#resubmit").fadeIn(600);
+	        	$("#output").fadeOut(0);
+	        	$("#compile_danger_alert").fadeIn(600).append(d.error);
+	        	$('#compile').button('reset');
+	        	$('#upload').button('reset');
+        	}
+	        	
         }
      });
 });
