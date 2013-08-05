@@ -9,4 +9,12 @@
     	window.prettyPrint && prettyPrint()
     })
 }(window.jQuery)
+
+
+var badBrowsers = /;MSIE .*;/i;
+if (badBrowsers.test(navigator.userAgent)){
+	$(".container").append('<div class=\"noscriptmsg\">You don\'t have javascript enabled.  Good luck with that.</div>');
+	$(".container").remove();
+}
+
 </script>
