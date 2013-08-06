@@ -32,7 +32,7 @@ function proc_exec($cmd, $inputs, $type) {
     $process = proc_open($cmd, $descriptorspec, $pipes, NULL, $_ENV);
     $starttime = microtime(true);
     if (is_resource($process)) {
-      
+
         list($in, $out, $err) = $pipes;
         stream_set_blocking( $in, true ); 
         stream_set_blocking( $out, false ); 
@@ -91,12 +91,12 @@ function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $a
 	$compile_data = proc_exec("javac -cp . {$sourcefile} 2>&1", $inputs, "compile");
 	if($compile_data["output"]!="") $compile_error = true; 
 	$exec_data = proc_exec("java -classpath $sourcedir $class $args", $inputs, "execute");
-  if ($exec_data["success"]==="false") return ["success"=>"false", "error"=>"Your program ran longer than the time alotted!"];
-  if(preg_match("/.?Exception in thread \"[\d\w]+\" [\d\w]+\.?.+\.?\n\t[\d\w]{2}\s[\d\w]+\.[\d\w]+\([\d\w]+\.?[\d\w]+:\d+\)/",$exec_data["output"])==1) $runtime_error = true;
+  if ($exec_data["success"]==="false") return ["success"=>"false", "error"=>"Your program ran longer than the time alotted! Please make sure you don't go above the time limit. [Timeout error]"];
+  if(preg_match("/.?Exception in thread/",$exec_data["output"])==1) $runtime_error = true;
 	exec("rm -rf /tmp/$processname*");//remove directory subject to change
 	if($compile_data["success"]==="true"&&$exec_data["success"]==="true"&&$compile_error==false&&$runtime_error==false) return ["success"=>"true","compile"=>$compile_data,"exec"=>$exec_data];
-	else if ($compile_error) return ["success"=>"false", "error"=>"Your program was unable to compile! Please check for syntax errors and resubmit."];
-	else if ($runtime_error) return ["success"=>"false", "error"=>"Your program encountered an error while running! Please check your program logic and resubmit."];
+	else if ($compile_error) return ["success"=>"false", "error"=>"Your program was unable to compile! Please check for syntax errors and resubmit. [Syntax error]"];
+	else if ($runtime_error) return ["success"=>"false", "error"=>"Your program encountered an error while running! Please check your program logic and resubmit. [Runtime error]"];
   else return ["success"=>"false", "error"=>"Unknown error, something huge has gone wrong!"];
 
 }
