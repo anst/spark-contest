@@ -39,7 +39,8 @@ function readBlob() {
         $("#byte_content").text(evt.target.result);
         $("#code").val(evt.target.result);
         prettyPrint();
-        $("#files").fadeOut(0);
+        $("#compile_question_select").fadeOut(0);
+        $("#upload_form").fadeOut(0);
         $("#upload").fadeOut(0);
         $("#compile").fadeIn(0);
       }
@@ -56,6 +57,9 @@ $("#upload").click(function() {
 		$('#upload').button('loading');
 		readBlob(0, 0);
 	}
+});
+$('#files').change(function() {
+	$("#real_file").val($(this).val());
 });
 window.onbeforeunload = function() {$('.btn').button('reset'); $('form').each(function() { this.reset() });}
 function onCompileResubmit() {

@@ -20,6 +20,13 @@ $panel->route('/', function($panel) { //index router, check for login
 		"contest_name"=>contest_name,
 	]);
 });
+$panel->route('/submit', function($panel) {
+	http_response_code(200);
+	return $panel->render("submit.html",[
+		"title"=>title,
+		"contest_name"=>contest_name,
+	]);
+});
 $panel->route('/compile', function($panel) {
 	http_response_code(200);
 	return $panel->render("compile_temp.html",[

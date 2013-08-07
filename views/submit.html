@@ -1,0 +1,157 @@
+<html>
+<head>
+<?php require_once "head.html"; ?>
+</head>
+<body class="home">
+	<noscript>
+    	<style type="text/css">
+    	    .main {display:none;}
+    	</style>
+    	<div class="container noscriptmsg">
+    		<div class="noscriptinner">
+    			<div class="col-lg-12">
+    				<h1>Sorry!</h1>
+    				<p>Either your web brower does not have JavaScript turned on or your web browser does not support JavaScript. To ensure that you do not experience any problems with the web control panel, use a modern, standards-compliant web browser such as Google Chrome or Mozilla Firefox, and make sure JavaScript is enabled.</p>
+    			</div>
+    		</div>
+    	</div>
+	</noscript>
+	<div class="container badbrowsermsg" style="display:none;">
+		<div class="badbrowserinner">
+			<div class="col-lg-12">
+				<div class="col-lg-12">
+    				<h1>Sorry!</h1>
+    				<p>Your web browser is not supported by the control panel. To ensure that you do not experience any problems with the web control panel, use a modern, standards-compliant web browser such as Google Chrome or Mozilla Firefox, and make sure JavaScript is enabled.</p>
+    			</div>
+    		</div>
+    	</div>
+	</div>
+	<div class="container main">
+		<div class="navbar" style="background:#f7f7f7 !important">
+			<a class="navbar-brand" href="#">THSCS 2013</a>
+			<ul class="nav navbar-nav">
+				<li><a href="/">Home</a></li>
+				<li class="active"><a href="/submit">Submit</a></li>
+				<li><a href="/scoreboard">Scoreboard</a></li>
+			</ul>
+		</div>
+		<div class="row">
+			<div class="col-lg-12" style="">
+				<div class="well section" style="">
+					<div class="row">
+						<div class="col-lg-7">
+							<legend id="compile_legend">Compile</legend>
+							<form method="post" name="compile" id="compile_form" action="#" accept-charset="utf-8">
+								<pre id="byte_content" class="prettyprint linenums" style="display:none;"></pre>
+								<div id="output_container" style="display:none;">
+									<legend>Results</legend>
+									<div class="alert alert-success" id="compile_success_alert" style="display:none">
+										<strong>Success - </strong>
+									</div>
+									<div class="alert alert-danger" id="compile_danger_alert" style="display:none">
+										<strong>Error - </strong>
+									</div>
+									<legend id="error_divider"></legend>
+									<pre id="output" class="prettyprint linenums"></pre>
+								</div>
+								<fieldset class="form-container" >
+									<div class="form-group">
+										<select class="form-control" name="compile_question_select" id="compile_question_select">
+											<option id="1" value="1">Problem #1</option>
+											<option id="2" value="2">Problem #2</option>
+											<option id="3" value="3">Problem #3</option>
+											<option id="4" value="4">Problem #4</option>
+											<option id="5" value="5">Problem #5</option>
+											<option id="6" value="6">Problem #6</option>
+											<option id="7" value="7">Problem #7</option>
+											<option id="8" value="8">Problem #8</option>
+											<option id="9" value="9">Problem #9</option>
+											<option id="10" value="10">Problem #10</option>
+											<option id="11" value="11">Problem #11</option>
+											<option id="12" value="12">Problem #12</option>
+											<option id="13" value="13">Problem #13</option>
+											<option id="14" value="14">Problem #14</option>
+											<option id="15" value="15">Problem #15</option>
+											<option id="16" value="16">Problem #16</option>
+											<option id="17" value="17">Problem #17</option>
+											<option id="18" value="18">Problem #18</option>
+											<option id="19" value="19">Problem #19</option>
+											<option id="20" value="20">Problem #20</option>
+										</select>	
+									</div>
+									<div class="form-group" id="upload_form">
+										<input type="file" id="files" accept="text/plain" style="display:none">
+										<div class="input-append">
+											<div class="input-group">
+										   		<input id="real_file" class="form-control" type="text">
+										   		<span class="input-group-btn"><button type="button" class="btn btn-default" onclick="$('input[id=files]').click();">Browse</button></span>
+										   	</div>
+										</div>
+									</div>
+									<textarea name="code" id="code" cols="30" rows="10" style="display:none"></textarea>
+
+									<button type="button" class="btn btn-block btn-default" id="upload" tabindex="5" style="" data-loading-text="Uploading...">Upload</button>
+									<button type="button" class="btn btn-block btn-success" id="compile" tabindex="5" style="display:none" data-loading-text="Judging...">Judge</button>
+									<button type="button" class="btn btn-block btn-primary" id="resubmit" tabindex="5" style="display:none" data-loading-text="Resubmitting..." onClick="onCompileResubmit()">Resubmit</button>
+								</fieldset>
+							</form>
+						</div>
+						<div class="col-lg-5">
+							<legend>Clarification</legend>
+							<form id="clar_from">
+								<div class="form-group">
+									<select class="form-control" name="compile_question_select" id="compile_question_select">
+										<option id="1" value="1">Problem #1</option>
+										<option id="2" value="2">Problem #2</option>
+										<option id="3" value="3">Problem #3</option>
+										<option id="4" value="4">Problem #4</option>
+										<option id="5" value="5">Problem #5</option>
+										<option id="6" value="6">Problem #6</option>
+										<option id="7" value="7">Problem #7</option>
+										<option id="8" value="8">Problem #8</option>
+										<option id="9" value="9">Problem #9</option>
+										<option id="10" value="10">Problem #10</option>
+										<option id="11" value="11">Problem #11</option>
+										<option id="12" value="12">Problem #12</option>
+										<option id="13" value="13">Problem #13</option>
+										<option id="14" value="14">Problem #14</option>
+										<option id="15" value="15">Problem #15</option>
+										<option id="16" value="16">Problem #16</option>
+										<option id="17" value="17">Problem #17</option>
+										<option id="18" value="18">Problem #18</option>
+										<option id="19" value="19">Problem #19</option>
+										<option id="20" value="20">Problem #20</option>
+									</select>	
+								</div>
+								<div class="form-group">
+									<textarea id="clarification" value="clar_text" class="form-control" rows="5" placeholder="Message" style="resize: vertical;"></textarea>
+								</div>
+								<button type="button" class="btn btn-warning btn-block">Submit Clarification</button>
+							</form>	
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+		<div class="row">
+			<div class="col-lg-1"></div>
+			<div class="col-lg-10" style="margin-top:-21px !important;">
+				<div class="well section" style="border-top-left-radius:0px !important;border-top-right-radius:0px !important;background:#eaeaea">
+					<div class="row">
+						<div class="col-lg-12">
+							<legend>Submissions</legend>
+							<div class="well submission">
+								
+							</div>					
+						</div>
+					</div>
+					
+				</div>	
+			</div>
+			<div class="col-lg-1"></div>	
+		</div>
+	</div>
+<?php require_once "js.html"; ?>
+</body>
+</html>
