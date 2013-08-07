@@ -49,6 +49,10 @@ function readBlob() {
     var blob = file.slice(start, stop + 1);
     reader.readAsBinaryString(blob);
 }
+$(".submission").click(function() {
+	var a = "#"+$(this).attr('id')+"detail";
+	$(a).toggle();
+});
 $("#upload").click(function() {
 	var ext = $('#files').val().split('.').pop().toLowerCase();
 	if($.inArray(ext, ['java']) == -1) {
@@ -58,6 +62,7 @@ $("#upload").click(function() {
 		readBlob(0, 0);
 	}
 });
+
 $('#files').change(function() {
 	$("#real_file").val($(this).val());
 });

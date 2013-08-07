@@ -83,7 +83,7 @@
 										<input type="file" id="files" accept="text/plain" style="display:none">
 										<div class="input-append">
 											<div class="input-group">
-										   		<input id="real_file" class="form-control" type="text">
+										   		<input id="real_file" class="form-control" onclick="$('input[id=files]').click();" type="text">
 										   		<span class="input-group-btn"><button type="button" class="btn btn-default" onclick="$('input[id=files]').click();">Browse</button></span>
 										   	</div>
 										</div>
@@ -127,7 +127,7 @@
 									<textarea id="clarification" value="clar_text" class="form-control" rows="5" placeholder="Message" style="resize: vertical;"></textarea>
 								</div>
 								<button type="button" class="btn btn-warning btn-block">Submit Clarification</button>
-							</form>	
+							</form>
 						</div>
 					</div>
 				</div>
@@ -141,13 +141,30 @@
 					<div class="row">
 						<div class="col-lg-12">
 							<legend>Submissions</legend>
-							<div class="well submission">
-								
+							<div class="well submission" id="I2J849">
+								<div class="noselect" style="width:100%;"><h4 style="display:inline">Run ID: <span id="run_id">I2J849</span><div class="success" style="float:right">Success</div></h4></div>
+								<div id="I2J849detail" class="detail" style="display:none">
+									<br>
+									<b>Ran for:</b> 1.13s<br>
+									<b>Submitted on:</b> 1/1/1 at 4:30 PM <br><br>
+									<legend></legend>
+									<a href="/submit/I2J849" class="btn btn-danger btn-small" disabled>Appeal</a>
+								</div>
+							</div>
+							<div class="well submission" id="L3IO45">
+								<div class="noselect" style="width:100%"><h4 style="display:inline">Run ID: <span id="run_id">L3IO45</span><div class="fail" style="float:right">Failed</div></h4></div>
+								<div id="L3IO45detail" class="detail" style="display:none">
+									<br>
+									<b>Ran for:</b> 3.18s<br>
+									<b>Submitted on:</b> 1/1/1 at 4:22 PM <br><br>
+									<legend></legend>
+									<a href="/submit/L3IO45" class="btn btn-danger btn-small" disabled>Appeal</a>									
+								</div>
 							</div>					
 						</div>
 					</div>
-					
-				</div>	
+				</div>
+
 			</div>
 			<div class="col-lg-1"></div>	
 		</div>
