@@ -93,6 +93,14 @@ $('#compile').click(function(){
         }
      });
 });
+
+// check if bad browser
+// Internet Explorer is confirmed bad
+if(navigator.userAgent.match(/MSIE/i)) {
+	$(".main").remove();
+	$(".badbrowsermsg").fadeIn(0);
+}
+
 /*!function ($) {
     $(function(){
     	window.prettyPrint && prettyPrint()
