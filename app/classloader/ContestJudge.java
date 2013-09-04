@@ -1,6 +1,6 @@
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -8,8 +8,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.Permission;
-
-
 
 public class ContestJudge {
 
@@ -35,12 +33,18 @@ public class ContestJudge {
 
 		urlcl.close();
 
-		// redirect stdout		
-		PrintStream ps = new PrintStream(new FileOutputStream(testclass.getName()+".out"));
-		System.setOut(ps);
-		System.setErr(ps);
+		// redirect stdout
+		final boolean debug = false;
+		PrintStream ps = null;
+		final ByteArrayOutputStream bao = new ByteArrayOutputStream();
+		if(debug)
+			ps = new PrintStream(bao);
+		else{
+			ps = new PrintStream(new FileOutputStream(testclass.getName()+".out"));
+			System.setOut(ps);
+			System.setErr(ps);
+		}
 
-		final SecurityManager old = System.getSecurityManager();
 		final SecurityManager sm = new SecurityManager(){
 			@Override
 			public void checkPermission(Permission perm) {
@@ -53,16 +57,16 @@ public class ContestJudge {
 			}
 
 			private void check(Permission perm) {
-				throw new SecurityException("Permission denied");
+				throw new SecurityException("Permission denied: "+perm.getActions());
 			}
 		};
-
-		Thread thread = new Thread(new Runnable() {
+		
+		Thread thread = new Thread(){
 			@Override
 			public void run() {
 				// enable sandbox
 				System.setSecurityManager(sm);
-
+				
 				// invoke main method
 				Class<?>[] argTypes = new Class<?>[] { String[].class };
 				try{
@@ -82,12 +86,12 @@ public class ContestJudge {
 				} catch (IllegalArgumentException e) {
 					e.printStackTrace();
 				}
-
-				// restore original security settings
-				System.setSecurityManager(old);
-
+				
+				if(debug){
+					System.out.println(bao.toString());
+				}
 			}
-		});
+		};
 		thread.start();
 
 
