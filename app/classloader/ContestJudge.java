@@ -7,7 +7,6 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.security.Permission;
 
 public class ContestJudge {
 
@@ -47,17 +46,13 @@ public class ContestJudge {
 
 		final SecurityManager sm = new SecurityManager(){
 			@Override
-			public void checkPermission(Permission perm) {
-				check(perm);
+			public void checkRead(String perm) {
+				// pass
 			} 
 
 			@Override
-			public void checkPermission(Permission perm, Object context) {
-				check(perm);
-			}
-
-			private void check(Permission perm) {
-				throw new SecurityException("Permission denied: "+perm.getActions());
+			public void checkRead(String perm, Object context) {
+				checkRead(perm);
 			}
 		};
 		
