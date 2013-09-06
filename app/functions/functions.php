@@ -6,6 +6,20 @@
 function isLoggedIn() {
 	return true;
 }
+function login() {
+  return false;
+}
+function getTeamNumber() {
+  //USE THE SESSION FOR THE TEAM NUMBER
+  return 1337; 
+}
+function getWrittenScores() {
+  //QUERY DB WITH GETTEAMNUMBER
+  return [];
+}
+function getScoreboard() {
+  return [];
+}
 function returnApiMessage($message) {
 	return json_encode($message);
 }
@@ -19,6 +33,7 @@ function shutdown() { //terminate program, print the errors
       echo 'Unknown exception, please try again.';
    }
 }
+
 function proc_timeout($start) { //check if program has timed out
     return microtime(true) - $start > 15 ? true : false; //current timeout, 15s
 }
@@ -88,17 +103,18 @@ function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $a
 	fclose($handle);
 	$compile_error = false;
 	$runtime_error = false;
-	$compile_data = proc_exec("javac -cp . {$sourcefile} 2>&1", $inputs, "compile");
+	$compile_data = proc_exec("javac -cp . {$sourcefile} 2>&1", "", "compile");
 	if($compile_data["output"]!="") $compile_error = true; 
-	$exec_data = proc_exec("java -classpath $sourcedir $class $args", $inputs, "execute");
+  chdir(dirname(__FILE__));
+	$exec_data = proc_exec("java -classpath ../classloader ContestJudge /tmp/$processname/ ".substr($classfile,0,strlen($classfile)-6), $inputs, "execute");
   if ($exec_data["success"]==="false") return ["success"=>"false", "error"=>"Your program ran longer than the time alotted! Please make sure you don't go above the time limit. [Timeout error]"];
   if(preg_match("/.?Exception in thread/",$exec_data["output"])==1) $runtime_error = true;
 	exec("rm -rf /tmp/$processname*");//remove directory subject to change
-	if($compile_data["success"]==="true"&&$exec_data["success"]==="true"&&$compile_error==false&&$runtime_error==false) return ["success"=>"true","compile"=>$compile_data,"exec"=>$exec_data];
+	/*if($compile_data["success"]==="true"&&$exec_data["success"]==="true"&&$compile_error==false&&$runtime_error==false) return ["success"=>"true","compile"=>$compile_data,"exec"=>$exec_data];
 	else if ($compile_error) return ["success"=>"false", "error"=>"Your program was unable to compile! Please check for syntax errors and resubmit. [Syntax error]"];
 	else if ($runtime_error) return ["success"=>"false", "error"=>"Your program encountered an error while running! Please check your program logic and resubmit. [Runtime error]"];
-  else return ["success"=>"false", "error"=>"Unknown error, something huge has gone wrong!"];
-
+  else return ["success"=>"false", "error"=>"Unknown error, something huge has gone wrong!"];*/
+  return ["success"=>"true","compile"=>$compile_data,"exec"=>$exec_data];
 }
 function proc_safety() {
 	$max_proc_count = exec("/bin/bash -c \"ulimit -u 2>&1\""); //stop abuse of compilation, limit processes

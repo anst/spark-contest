@@ -34,17 +34,33 @@ $panel->route('/compile', function($panel) {
 		"contest_name"=>contest_name,
 	]);
 });
+$panel->route('/api/<string>/<string>', function($panel, $api_query, $type) {
+	http_response_code(200);
+
+	if($api_query==="user") {
+		if($type==="team") {
+			return getTeamNumber();
+		}
+		else if($type === "written") {
+			return getWrittenScores();
+		}
+	}
+});
 $panel->route('/api/<string>', function($panel, $api_query) {
-	#header('Content-Type: application/json'); //we're returning JSON data
+	header('Content-Type: application/json'); //we're returning JSON data
 	http_response_code(200);
 	if($api_query==="login") {
-
+		login();
+		
+	}
+	else if($api_query==="scoreboard") {
+		return getScoreboard();
 	}
 	else if($api_query==="compile") {
 		$processname = md5(time() . getmypid() .rand(1,10)); //change this to md5(TeamNumber+Timestamp+rand(1,10000))
-		if(!isset($_POST['code'])) return returnApiMessage(["success"=>"false","error"=>"Invalid API Query."]);
-		$data = $_POST['code'];
-		#$data = "import java.io.*;public class untitled {    public static void main(String[] args) throws Exception{        System.out.println(new yo().lel()+new bro().lal());        Thread.sleep(15);              System.out.println(new yo().lel()+new bro().lal());                    }    static class yo {        static String lel() {return \"HEY \";}    }}class bro {    static String lal() {return \"YA\";}}class Jonathan240Exception extends Exception {    public Jonathan240Exception() {            }    public String toString() {        return \"OH NO JONATHAN 240\";    }}";
+		#if(!isset($_POST['code'])) return returnApiMessage(["success"=>"false","error"=>"Invalid API Query."]);
+		#$data = $_POST['code'];
+		$data = "import java.io.*;public class untitled {    public static void main(String[] args) throws Exception{        System.out.println(new yo().lel()+new bro().lal());        Thread.sleep(15);              System.out.println(new yo().lel()+new bro().lal());                    }    static class yo {        static String lel() {return \"HEY \";}    }}class bro {    static String lal() {return \"YA\";}}class Jonathan240Exception extends Exception {    public Jonathan240Exception() {            }    public String toString() {        return \"OH NO JONATHAN 240\";    }}";
 		$inputs = "";
 		$args = "";
 		$data = preg_replace('/(\r\n|\r|\n)/s',"\n",$data);
@@ -71,21 +87,21 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 		$packageerror = false;
 		if(!strlen($class)) $classerror = true;
 		if(strlen($package)) $packageerror = true;
-		$compiled = ($classerror||$packageerror)?FALSE:compileProgram("/tmp/$processname/$class" . ".java", "/tmp/$processname/", "/tmp/$processname/$class" . ".class", $class, $inputs, $args, $processname, $data);
 		if($classerror) {
 			echo returnApiMessage([
 					"success"=>"false",
-					"error"=>"Error - At least one public class is required"
+					"error"=>"At least one public class is required"
 				]
 			);
 		} else if ($packageerror) {
 			echo returnApiMessage([
 					"success"=>"false",
-					"error"=>"Error - Packages are not allowed"
+					"error"=>"Packages are not allowed"
 				]
 			);
 		}
-		else echo returnApiMessage($compiled);
+		$compiled = ($classerror||$packageerror)?FALSE:compileProgram("/tmp/$processname/$class" . ".java", "/tmp/$processname/", "/tmp/$processname/$class" . ".class", $class, $inputs, $args, $processname, $data);
+		echo returnApiMessage($compiled);
 		//if($compiled['exec']["output"]=="Hello World\n## ###\n")
 		//	echo "YUUUUS";
 	}
