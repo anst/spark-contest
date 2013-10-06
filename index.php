@@ -3,7 +3,7 @@
 ** CONTEST PORTAL v3 
 ** Created By Andy Sturzu (sturzu.org)
 */
-require_once dirname(__FILE__).'/app/lib/mysql.php';
+require_once dirname(__FILE__).'/app/lib/Phpass.php';
 require_once dirname(__FILE__).'/app/config/config.php';
 require_once dirname(__FILE__).'/app/frameworks/panel.php';
 require_once dirname(__FILE__).'/app/functions/functions.php';
@@ -56,9 +56,20 @@ $panel->route('/api/<string>/<string>', function($panel, $api_query, $type) {
 $panel->route('/api/<string>', function($panel, $api_query) {
 	header('Content-Type: application/json'); //we're returning JSON data
 	http_response_code(200);
-	if($api_query==="login") {
-		login();
-		
+	if($api_query==="register") {
+		extract($_POST);
+		if(preg_match("/^\d+$/", $team)&&strlen($team)<=3&&
+		   strlen($password)<=64&&strlen($password)>=6&&
+		   preg_match("/^[a-zA-Z]+\s+([-a-zA-Z.'\s]|[0-9](nd|rd|th))+$/", $member1)&&
+		   preg_match("/^[a-zA-Z]+\s+([-a-zA-Z.'\s]|[0-9](nd|rd|th))+$/", $member2)||strlen($member2)===0&&
+		   preg_match("/^[a-zA-Z]+\s+([-a-zA-Z.'\s]|[0-9](nd|rd|th))+$/", $member3)||strlen($member3)===0&&
+		   $division==="Advanced"||$division==="Novice") #one line validation ftw
+		{
+			echo register($team,$password,$school,$division,['member1'=>$member1,'member2'=>$member2===""?NULL:$member2,'member3'=>$member3===""?NULL:$member3]);
+		}
+		else {
+			echo returnApiMessage(['error'=>'Don\'t mess with JS input validation. We\'re smarter than that.']);
+		}
 	}
 	else if($api_query==="scoreboard") {
 		return getScoreboard();

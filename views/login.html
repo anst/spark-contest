@@ -45,7 +45,7 @@
 					<legend>Log In</legend>
 					<form method="post" accept-charset="utf-8">
 						<fieldset class="signup-container" >
-							<div class="form-group"><input type="text" name="teamnumber" class="form-control" placeholder="Team Number" tabindex="1"></div>
+							<div class="form-group"><input type="text" name="team" class="form-control" placeholder="Team Number" tabindex="1"></div>
 							<div class="form-group"><input type="password" name="password" class="form-control" placeholder="Password" tabindex="1"></div>
 							<div class="form-group"><legend></legend></div>
 							<button type="submit" class="btn btn-block btn-success" id="sign" tabindex="5" style="height:40px;" data-loading-text="Signing In...">Sign In</button>
@@ -57,17 +57,17 @@
 			<div class="col-lg-6" style="">
 				<div class="well section" style="">
 					<legend>Register</legend>
-					<form method="post" accept-charset="utf-8">
+					<form method="post" action="/api/register" accept-charset="utf-8">
 						<fieldset class="signup-container" >
-							<div class="form-group"><input type="text" name="teamnumber" placeholder="Team Number" tabindex="1" class="form-control"></div>
-							<div class="form-group"><input type="password" name="password" placeholder="Password" tabindex="1" class="form-control"></div>
+							<div class="form-group"><input type="text" name="team" id="register-team" placeholder="Team Number" tabindex="1" class="form-control"></div>
+							<div class="form-group"><input type="password" name="password" id="register-password"placeholder="Password" tabindex="1" class="form-control"></div>
 							<div class="form-group"><legend></legend></div>
 							<div class="btn-group" data-toggle="buttons" style="margin-bottom: 15px;width:100%;">			
 								<label class="btn btn-success" style="width:50%;height:40px;">
-									<input type="radio" name="options" id="novice"> Novice
+									<input type="radio" name="division" value="Novice" id="novice"> Novice
 								</label>
 								<label class="btn btn-success" style="width:50%;height:40px;">
-									<input type="radio" name="options" id="advanced"> Advanced
+									<input type="radio" name="division" value="Advanced" id="advanced"> Advanced
 								</label>
 							</div>
 							<div class="form-group"><legend></legend></div>
