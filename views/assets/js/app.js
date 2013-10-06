@@ -102,6 +102,31 @@ $('#compile').click(function(){
         }
      });
 });
+$("#register-form").submit(function(e){
+	e.preventDefault();
+	$('#reg').button('loading');
+
+    var dat = 'team='+encodeURIComponent($('#register-team').val())
+    +'&password='+encodeURIComponent($('#register-password').val())
+    +'&division='+encodeURIComponent($('[name=\'division\']:checked').val())
+    +'&teamselect='+encodeURIComponent($('#team').val())
+    +'&school='+encodeURIComponent($('#school').val())
+    +'&member1='+encodeURIComponent($('#member1').val())
+    +'&member2='+encodeURIComponent($('#member2').val())
+    +'&member3='+encodeURIComponent($('#member3').val());
+    $.post('/api/register', dat, function(data) {
+    	$('#reg').button('reset');
+
+	    console.log(data);
+        if(d.error!=undefined) {
+        	$("#register_error_msg").fadeIn(600).html('<h4>Error!</h4>'+d.error);
+        } else {
+        	$("#register_error_msg").fadeOut(600);
+        	$("#register-form").fadeOut(600);
+        	$("#register_success_msg").fadeIn(600);
+        }	
+	});
+});
 
 // check if bad browser
 // Internet Explorer is confirmed bad

@@ -57,15 +57,11 @@ $panel->route('/api/<string>/<string>', function($panel, $api_query, $type) {
 	}
 });
 $panel->route('/api/<string>', function($panel, $api_query) {
-	header('Content-Type: application/json'); //we're returning JSON data
+	#header('Content-Type: application/json'); //we're returning JSON data
 	http_response_code(200);
 	if($api_query==="register") {
 		extract($_POST);
-		if(is_numeric($team)&&strlen($team)<=3&&
-		   strlen($password)<=64&&strlen($password)>=6&&
-		   $teamselect!=="null"&&
-		   $division==="Advanced"||$division==="Novice"&&
-		   $school!=='null')
+		if(is_numeric($team)&&strlen($team)<=3&&strlen($password)<=64&&strlen($password)>=6&&$teamselect!=="null"&&$division==="Advanced"||$division==="Novice"&&$school!=="null")
 		{
 			if($teamselect=="1") {
 				if(preg_match("/^[a-zA-Z]+\s+([-a-zA-Z.'\s]|[0-9](nd|rd|th))+$/", $member1))
