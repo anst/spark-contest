@@ -41,12 +41,14 @@
 			<div class="col-lg-6" style="">
 				<div class="well section" style="">
 					<legend>Log In</legend>
-					<form method="post" accept-charset="utf-8">
+					<div class="alert alert-danger alert" id="login_error_msg" style="display:none;">
+					</div>
+					<form id="login-form" accept-charset="utf-8">
 						<fieldset class="signup-container" >
-							<div class="form-group"><input type="text" name="team" class="form-control" placeholder="Team Number" tabindex="1"></div>
-							<div class="form-group"><input type="password" name="password" class="form-control" placeholder="Password" tabindex="1"></div>
+							<div class="form-group"><input type="text" id="login-team" name="teaml" class="form-control" placeholder="Team Number" tabindex="1"></div>
+							<div class="form-group"><input type="password" id="login-password" name="passwordl" class="form-control" placeholder="Password" tabindex="1"></div>
 							<div class="form-group"><legend></legend></div>
-							<button type="submit" class="btn btn-block btn-success" id="sign" tabindex="5" style="height:40px;" data-loading-text="Signing In...">Sign In</button>
+							<button class="btn btn-block btn-success" id="sign" tabindex="5" style="height:40px;" data-loading-text="Signing In...">Sign In</button>
 						</fieldset>
 					</form>
 				</div>

@@ -116,8 +116,7 @@ $("#register-form").submit(function(e){
     +'&member3='+encodeURIComponent($('#member3').val());
     $.post('/api/register', dat, function(data) {
     	$('#reg').button('reset');
-
-	    console.log(data);
+    	var d = eval('('+data+')');
         if(d.error!=undefined) {
         	$("#register_error_msg").fadeIn(600).html('<h4>Error!</h4>'+d.error);
         } else {
@@ -127,7 +126,29 @@ $("#register-form").submit(function(e){
         }	
 	});
 });
+$("#login-form").submit(function(e){
+	e.preventDefault();
+	$('#sign').button('loading');
 
+    var dat = 'team='+encodeURIComponent($('#login-team').val())+'&password='+encodeURIComponent($('#login-password').val());
+    $.post('/api/login', dat, function(data) {
+    	$('#sign').button('reset');
+    	var d = eval('('+data+')');
+        if(d.error!=undefined) {
+        	$("#login_error_msg").fadeIn(600).html('<h4>Error!</h4>'+d.error);
+        } else {
+        	location.reload();
+        }	
+	});
+});
+$("#pizzaform input[type=text]").change(function () {
+  var str = 0;
+  $("#pizzaform input[type=text]").each(function () {
+	if( !isNaN(parseInt($(this).val())))
+        str += parseInt($(this).val(),10)*11;
+      });
+  $("#total").text("$"+str);
+});
 // check if bad browser
 // Internet Explorer is confirmed bad
 if(navigator.userAgent.match(/MSIE/i)) {

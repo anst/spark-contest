@@ -26,12 +26,13 @@
 	</div>
 	<div class="container main">
 		<div class="navbar" style="background:#f7f7f7 !important">
-			<a class="navbar-brand" href="#">THSCS 2013</a>
+			<a class="navbar-brand" href="/">THSCS 2013</a>
 			<ul class="nav navbar-nav">
 				<li class="active"><a href="/">Home</a></li>
 				<li><a href="/submit">Submit</a></li>
 				<li><a href="/scoreboard">Scoreboard</a></li>
 			</ul>
+			<p class="navbar-text pull-right"><a href="/logout" style="text-decoration: none" class="navbar-link">Logout</a></p>
 		</div>
 		<div class="row">
 			<div class="col-lg-12">
@@ -54,19 +55,19 @@
 								<input type="text" class="form-control" value="Advanced" disabled>
 							</div>
 							<div class="form-group">
-								<input type="text" class="form-control" value="Team Number 9000" disabled>
+								<input type="text" class="form-control" value="Team Number <?=$t?>" disabled>
 							</div>
 							<div class="form-group">
-								<input type="text" class="form-control" value="Andy Sturzu">
+								<input type="text" class="form-control" value="Andy Sturzu" disabled>
 							</div>
 							<div class="form-group">
-								<input type="text" class="form-control" value="Chufan Liang">
+								<input type="text" class="form-control" value="Chufan Liang" disabled>
 							</div>
 							<div class="form-group">
-								<input type="text" class="form-control" value="Jonathan Zong">
+								<input type="text" class="form-control" value="Jonathan Zong" disabled>
 							</div>
-							<div class="form-group">
-								<button class="btn btn-success btn-block">Submit</button>
+							<div class="alert alert-warning" style="">
+								Please raise your hand if you need to change your team information. 
 							</div>															
 						</div>
 						<div class="col-lg-5">
@@ -114,20 +115,51 @@
 				<div class="well section" style="border-top-left-radius:0px !important;border-top-right-radius:0px !important;background:#eaeaea">
 					<div class="row">
 						<div class="col-lg-6">
-							<legend>Pizza</legend>
-							<div class="form-group">
-								<input type="text" class="form-control" placeholder="Cheese Pizza Count">
+							<div class="row">
+								<div class="col-lg-10">
+									<legend>Pizza</legend>				
+								</div>
+								<div class="col-lg-2">
+									<legend>Total</legend>	
+								</div>
 							</div>
-							<div class="form-group">
-								<input type="text" class="form-control" placeholder="Sausage Pizza Count">
-							</div>
-							<div class="form-group">
-								<input type="text" class="form-control" placeholder="Pepperoni Pizza Count">
-							</div>
-							<blockquote style="color:#888;">By submitting this order, you agree to pay the quoted amount. </blockquote>
-							<div class="form-group">
-								<button class="btn btn-danger btn-block">Order</button>
-							</div>	
+							<form id="pizzaform">
+								<div class="row">
+									<div class="col-lg-10">
+										<div class="form-group">
+											<div class="input-group">
+												<span class="input-group-addon">Cheese&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+												<input type="text" name="cheese" id="cheese" class="form-control" placeholder="Cheese Pizza Count">
+											</div>
+										</div>
+										<div class="form-group">
+											<div class="input-group">
+												<span class="input-group-addon">Sausage&nbsp;&nbsp;&nbsp;</span>
+												<input type="text" name="sausage" id="sausage" class="form-control" placeholder="Sausage Pizza Count">
+											</div>											
+										</div>
+										<div class="form-group">
+											<div class="input-group">
+												<span class="input-group-addon">Pepperoni&nbsp;</span>
+												<input type="text" name="pepperoni" id="pepperoni" class="form-control" placeholder="Pepperoni Pizza Count">
+											</div>											
+										</div>
+						
+									</div>
+									<div class="col-lg-2">
+										<span style="text-align:center"><h1 id="total" style="color:green;line-height:100px">$0</h1></span>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-lg-12">
+										<blockquote style="color:#888;">By submitting this order, you agree to pay the quoted amount. </blockquote>
+										<div class="form-group">
+											<button class="btn btn-danger btn-block">Order</button>
+										</div>											
+									</div>
+								</div>
+	
+							</form>
 						</div>
 						<div class="col-lg-6">
 							<legend>Help</legend>

@@ -4,7 +4,7 @@
 ** Created By Andy Sturzu (sturzu.org)
 */
 function isLoggedIn() {
-	return false;
+	return isset($_SESSION['team']);
 }
 function register($team,$pass,$school,$division,$members) {
   $conn = mysqli_connect(host, user, pw, db);
@@ -24,12 +24,43 @@ function register($team,$pass,$school,$division,$members) {
     mysqli_query($conn, $query);
     mysqli_close($conn);
 
-    return returnApiMessage(['Success'=>'Successfully registered!']);
+    return returnApiMessage(['success'=>'Successfully registered!']);
   } else {
     mysqli_close($conn);
     return returnApiMessage(['error'=>'Team already exists!']);
   }
 
+}
+function login($team, $pass) {
+  $conn = mysqli_connect(host, user, pw, db);
+  $team = mysqli_real_escape_string($conn, $team);
+  $pass = mysqli_real_escape_string($conn, $pass);
+
+  $phpassHash = new \Phpass\Hash;
+
+  $query = "SELECT password FROM teams WHERE team = '$team';";
+  $result = mysqli_query($conn, $query);
+  if(mysqli_num_rows($result)===0) {
+    return returnApiMessage(['error'=>'Team does not exist!']);
+    mysqli_close($conn);
+  } else if(mysqli_num_rows($result)===1){
+    $passw = mysqli_fetch_array($result, MYSQL_ASSOC);
+    if($phpassHash->checkPassword($pass, $passw['password'])) {
+      startsession($team);
+      return returnApiMessage(['success'=>'Logged In!']);
+    } else {
+      return returnApiMessage(['error'=>'Incorrect password!']);
+    }
+  } else {
+    return returnApiMessage(['error'=>'Unknown Error!']);
+  }
+}
+function logout() {
+  session_destroy();
+  header("Location: /");
+}
+function startsession($team) {
+  $_SESSION['team'] = $team;
 }
 function getTeamNumber() {
   //USE THE SESSION FOR THE TEAM NUMBER

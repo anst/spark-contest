@@ -8,6 +8,9 @@ require_once dirname(__FILE__).'/app/config/config.php';
 require_once dirname(__FILE__).'/app/frameworks/panel.php';
 require_once dirname(__FILE__).'/app/functions/functions.php';
 
+session_start();
+session_regenerate_id();
+
 $panel = new Panel('panel',false, 'logs/' . date('Y-m-d') . '.txt'); //include default routing engine with logs enabled
 
 $panel->route('/', function($panel) { //index router, check for login
@@ -21,6 +24,7 @@ $panel->route('/', function($panel) { //index router, check for login
 	return $panel->render("home.html",[
 		"title"=>title,
 		"contest_name"=>contest_name,
+		"t"=>$_SESSION['team'],
 	]);
 });
 $panel->route('/submit', function($panel) {
@@ -29,6 +33,10 @@ $panel->route('/submit', function($panel) {
 		"title"=>title,
 		"contest_name"=>contest_name,
 	]);
+});
+$panel->route('/logout', function($panel) {
+	http_response_code(200);
+	logout();
 });
 $panel->route('/compile', function($panel) {
 	http_response_code(200);
@@ -61,8 +69,7 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 	http_response_code(200);
 	if($api_query==="register") {
 		extract($_POST);
-		if(is_numeric($team)&&strlen($team)<=3&&strlen($password)<=64&&strlen($password)>=6&&$teamselect!=="null"&&$division==="Advanced"||$division==="Novice"&&$school!=="null")
-		{
+		if(is_numeric($team)&&strlen($team)<=3&&strlen($password)<=64&&strlen($password)>=6&&$teamselect!=="null"&&$division==="Advanced"||$division==="Novice"&&$school!=="null") {
 			if($teamselect=="1") {
 				if(preg_match("/^[a-zA-Z]+\s+([-a-zA-Z.'\s]|[0-9](nd|rd|th))+$/", $member1))
 					echo register($team,$password,$school,$division,['member1'=>$member1,'member2'=>$member2===""?NULL:$member2,'member3'=>$member3===""?NULL:$member3]);
@@ -76,6 +83,15 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 					echo register($team,$password,$school,$division,['member1'=>$member1,'member2'=>$member2===""?NULL:$member2,'member3'=>$member3===""?NULL:$member3]);
 				else echo returnApiMessage(['error'=>'Don\'t mess with JS input validation. We\'re smarter than that.']);
 			}
+		}
+		else {
+			echo returnApiMessage(['error'=>'Don\'t mess with JS input validation. We\'re smarter than that.']);
+		}
+	} 
+	else if($api_query==="login") {
+		extract($_POST);
+		if(is_numeric($team)&&strlen($team)<=3&&strlen($password)<=64&&strlen($password)>=6) {
+			echo returnApiMessage(login($team, $password));
 		}
 		else {
 			echo returnApiMessage(['error'=>'Don\'t mess with JS input validation. We\'re smarter than that.']);
