@@ -11,9 +11,12 @@ require_once dirname(__FILE__).'/app/functions/functions.php';
 $panel = new Panel('panel',false, 'logs/' . date('Y-m-d') . '.txt'); //include default routing engine with logs enabled
 
 $panel->route('/', function($panel) { //index router, check for login
+	$string = file_get_contents(dirname(__FILE__)."/app/config/schools.json");
+	$json_a = json_decode($string, true);
 	if(!isLoggedIn()) return $panel->render("login.html",[
 		"title"=>title,
 		"contest_name"=>contest_name,
+		"schools"=>$json_a,
 	]);
 	return $panel->render("home.html",[
 		"title"=>title,
@@ -58,14 +61,25 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 	http_response_code(200);
 	if($api_query==="register") {
 		extract($_POST);
-		if(preg_match("/^\d+$/", $team)&&strlen($team)<=3&&
+		if(is_numeric($team)&&strlen($team)<=3&&
 		   strlen($password)<=64&&strlen($password)>=6&&
-		   preg_match("/^[a-zA-Z]+\s+([-a-zA-Z.'\s]|[0-9](nd|rd|th))+$/", $member1)&&
-		   preg_match("/^[a-zA-Z]+\s+([-a-zA-Z.'\s]|[0-9](nd|rd|th))+$/", $member2)||strlen($member2)===0&&
-		   preg_match("/^[a-zA-Z]+\s+([-a-zA-Z.'\s]|[0-9](nd|rd|th))+$/", $member3)||strlen($member3)===0&&
-		   $division==="Advanced"||$division==="Novice") #one line validation ftw
+		   $teamselect!=="null"&&
+		   $division==="Advanced"||$division==="Novice"&&
+		   $school!=='null')
 		{
-			echo register($team,$password,$school,$division,['member1'=>$member1,'member2'=>$member2===""?NULL:$member2,'member3'=>$member3===""?NULL:$member3]);
+			if($teamselect=="1") {
+				if(preg_match("/^[a-zA-Z]+\s+([-a-zA-Z.'\s]|[0-9](nd|rd|th))+$/", $member1))
+					echo register($team,$password,$school,$division,['member1'=>$member1,'member2'=>$member2===""?NULL:$member2,'member3'=>$member3===""?NULL:$member3]);
+				else echo returnApiMessage(['error'=>'Don\'t mess with JS input validation. We\'re smarter than that.']);
+			} else if ($teamselect=="2") {
+				if (preg_match("/^[a-zA-Z]+\s+([-a-zA-Z.'\s]|[0-9](nd|rd|th))+$/", $member1)&&preg_match("/^[a-zA-Z]+\s+([-a-zA-Z.'\s]|[0-9](nd|rd|th))+$/", $member2))
+					echo register($team,$password,$school,$division,['member1'=>$member1,'member2'=>$member2===""?NULL:$member2,'member3'=>$member3===""?NULL:$member3]);
+				else echo returnApiMessage(['error'=>'Don\'t mess with JS input validation. We\'re smarter than that.']);
+			} else {
+				if (preg_match("/^[a-zA-Z]+\s+([-a-zA-Z.'\s]|[0-9](nd|rd|th))+$/", $member1)&&preg_match("/^[a-zA-Z]+\s+([-a-zA-Z.'\s]|[0-9](nd|rd|th))+$/", $member2)&&preg_match("/^[a-zA-Z]+\s+([-a-zA-Z.'\s]|[0-9](nd|rd|th))+$/", $member3))
+					echo register($team,$password,$school,$division,['member1'=>$member1,'member2'=>$member2===""?NULL:$member2,'member3'=>$member3===""?NULL:$member3]);
+				else echo returnApiMessage(['error'=>'Don\'t mess with JS input validation. We\'re smarter than that.']);
+			}
 		}
 		else {
 			echo returnApiMessage(['error'=>'Don\'t mess with JS input validation. We\'re smarter than that.']);

@@ -10,8 +10,7 @@
     	<div class="container noscriptmsg">
     		<div class="noscriptinner">
     			<div class="col-lg-12">
-    				<h1>Sorry!</h1>
-    				<p>Either your web brower does not have JavaScript turned on or your web browser does not support JavaScript. To ensure that you do not experience any problems with the web control panel, use a modern, standards-compliant web browser such as Google Chrome or Mozilla Firefox, and make sure JavaScript is enabled.</p>
+    				<?php require_once "nojs.html";?>
     			</div>
     		</div>
     	</div>
@@ -20,13 +19,12 @@
 		<div class="badbrowserinner">
 			<div class="col-lg-12">
 				<div class="col-lg-12">
-    				<h1>Sorry!</h1>
-    				<p>Your web browser is not supported by the control panel. To ensure that you do not experience any problems with the web control panel, use a modern, standards-compliant web browser such as Google Chrome or Mozilla Firefox, and make sure JavaScript is enabled.</p>
+					<?php require_once "nojs.html";?>
     			</div>
     		</div>
     	</div>
 	</div>
-	<div class="container">
+	<div class="container main">
 		<div class="col-lg-12">
 			<div onClick="window.location = '/';" style='margin:0 auto;background:url("/views/assets/images/taylor_logo_small.png") no-repeat;width: 144px;height:128px;margin-bottom:20px;cursor:pointer'></div>
 			<div style="width:350px;font-size:18px;margin:0 auto; text-align:center; margin-bottom: 20px;color:rgba(0,0,0,0.6);text-shadow:0 1px rgba(255,255,255,0.4); font-weight: bold;"><?=contest_name?></div>
@@ -73,11 +71,13 @@
 							<div class="form-group"><legend></legend></div>
 							<div class="form-group"><select name="school" id="school" class="form-control">
 								<option value="null">School Name</option>
-								<option value="Cinco Ranch">Cinco Ranch</option>
-								<option value="Cy Woods">Cy Woods</option>
-								<option value="Seven Lakes">Seven Lakes</option>
+								<?php
+									foreach ($schools as $school=>$a) {
+										echo '<option value="'.$a.'">'.$a.'</option>';
+									}
+								?>
 							</select></div>
-							<div class="form-group"><select name="team" id="team" class="form-control">
+							<div class="form-group"><select name="teamselect" id="team" class="form-control">
 								<option value="null">Number of Team Members</option>
 								<option value="1">1 Team Member</option>
 								<option value="2">2 Team Members</option>
