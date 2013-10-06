@@ -34,6 +34,13 @@ $panel->route('/compile', function($panel) {
 		"contest_name"=>contest_name,
 	]);
 });
+$panel->route('/temp', function($panel) {
+	http_response_code(200);
+	return $panel->render("clar.html",[
+		"title"=>title,
+		"contest_name"=>contest_name,
+	]);
+});
 $panel->route('/api/<string>/<string>', function($panel, $api_query, $type) {
 	http_response_code(200);
 

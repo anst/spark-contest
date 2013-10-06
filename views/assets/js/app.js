@@ -49,8 +49,8 @@ function readBlob() {
     var blob = file.slice(start, stop + 1);
     reader.readAsBinaryString(blob);
 }
-$(".submission").click(function() {
-	var a = "#"+$(this).attr('id')+"detail";
+$(".noselect").click(function() {
+	var a = "#"+$(this).parent().attr('id')+"detail";
 	$(a).toggle();
 });
 $("#upload").click(function() {
@@ -79,7 +79,7 @@ $('#compile').click(function(){
         type: "POST",
         url: "/api/compile",
         data: code,
-        success: function(data){
+        success: function(data){	
         	$("#byte_content").fadeOut(0);
         	$("#compile_legend").fadeOut(0);
         	var d = eval('('+data+')');

@@ -39,7 +39,6 @@ h4 .fail {
 	color:red;
 }
 .submission {
-	cursor:pointer;
 }
 .noselect {
 	-moz-user-select: -moz-none;
@@ -47,6 +46,7 @@ h4 .fail {
    	-webkit-user-select: none;
    	-o-user-select: none;
    	user-select: none;
+   	cursor:pointer;
 }
 #real_file:focus {
 	box-shadow:none !important;
