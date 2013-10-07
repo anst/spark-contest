@@ -55,3 +55,12 @@ h4 .fail {
 #preview_problems td {
  border:1px solid rgba(0,0,0,0.15) !important;
 }
+td.success {
+	color:rgba(0,0,0,0.3) !important;
+}
+td.warning {
+	color:rgba(0,0,0,0.3) !important;
+}
+td.danger {
+	color:rgba(0,0,0,0.3) !important;
+}

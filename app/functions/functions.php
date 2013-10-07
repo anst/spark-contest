@@ -164,7 +164,9 @@ function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $a
     $compile_error = true; 
 
   chdir(dirname(__FILE__));
-	$exec_data = proc_exec("java -classpath ../classloader ContestJudge /tmp/$processname/ ".substr($classfile,0,strlen($classfile)-6), $inputs, "execute");
+	#$exec_data = proc_exec("java -classpath ../classloader ContestJudge /tmp/$processname/ ".substr($classfile,0,strlen($classfile)-6), $inputs, "execute");
+
+  $exec_data = proc_exec("java -classpath $sourcedir $class $args", $inputs, "execute");
 
   if ($exec_data["success"]==="false") return ["success"=>"false", "error"=>"Your program ran longer than the time alotted! Please make sure you don't go above the time limit. [Timeout error]"];
   
@@ -181,7 +183,6 @@ function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $a
     return ["success"=>"false", "error"=>"Your program encountered an error while running! Please check your program logic and resubmit. [Runtime error]"];
   else
     return ["success"=>"false", "error"=>"Unknown error, something huge has gone wrong!"];
-
   return ["success"=>"true","compile"=>$compile_data,"exec"=>$exec_data];
 }
 function proc_safety() {

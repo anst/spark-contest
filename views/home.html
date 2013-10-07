@@ -31,6 +31,7 @@
 				<li class="active"><a href="/">Home</a></li>
 				<li><a href="/submit">Submit</a></li>
 				<li><a href="/scoreboard">Scoreboard</a></li>
+				<li><a href="/#helpbox">Help</a></li>
 			</ul>
 			<p class="navbar-text pull-right"><a href="/logout" style="text-decoration: none" class="navbar-link">Logout</a></p>
 		</div>
@@ -73,16 +74,16 @@
 						<div class="col-lg-5">
 							<legend>Problems</legend>
 							<div class="alert alert-info" style="">
-								<h4>Info</h4>
+								<h4>Info!</h4>
 								Every problem is worth 60 points, each incorrect submission deducts 5 points if the problem ends up solved. Maximum possible score is 720 points. 
 							</div>
 							<table class="table table-bordered table-condensed" id="preview_problems">
-								<tr><td class="success">1.</td><td class="danger">7.</td></tr>
-								<tr><td class="warning">2.</td><td class="success">8.</td></tr>
-								<tr><td class="success">3.</td><td class="warning">9.</td></tr>
-								<tr><td class="danger">4.</td><td class="success">10.</td></tr>
-								<tr><td class="success">5.</td><td class="danger">11.</td></tr>
-								<tr><td class="warning">6.</td><td class="success">12.</td></tr>
+								<tr><td class="success"><b>1.</b> Abstergo</td><td class="danger"><b>7.</b> The O'Really Factor</td></tr>
+								<tr><td class="warning"><b>2.</b> Secret Top Secret</td><td class="success"><b>8.</b> GNU Not Unix</td></tr>
+								<tr><td class="success"><b>3.</b> Solitary</td><td class="warning"><b>9.</b> Daniel's Tiling Company</td></tr>
+								<tr><td class="danger"><b>4.</b> Eboola</td><td class="success"><b>10.</b> Look and See</td></tr>
+								<tr><td class="success"><b>5.</b> Tick Tock</td><td class="danger"><b>11.</b> Ub3r Inj3c0r</td></tr>
+								<tr><td class="warning"><b>6.</b> Palindromida</td><td class="success"><b>12.</b> Game of  Life Redux</td></tr>
 							</table>
 							
 						</div>
@@ -99,9 +100,9 @@
 						<div class="col-lg-5">
 							<legend>Legend</legend>
 							<table class="table table-bordered table-condensed" id="preview_problems">
-								<tr><td class="success">Correct</td></tr>
-								<tr><td class="danger">Incorrect</td></tr>
-								<tr><td class="warning">No Submission</td></tr>
+								<tr><td class="success"><b>Correct</b></td></tr>
+								<tr><td class="danger"><b>Incorrect</b></td></tr>
+								<tr><td class="warning"><b>No Submission</b></td></tr>
 							</table>
 						</div>
 					</div>
@@ -162,8 +163,37 @@
 							</form>
 						</div>
 						<div class="col-lg-6">
-							<legend>Help</legend>
-							
+							<legend id="helpbox">Help</legend>
+							<ol>
+								<li>
+									<span data-toggle="collapse" class="btn btn-link btn-block navbar-link" style="text-align:left;cursor:pointer;outline:none;text-decoration:none" data-target="#q1">How will I get my pizza?</span>
+									<div id="q1" class="collapse">Once you order through the control panel, come up to the pizza stand and pay for your order. We'll let you know when the pizza is here. Claim your pizza with your ticket.</div>
+								</li>
+								<li>
+									<span data-toggle="collapse" class="btn btn-link btn-block navbar-link" style="text-align:left;cursor:pointer;outline:none;text-decoration:none" data-target="#q2">Are written scores combined with the programming?</span>
+									<div id="q2" class="collapse">Nope! Written scores are separate, to give the smaller teams a fighting chance. Written scores shall only be used for  the purpose of breaking ties.</div>
+								</li>
+								<li>
+									<span data-toggle="collapse" class="btn btn-link btn-block navbar-link" style="text-align:left;cursor:pointer;outline:none;text-decoration:none" data-target="#q3">How do I appeal?</span>
+									<div id="q3" class="collapse">At the end of the contest, you will be able to go through your individual runs and you will be able to see your output compared to the judges output. If we made a mistake, then hit the appeal button!</div>
+								</li>
+								<li>
+									<span data-toggle="collapse" class="btn btn-link btn-block navbar-link" style="text-align:left;cursor:pointer;outline:none;text-decoration:none" data-target="#q4">How will I receive a notification if there is a new clarification?</span>
+									<div id="q4" class="collapse">Your web browser is connected to our server via. websockets, so anything that we send out, you get it immediately. You'll even get a handy alert!</div>
+								</li>
+								<li>
+									<span data-toggle="collapse" class="btn btn-link btn-block navbar-link" style="text-align:left;cursor:pointer;outline:none;text-decoration:none" data-target="#q5">Why can I only see my team's written scores?</span>
+									<div id="q5" class="collapse">If we gave out the all of the written scores, how much fun would that leave for the awards ceremony? If you don't see your own team members scores, that means it hasn't been entered in yet, or your team member didn't write his name legibly :( </div>
+								</li>
+								<li>
+									<span data-toggle="collapse" class="btn btn-link btn-block navbar-link" style="text-align:left;cursor:pointer;outline:none;text-decoration:none" data-target="#q6">Will I be able to preview my source code before submitting?</span>
+									<div id="q6" class="collapse">Yes! We have a handy feature that shows you what you're submitting before you press that judge button. This prevents any accidental submissions!</div>
+								</li>
+								<li>
+									<span data-toggle="collapse" class="btn btn-link btn-block navbar-link" style="text-align:left;cursor:pointer;outline:none;text-decoration:none" data-target="#q7">I have a question that is not here or something isn't working.</span>
+									<div id="q7" class="collapse">Submit a general clarification if the contest has started, or simply raise your hand if it hasn't.</div>
+								</li>								
+							</ol>
 						</div>
 					</div>
 					
