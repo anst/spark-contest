@@ -4,7 +4,7 @@
 ** Created By Andy Sturzu (sturzu.org)
 */
 function isLoggedIn() {
-	return isset($_SESSION['team']);
+	return isset($_SESSION['team'])&&is_numeric($_SESSION['team']);
 }
 function register($team,$pass,$school,$division,$members) {
   $conn = mysqli_connect(host, user, pw, db);
@@ -63,11 +63,11 @@ function startsession($team) {
   $_SESSION['team'] = $team;
 }
 function getTeamNumber() {
-  //USE THE SESSION FOR THE TEAM NUMBER
-  return 1337; 
+  if(isLoggedIn())
+    return ['team'=>intval($_SESSION['team'])];
+  return ['error'=> 'You are not logged in!'];
 }
 function getWrittenScores() {
-  //QUERY DB WITH GETTEAMNUMBER
   return [];
 }
 function getScoreboard() {

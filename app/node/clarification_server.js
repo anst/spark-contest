@@ -9,6 +9,7 @@ io.sockets.on('connection', function (socket) {
 	  password : 'AwesomeSauce',
 	  database : 'thscs',
 	  port     : 8889,
+	  _socket: '/var/run/mysqld/mysqld.sock',
 	});
 	m.connect();
 	socket.on('clarification', function (data) {
@@ -19,8 +20,7 @@ io.sockets.on('connection', function (socket) {
 	            console.error(err);
 	            return;
 	        }
-			m.end();
 			console.log("inserted clarification");
 		});
-  	});
+  	}, function() { m.end();});
 });

@@ -1,3 +1,17 @@
 {
-	
+	"Abstergo": {
+		"points": 60,
+		"deduction": 5,
+		"input": "abstergo/Abstergo.in",
+		"output": "abstergo/Abstergo.out",
+		"timeout": 30
+	},
+	"Four Dee": {
+		"points":60,
+		"deduction":5,
+		"input": "fourdee/FourDee.in",
+		"output": "fourdee/Fourdee.out",
+		"timeout": 30
+	}
+
 }
