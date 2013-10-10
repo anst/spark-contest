@@ -13,8 +13,7 @@ function register($team,$pass,$school,$division,$members) {
   foreach ($members as &$member) {
     $member = mysqli_real_escape_string($conn, $member);
   }
-  $phpassHash = new \Phpass\Hash;
-  $hash = $phpassHash->hashPassword($pass); //bcrypt ftw
+  $hash = md5($pass);
   extract($members);
   $query = "SELECT password FROM teams WHERE team = '$team';";
   $result = mysqli_query($conn, $query);
@@ -36,8 +35,6 @@ function login($team, $pass) {
   $team = mysqli_real_escape_string($conn, $team);
   $pass = mysqli_real_escape_string($conn, $pass);
 
-  $phpassHash = new \Phpass\Hash;
-
   $query = "SELECT password FROM teams WHERE team = '$team';";
   $result = mysqli_query($conn, $query);
   if(mysqli_num_rows($result)===0) {
@@ -45,7 +42,7 @@ function login($team, $pass) {
     mysqli_close($conn);
   } else if(mysqli_num_rows($result)===1){
     $passw = mysqli_fetch_array($result, MYSQL_ASSOC);
-    if($phpassHash->checkPassword($pass, $passw['password'])) {
+    if(md5($pass)===$passw['password']) {
       startsession($team);
       return returnApiMessage(['success'=>'Logged In!']);
     } else {
@@ -168,12 +165,13 @@ function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $a
 
   $exec_data = proc_exec("java -classpath $sourcedir $class $args", $inputs, "execute");
 
-  if ($exec_data["success"]==="false") return ["success"=>"false", "error"=>"Your program ran longer than the time alotted! Please make sure you don't go above the time limit. [Timeout error]"];
+  if ($exec_data["success"]==="false")
+    return ["success"=>"false", "error"=>"Your program ran longer than the time alotted! Please make sure you don't go above the time limit. [Timeout error]"];
   
   if(preg_match("/.?Exception in thread/",$exec_data["output"])==1)
     $runtime_error = true;
 
-	exec("rm -rf /tmp/$processname*");//remove directory subject to change
+	exec("rm -rf /tmp/$processname*");
 	
   if($compile_data["success"]==="true"&&$exec_data["success"]==="true"&&$compile_error==false&&$runtime_error==false)
     return ["success"=>"true","compile"=>$compile_data,"exec"=>$exec_data];

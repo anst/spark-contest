@@ -3,7 +3,6 @@
 ** CONTEST PORTAL v3 
 ** Created By Andy Sturzu (sturzu.org)
 */
-require_once dirname(__FILE__).'/app/lib/Phpass.php';
 require_once dirname(__FILE__).'/app/config/config.php';
 require_once dirname(__FILE__).'/app/frameworks/panel.php';
 require_once dirname(__FILE__).'/app/functions/functions.php';
