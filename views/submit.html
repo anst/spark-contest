@@ -83,21 +83,19 @@
 						</div>
 						<div class="col-lg-5">
 							<legend>Clarification</legend>
-							<form id="clar_from">
-								<div class="form-group">
-									<select class="form-control" name="compile_question_select" id="compile_question_select">
-										<?php
-											foreach ($problems as $num=>$a) {
-												echo '<option value="'.$num.'">'.$num.'. '.$a[$num].'</option>';
-											}
-										?>
-									</select>	
-								</div>
-								<div class="form-group">
-									<textarea id="clarification" value="clar_text" class="form-control" rows="5" placeholder="Message" style="resize: vertical;"></textarea>
-								</div>
-								<button type="button" class="btn btn-warning btn-block">Submit Clarification</button>
-							</form>
+							<div class="form-group">
+								<select class="form-control" name="clar_question_select" id="clar_question_select">
+									<?php
+										foreach ($problems as $num=>$a) {
+											echo '<option value="'.$num.'">'.$num.'. '.$a[$num].'</option>';
+										}
+									?>
+								</select>	
+							</div>
+							<div class="form-group">
+								<textarea id="clarification_message" value="clar_text" class="form-control" rows="5" placeholder="Message" style="resize: vertical;"></textarea>
+							</div>
+							<button type="button" class="btn btn-warning btn-block clar_submit">Submit Clarification</button>
 						</div>
 					</div>
 				</div>
@@ -111,23 +109,10 @@
 					<div class="row">
 						<div class="col-lg-12">
 							<legend>Clarifications</legend>
-							<div class="well submission" id="W3J8E8">
-								<div class="noselect" style="width:100%;"><h4 style="display:inline">Clarification ID: <span class="run_id">W3J8E8</span><div class="success" style="float:right">Replied</div></h4></div>
-								<div id="W3J8E8detail" class="detail" style="display:none">
-									<br>
-									<br>
-									<p>Your message:</p>
-									<blockquote>
-										Hey can you tell me the input?
-									</blockquote>
-									<p>Judge's response:</p>
-									<blockquote>
-										Lol, gtfo.
-									</blockquote>
-									<legend></legend>
-									<span style="color:#888;">This clarification for Problem #3 was responded to by a judge on 10/2/2013 at 10:34 AM. </span>
-								</div>
-							</div>				
+							 <div id="clar_box">
+								<i style="color:#888;">No clarifications here.</i>
+								<br><br>							
+							</div> 
 						</div>
 					</div>
 					<div class="row">

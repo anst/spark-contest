@@ -62,13 +62,15 @@ $panel->route('/api/<string>/<string>', function($panel, $api_query, $type) {
 	http_response_code(200);
 
 	if($api_query==="user") {
-		if($type==="team") {
-			return returnApiMessage(getTeamNumber());
-		}
-		else if($type === "written") {
-			return getWrittenScores();
-		}
-	}
+		if(isLoggedIn()) {
+			if($type==="team") {
+				return returnApiMessage(getTeamNumber());
+			}
+			else if($type === "written") {
+				return getWrittenScores();
+			}
+		} else echo returnApiMessage(["team"=>"null"]);
+	} 
 });
 $panel->route('/api/<string>', function($panel, $api_query) {
 	#header('Content-Type: application/json'); //we're returning JSON data

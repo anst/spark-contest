@@ -49,10 +49,6 @@ function readBlob() {
     var blob = file.slice(start, stop + 1);
     reader.readAsBinaryString(blob);
 }
-$(".noselect").click(function() {
-	var a = "#"+$(this).parent().attr('id')+"detail";
-	$(a).toggle();
-});
 $("#upload").click(function() {
 	var ext = $('#files').val().split('.').pop().toLowerCase();
 	if($.inArray(ext, ['java']) == -1) {
@@ -155,13 +151,40 @@ if(navigator.userAgent.match(/MSIE/i)) {
 	$(".main").remove();
 	$(".badbrowsermsg").fadeIn(0);
 }
-var socket = io.connect('http://'+document.domain+':8008');
-$(".hey").click(function(){
-    socket.emit('clarification', {message: $(".message").val()});
+$.getJSON( "/api/user/team", function(data) {
+  if(data.team!="null") {
+    var socket = io.connect('http://'+document.domain+':8008');
+    socket.emit('get_clars',{team:data.team});
+    socket.on('clarifications', function(data){
+        if(data.length!=0) 
+            $('#clar_box').empty();
+        $.each(data, function(key, value) {
+            $('#clar_box').append('\
+                <div class="well submission" id="clar'+value.id+'"> \
+                <div class="noselect" style="width:100%;"><h4 style="display:inline">ID: <span class="run_id">'+value.id+' for Problem #'+value.problem+'</span><div class="'+(value.reply==""?"fail":"success")+'" style="float:right">'+(value.reply==""?"No Reply":"Replied"+(value.global=='yes'?" (GLOBAL)":""))+'</div></h4></div> \
+                <div id="clar'+value.id+'detail" class="detail" style="display:none"><br><br><p>Your message:</p><blockquote>'+value.message+'</blockquote><p>Judge\'s response:</p><blockquote>'+(value.reply==""?"No Reply":value.reply)+'</blockquote></div></div> \
+            ');
+        });
+        $(".noselect").click(function() {
+            var a = "#"+$(this).parent().attr('id')+"detail";
+            $(a).toggle();
+        });
+    });
+    socket.on('refresh', function (data) {
+        alert("ok");
+        location.reload();
+    });
+    socket.on('soft_refresh', function (d) {
+        socket.emit('get_clars',{team:data.team});
+    });
+    $(".clar_submit").click(function(){
+        socket.emit('clarification', {from:data.team, problem:$("#clar_question_select").val(), message: $("#clarification_message").val()});
+    });
+
+  }
 });
-socket.on('refresh', function (data) {
-    location.reload();
-});
+
+
 /*!function ($) {
     $(function(){
     	window.prettyPrint && prettyPrint()
