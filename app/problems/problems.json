@@ -1,16 +1,36 @@
 {
-	"Abstergo": {
-		"points": 60,
-		"deduction": 5,
-		"input": "abstergo/Abstergo.in",
-		"output": "abstergo/Abstergo.out",
-		"timeout": 30
+	"0": {
+		"title": "Wet Walk",
+		"info": {
+			"points":0,
+			"deduction":0,
+			"input": "wetwalk/wetwalk.in",
+			"output": "wetwalk/wetwalk.out",
+			"timeout":30,
+			"regex":".+"
+		}
 	},
-	"Four Dee": {
-		"points":60,
-		"deduction":5,
-		"input": "fourdee/FourDee.in",
-		"output": "fourdee/Fourdee.out",
-		"timeout": 30
-	}
+	"1": {
+		"title": "Abstergo",
+		"info": {
+			"points": 60,
+			"deduction": 5,
+			"input": "null",
+			"output": "abstergo/abstergo.out",
+			"timeout": 30,
+			"regex":".+"
+		}
+	},	
+	"2": {
+		"title": "Four Dee",
+		"info": {
+			"points":60,
+			"deduction":5,
+			"input": "fourdee/fourdee.in",
+			"output": "fourdee/fourdee.out",
+			"timeout": 30,
+			"regex":".+"
+		}		
+	}	
+	
 }

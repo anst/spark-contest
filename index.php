@@ -13,12 +13,12 @@ session_regenerate_id();
 $panel = new Panel('panel',false, 'logs/' . date('Y-m-d') . '.txt'); //include default routing engine with logs enabled
 
 $panel->route('/', function($panel) { //index router, check for login
-	$string = file_get_contents(dirname(__FILE__)."/app/config/schools.json");
-	$json_a = json_decode($string, true);
+	$schools = json_decode(file_get_contents(dirname(__FILE__)."/app/config/schools.json"), true);
 	if(!isLoggedIn()) return $panel->render("login.html",[
 		"title"=>title,
 		"contest_name"=>contest_name,
-		"schools"=>$json_a,
+		"schools"=>$schools,
+		"navbar_title"=>navbar_title,
 	]);
 	return $panel->render("home.html",[
 		"title"=>title,
@@ -28,9 +28,16 @@ $panel->route('/', function($panel) { //index router, check for login
 });
 $panel->route('/submit', function($panel) {
 	http_response_code(200);
+	$problems = json_decode(file_get_contents(dirname(__FILE__)."/app/problems/problems.json"), true);
+	$parsed = [];
+	foreach ($problems as $problem=>$a) {
+		$parsed[$problem]=[$problem=>$a["title"], "points"=>$a["info"]["points"], "timeout"=>$a["info"]["points"]];
+	}
 	return $panel->render("submit.html",[
 		"title"=>title,
 		"contest_name"=>contest_name,
+		"navbar_title"=>navbar_title,
+		"problems"=>$parsed,
 	]);
 });
 $panel->route('/logout', function($panel) {
@@ -96,6 +103,14 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 			echo returnApiMessage(['error'=>'Don\'t mess with JS input validation. We\'re smarter than that.']);
 		}
 	}
+	else if($api_query==="problems") {
+		$problems = json_decode(file_get_contents(dirname(__FILE__)."/app/problems/problems.json"), true);
+		$parsed = [];
+		foreach ($problems as $problem=>$a) {
+			$parsed[$problem]=[$problem=>$a["title"], "points"=>$a["info"]["points"], "timeout"=>$a["info"]["points"]];
+		}
+		return returnApiMessage($parsed);
+	}
 	else if($api_query==="scoreboard") {
 		return getScoreboard();
 	}
@@ -106,6 +121,7 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 			$data = $_POST['code'];
 			#$data = "import java.io.*;public class untitled {    public static void main(String[] args) throws Exception{        System.out.println(new yo().lel()+new bro().lal());        Thread.sleep(15);              System.out.println(new yo().lel()+new bro().lal());                    }    static class yo {        static String lel() {return \"HEY \";}    }}class bro {    static String lal() {return \"YA\";}}class Jonathan240Exception extends Exception {    public Jonathan240Exception() {            }    public String toString() {        return \"OH NO JONATHAN 240\";    }}";
 			$inputs = "";
+			$problems = json_decode(file_get_contents(dirname(__FILE__)."/app/problems/problems.json"), true);
 			$args = "";
 			$data = preg_replace('/(\r\n|\r|\n)/s',"\n",$data);
 

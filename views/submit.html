@@ -26,7 +26,7 @@
 	</div>
 	<div class="container main">
 		<div class="navbar" style="background:#f7f7f7 !important">
-			<a class="navbar-brand" href="/">THSCS 2013</a>
+			<a class="navbar-brand" href="/"><?=navbar_title?></a>
 			<ul class="nav navbar-nav">
 				<li><a href="/">Home</a></li>
 				<li class="active"><a href="/submit">Submit</a></li>
@@ -57,26 +57,11 @@
 								<fieldset class="form-container" >
 									<div class="form-group">
 										<select class="form-control" name="compile_question_select" id="compile_question_select">
-											<option id="1" value="1">Problem #1</option>
-											<option id="2" value="2">Problem #2</option>
-											<option id="3" value="3">Problem #3</option>
-											<option id="4" value="4">Problem #4</option>
-											<option id="5" value="5">Problem #5</option>
-											<option id="6" value="6">Problem #6</option>
-											<option id="7" value="7">Problem #7</option>
-											<option id="8" value="8">Problem #8</option>
-											<option id="9" value="9">Problem #9</option>
-											<option id="10" value="10">Problem #10</option>
-											<option id="11" value="11">Problem #11</option>
-											<option id="12" value="12">Problem #12</option>
-											<option id="13" value="13">Problem #13</option>
-											<option id="14" value="14">Problem #14</option>
-											<option id="15" value="15">Problem #15</option>
-											<option id="16" value="16">Problem #16</option>
-											<option id="17" value="17">Problem #17</option>
-											<option id="18" value="18">Problem #18</option>
-											<option id="19" value="19">Problem #19</option>
-											<option id="20" value="20">Problem #20</option>
+											<?php
+												foreach ($problems as $num=>$a) {
+													echo '<option value="'.$num.'">'.$num.'. '.$a[$num].'</option>';
+												}
+											?>
 										</select>	
 									</div>
 									<div class="form-group" id="upload_form">
@@ -101,26 +86,11 @@
 							<form id="clar_from">
 								<div class="form-group">
 									<select class="form-control" name="compile_question_select" id="compile_question_select">
-										<option id="1" value="1">Problem #1</option>
-										<option id="2" value="2">Problem #2</option>
-										<option id="3" value="3">Problem #3</option>
-										<option id="4" value="4">Problem #4</option>
-										<option id="5" value="5">Problem #5</option>
-										<option id="6" value="6">Problem #6</option>
-										<option id="7" value="7">Problem #7</option>
-										<option id="8" value="8">Problem #8</option>
-										<option id="9" value="9">Problem #9</option>
-										<option id="10" value="10">Problem #10</option>
-										<option id="11" value="11">Problem #11</option>
-										<option id="12" value="12">Problem #12</option>
-										<option id="13" value="13">Problem #13</option>
-										<option id="14" value="14">Problem #14</option>
-										<option id="15" value="15">Problem #15</option>
-										<option id="16" value="16">Problem #16</option>
-										<option id="17" value="17">Problem #17</option>
-										<option id="18" value="18">Problem #18</option>
-										<option id="19" value="19">Problem #19</option>
-										<option id="20" value="20">Problem #20</option>
+										<?php
+											foreach ($problems as $num=>$a) {
+												echo '<option value="'.$num.'">'.$num.'. '.$a[$num].'</option>';
+											}
+										?>
 									</select>	
 								</div>
 								<div class="form-group">

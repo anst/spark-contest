@@ -155,7 +155,13 @@ if(navigator.userAgent.match(/MSIE/i)) {
 	$(".main").remove();
 	$(".badbrowsermsg").fadeIn(0);
 }
-
+var socket = io.connect('http://'+document.domain+':8008');
+$(".hey").click(function(){
+    socket.emit('clarification', {message: $(".message").val()});
+});
+socket.on('refresh', function (data) {
+    location.reload();
+});
 /*!function ($) {
     $(function(){
     	window.prettyPrint && prettyPrint()
