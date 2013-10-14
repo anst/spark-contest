@@ -6,6 +6,9 @@
 function isLoggedIn() {
 	return isset($_SESSION['team'])&&is_numeric($_SESSION['team']);
 }
+function contestHasStarted() {
+  return true;
+}
 function register($team,$pass,$school,$division,$members) {
   $conn = mysqli_connect(host, user, pw, db);
   $team = mysqli_real_escape_string($conn, $team);
@@ -144,13 +147,16 @@ function proc_exec($cmd, $inputs, $type) {
         return $error?["success"=>"false","error"=>$error_message]:["success"=>"true", "type"=>$type, "id"=>"lolwut", "timestamp"=>date("Y-m-d H:i:s"), "time"=>round(microtime(true)-$starttime,2), "output"=>$output];
     }
 }
-function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $args, $processname, $data) {
+function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $args, $processname, $data,$problem_number,$file_input_title,$file_input_data,$file_output_data) {
 	@mkdir($sourcedir, 0755, true);
 	$outputfile = "$classfile";
 	chdir("/tmp/$processname");
 	$handle = fopen($sourcefile, 'w+');
-	fwrite($handle, $data); 
+	fwrite($handle, $data);
 	fclose($handle);
+  $handle = fopen($file_input_title.'.in', 'w+');
+  fwrite($handle, $file_input_data);
+  fclose($handle);
 
 	$compile_error = false;
 	$runtime_error = false;
@@ -160,7 +166,7 @@ function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $a
 	if($compile_data["output"]!="")
     $compile_error = true; 
 
-  chdir(dirname(__FILE__));
+  #chdir(dirname(__FILE__));
 	#$exec_data = proc_exec("java -classpath ../classloader ContestJudge /tmp/$processname/ ".substr($classfile,0,strlen($classfile)-6), $inputs, "execute");
 
   $exec_data = proc_exec("java -classpath $sourcedir $class $args", $inputs, "execute");
@@ -173,15 +179,21 @@ function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $a
 
 	exec("rm -rf /tmp/$processname*");
 	
-  if($compile_data["success"]==="true"&&$exec_data["success"]==="true"&&$compile_error==false&&$runtime_error==false)
-    return ["success"=>"true","compile"=>$compile_data,"exec"=>$exec_data];
+  if($compile_data["success"]==="true"&&$exec_data["success"]==="true"&&$compile_error==false&&$runtime_error==false) {
+      
+      if($file_output_data===$exec_data['output']) {
+        return ["success"=>"true","time"=>$exec_data['time']];
+      } else {
+        return ["success"=>"false", "error"=>"Your output was incorrect!".$exec_data];
+      }
+  }   
+    
 	else if ($compile_error)
     return ["success"=>"false", "error"=>"Your program was unable to compile! Please check for syntax errors and resubmit. [Syntax error]"];
 	else if ($runtime_error)
     return ["success"=>"false", "error"=>"Your program encountered an error while running! Please check your program logic and resubmit. [Runtime error]"];
   else
     return ["success"=>"false", "error"=>"Unknown error, something huge has gone wrong!"];
-  return ["success"=>"true","compile"=>$compile_data,"exec"=>$exec_data];
 }
 function proc_safety() {
 	$max_proc_count = exec("/bin/bash -c \"ulimit -u 2>&1\""); //stop abuse of compilation, limit processes

@@ -1,11 +1,12 @@
 {
 	"0": {
 		"title": "Wet Walk",
+		"file_title":"Wetwalk",
 		"info": {
 			"points":0,
 			"deduction":0,
-			"input": "wetwalk/wetwalk.in",
-			"output": "wetwalk/wetwalk.out",
+			"input": "wetwalk/Wetwalk.in",
+			"output": "wetwalk/Wetwalk.out",
 			"timeout":30,
 			"regex":".+"
 		}
@@ -16,7 +17,7 @@
 			"points": 60,
 			"deduction": 5,
 			"input": "null",
-			"output": "abstergo/abstergo.out",
+			"output": "abstergo/Abstergo.out",
 			"timeout": 30,
 			"regex":".+"
 		}
@@ -26,8 +27,8 @@
 		"info": {
 			"points":60,
 			"deduction":5,
-			"input": "fourdee/fourdee.in",
-			"output": "fourdee/fourdee.out",
+			"input": "fourdee/Fourdee.in",
+			"output": "fourdee/Fourdee.out",
 			"timeout": 30,
 			"regex":".+"
 		}		

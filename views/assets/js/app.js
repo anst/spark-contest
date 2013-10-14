@@ -70,7 +70,7 @@ function onCompileResubmit() {
 }
 $('#compile').click(function(){
 	$('#compile').button('loading');
-    var code = 'code='+encodeURIComponent($('#code').val());
+    var code = 'code='+encodeURIComponent($('#code').val())+'&problem='+$('#compile_question_select').val();
     $.ajax({
         type: "POST",
         url: "/api/compile",
@@ -78,14 +78,15 @@ $('#compile').click(function(){
         success: function(data){	
         	$("#byte_content").fadeOut(0);
         	$("#compile_legend").fadeOut(0);
+            console.log(data);
         	var d = eval('('+data+')');
-        	if(d.compile!=undefined&&d.exec!=undefined&&d.compile.success=="true"&&d.exec.success=="true") {
-        		$("#output").text(d.exec.output);
+        	if(d.success!=undefined&&d.success=="true") {
+        		//$("#output").text(d.exec.output);
 	    		prettyPrint();
 	    		$('#compile').fadeOut(0);
 	        	$("#output_container").fadeIn(600);
 	        	$("#resubmit").fadeIn(600);
-	        	$("#compile_success_alert").fadeIn(600).append("Your program ran for " + parseFloat(d.exec.time) + "s.");
+	        	$("#compile_success_alert").fadeIn(600).append("Your program ran for " + parseFloat(d.time) + "s.");
         	} else {
         		$('#compile').fadeOut(0);
 	        	$("#output_container").fadeIn(600);
@@ -162,7 +163,7 @@ $.getJSON( "/api/user/team", function(data) {
             $('#clar_box').append('\
                 <div class="well submission" id="clar'+value.id+'"> \
                 <div class="noselect" style="width:100%;"><h4 style="display:inline">ID: <span class="run_id">'+value.id+' for Problem #'+value.problem+'</span><div class="'+(value.reply==""?"fail":"success")+'" style="float:right">'+(value.reply==""?"No Reply":"Replied"+(value.global=='yes'?" (GLOBAL)":""))+'</div></h4></div> \
-                <div id="clar'+value.id+'detail" class="detail" style="display:none"><br><br><p>Your message:</p><blockquote>'+value.message+'</blockquote><p>Judge\'s response:</p><blockquote>'+(value.reply==""?"No Reply":value.reply)+'</blockquote></div></div> \
+                <div id="clar'+value.id+'detail" class="detail" style="display:none"><br><br><p>Your message:</p><blockquote>'+nl2br(value.message,false)+'</blockquote><p>Judge\'s response:</p><blockquote>'+(value.reply==""?"No Reply":value.reply)+'</blockquote></div></div> \
             ');
         });
         $(".noselect").click(function() {
@@ -183,7 +184,10 @@ $.getJSON( "/api/user/team", function(data) {
 
   }
 });
-
+function nl2br (str, is_xhtml) {
+    var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br ' + '/>' : '<br>';
+    return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
+}
 
 /*!function ($) {
     $(function(){

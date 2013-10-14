@@ -20,7 +20,7 @@ io.sockets.on('connection', function (socket) {
 			  port     : 8889,
 			  _socket: '/var/run/mysqld/mysqld.sock',
 			});
-			m.query("SELECT * FROM clarifications WHERE (`from`="+m.escape(team)+" OR `global`='yes') ORDER BY `id` DESC", function(err, result, fields) {
+			m.query("SELECT * FROM clarifications WHERE (`from`="+m.escape(team)+" OR `global`='yes') ORDER BY `global`, `reply`='',`id` DESC", function(err, result, fields) {
 				if(err) {
 		            m.end();
 		            console.error(err);
@@ -51,7 +51,6 @@ io.sockets.on('connection', function (socket) {
 	        }
 			console.log("New clarifiction from team" + data.from+ " about problem #"+data.problem+"\nMessage:\n"+data.message);
 			socket.emit('soft_refresh');
-			console.log('REFRESHINSDOGINSDOIGNSODIGN');
 		});
   	});
 });
