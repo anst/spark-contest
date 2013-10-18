@@ -146,12 +146,12 @@ $("#pizzaform input[type=text]").change(function () {
       });
   $("#total").text("$"+str);
 });
-// check if bad browser
-// Internet Explorer is confirmed bad
+
 if(navigator.userAgent.match(/MSIE/i)) {
 	$(".main").remove();
 	$(".badbrowsermsg").fadeIn(0);
 }
+
 $.getJSON( "/api/user/team", function(data) {
   if(data.team!="null") {
     var socket = io.connect('http://'+document.domain+':8008');
@@ -188,9 +188,3 @@ function nl2br (str, is_xhtml) {
     var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br ' + '/>' : '<br>';
     return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
 }
-
-/*!function ($) {
-    $(function(){
-    	window.prettyPrint && prettyPrint()
-    })
-}(window.jQuery)*/

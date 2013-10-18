@@ -1,6 +1,8 @@
 var io = require('socket.io').listen(8008);
 var mysql = require('mysql');
 
+io.set('log level', 1);
+
 function toObject(arr) {
   var rv = {};
   for (var i = 0; i < arr.length; ++i)
@@ -31,7 +33,6 @@ io.sockets.on('connection', function (socket) {
 			});
 		} else socket.emit('clarifications', {});
 	});
-	//socket.emit('refresh');
 	
 	socket.on('clarification', function (data) {
 		var m = mysql.createConnection({

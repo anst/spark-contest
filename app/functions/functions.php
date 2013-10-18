@@ -147,6 +147,12 @@ function proc_exec($cmd, $inputs, $type) {
         return $error?["success"=>"false","error"=>$error_message]:["success"=>"true", "type"=>$type, "id"=>"lolwut", "timestamp"=>date("Y-m-d H:i:s"), "time"=>round(microtime(true)-$starttime,2), "output"=>$output];
     }
 }
+function judge($output, $correct){
+  $submission = array_map('trim', preg_split ('/$\R?^/m', $output));
+  $judge = array_map('trim', preg_split ('/$\R?^/m', $correct));
+
+  return sizeof(array_diff_assoc($submission, $judge)) === 0;
+}
 function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $args, $processname, $data,$problem_number,$file_input_title,$file_input_data,$file_output_data) {
 	@mkdir($sourcedir, 0755, true);
 	$outputfile = "$classfile";
@@ -181,7 +187,7 @@ function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $a
 	
   if($compile_data["success"]==="true"&&$exec_data["success"]==="true"&&$compile_error==false&&$runtime_error==false) {
       
-      if($file_output_data===$exec_data['output']) {
+      if(judge($file_output_data,$exec_data['output'])) {
         return ["success"=>"true","time"=>$exec_data['time']];
       } else {
         return ["success"=>"false", "error"=>"Your output was incorrect!".$exec_data];
