@@ -73,7 +73,7 @@
 			"deduction":5,
 			"input": "palindromida/Palindromida.in",
 			"output": "palindromida/Palindromida.out",
-			"timeout": 30
+			"timeout": 120
 		}		
 	},
 	"7": {

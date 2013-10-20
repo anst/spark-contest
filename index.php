@@ -118,7 +118,7 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 	}
 	else if($api_query==="compile") {
 		if(isLoggedIn()) {
-			$processname = substr(md5(getTeamNumber()['team'].time().rand(1,10000)), 26);
+			$processname = strtoupper(substr(md5(getTeamNumber()['team'].time().rand(1,10000)), 26));
 			if(!isset($_POST['code'])) return returnApiMessage(["success"=>"false","error"=>"Invalid API Query."]);
 			$data = $_POST['code'];
 			#$data = "import java.io.*;public class untitled {    public static void main(String[] args) throws Exception{        System.out.println(new yo().lel()+new bro().lal());        Thread.sleep(15);              System.out.println(new yo().lel()+new bro().lal());                    }    static class yo {        static String lel() {return \"HEY \";}    }}class bro {    static String lal() {return \"YA\";}}class Jonathan240Exception extends Exception {    public Jonathan240Exception() {            }    public String toString() {        return \"OH NO JONATHAN 240\";    }}";
@@ -128,7 +128,8 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 			$problem_number = $_POST['problem'];
 			$problems = json_decode(file_get_contents(dirname(__FILE__)."/app/problems/problems.json"), true);
 			$file_input_title = $problems[$problem_number]["file_title"];
-			$file_input_data = file_get_contents(dirname(__FILE__).'/app/problems/'.strtolower($file_input_title).'/'.$file_input_title.'.in', FILE_USE_INCLUDE_PATH);
+			$problem_timeout = $problems[$problem_number]["info"]["timeout"];
+			$file_input_data = $problems[$problem_number]["info"]["input"]==="null"?"":file_get_contents(dirname(__FILE__).'/app/problems/'.strtolower($file_input_title).'/'.$file_input_title.'.in', FILE_USE_INCLUDE_PATH);
 			$file_output_data = file_get_contents(dirname(__FILE__).'/app/problems/'.strtolower($file_input_title).'/'.$file_input_title.'.out', FILE_USE_INCLUDE_PATH);
 			$proccess_safety = proc_safety();
 			if($proccess_safety!=="Success") return returnApiMessage(["error"=>$proccess_safety]);
@@ -165,7 +166,7 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 					]
 				);
 			} else {
-				$compiled = ($classerror||$packageerror)?FALSE:compileProgram("/tmp/$processname/$class" . ".java", "/tmp/$processname/", "/tmp/$processname/$class" . ".class", $class, $inputs, $args, $processname, $data,$problem_number,$file_input_title,$file_input_data,$file_output_data);
+				$compiled = ($classerror||$packageerror)?FALSE:compileProgram("/tmp/$processname/$class" . ".java", "/tmp/$processname/", "/tmp/$processname/$class" . ".class", $class, $inputs, $args, $processname, $data,$problem_number,$file_input_title,$file_input_data,$file_output_data,$problem_timeout);
 				echo returnApiMessage($compiled);
 			}
 		} else {
