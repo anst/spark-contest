@@ -82,7 +82,7 @@ io.sockets.on('connection', function (socket) {
   	// dumps table
   	socket.on('recalculate', function (data) {
 		team = data.team;
-		if(team && ) {
+		if(team) {
 			var m = mysql.createConnection({
 			  host     : 'localhost',
 			  user     : 'root',
@@ -119,6 +119,15 @@ io.sockets.on('connection', function (socket) {
 		        				sum += probs[x];
 		        		}
 		        	}
+		        	m.query('UPDATE scoreboard SET score='+sum+' WHERE team='+team+';', function(err, result) {
+						if(err) {
+				            m.end();
+				            console.error(err);
+				            return;
+				        }
+						console.log("New clarifiction from team" + data.from+ " about problem #"+data.problem+"\nMessage:\n"+data.message);
+						socket.emit('soft_refresh');
+					});
 			    	return socket.emit('recalculate', {score: sum});
 			    }
 			});
