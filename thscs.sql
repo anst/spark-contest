@@ -12,9 +12,10 @@ CREATE TABLE `clarifications` (
   `from` int(3) NOT NULL,
   `problem` int(3) NOT NULL,
   `message` varchar(8192) NOT NULL,
+  `reply` varchar(8219) NOT NULL,
   `global` enum('yes','no') NOT NULL DEFAULT 'no',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
 
 CREATE TABLE `pizza` (
   `team` int(3) NOT NULL,
@@ -39,7 +40,7 @@ CREATE TABLE `submissions` (
   `code` longtext NOT NULL,
   `output` longtext NOT NULL,
   `success` enum('Yes','No') NOT NULL DEFAULT 'Yes',
-  `error` enum('None','Syntax','Compile') NOT NULL DEFAULT 'None',
+  `error` enum('None','Syntax','Runtime','Timeout') NOT NULL DEFAULT 'None',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
@@ -53,7 +54,7 @@ CREATE TABLE `teams` (
   `member3` varchar(256) NOT NULL,
   `password` varchar(512) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
 
 CREATE TABLE `written` (
   `name` varchar(128) NOT NULL,

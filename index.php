@@ -118,7 +118,7 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 	}
 	else if($api_query==="compile") {
 		if(isLoggedIn()) {
-			$processname = substr(md5(getTeamNumber()['team'].time().rand(1,10000)), 26); //change this to md5(TeamNumber+Timestamp+rand(1,10000))
+			$processname = substr(md5(getTeamNumber()['team'].time().rand(1,10000)), 26);
 			if(!isset($_POST['code'])) return returnApiMessage(["success"=>"false","error"=>"Invalid API Query."]);
 			$data = $_POST['code'];
 			#$data = "import java.io.*;public class untitled {    public static void main(String[] args) throws Exception{        System.out.println(new yo().lel()+new bro().lal());        Thread.sleep(15);              System.out.println(new yo().lel()+new bro().lal());                    }    static class yo {        static String lel() {return \"HEY \";}    }}class bro {    static String lal() {return \"YA\";}}class Jonathan240Exception extends Exception {    public Jonathan240Exception() {            }    public String toString() {        return \"OH NO JONATHAN 240\";    }}";

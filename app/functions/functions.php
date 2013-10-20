@@ -154,6 +154,7 @@ function judge($output, $correct){
   return sizeof(array_diff_assoc($submission, $judge)) === 0;
 }
 function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $args, $processname, $data,$problem_number,$file_input_title,$file_input_data,$file_output_data) {
+  $team = getTeamNumber()['team'];
 	@mkdir($sourcedir, 0755, true);
 	$outputfile = "$classfile";
 	chdir("/tmp/$processname");
@@ -177,27 +178,57 @@ function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $a
 
   $exec_data = proc_exec("java -classpath $sourcedir $class $args", $inputs, "execute");
 
-  if ($exec_data["success"]==="false")
+  if ($exec_data["success"]==="false") {
+    $conn = mysqli_connect(host, user, pw, db);
+    $cur_time = date("Y-m-d H:i:s");
+    $query = "INSERT INTO submissions (id, team, problem, time, subid, code, output, success, error) VALUES (NULL, '$team', '$problem_number','$cur_time','$processname','$data','', 'No', 'Timeout')";
+
+    mysqli_query($conn, $query);
+    mysqli_close($conn);
     return ["success"=>"false", "error"=>"Your program ran longer than the time alotted! Please make sure you don't go above the time limit. [Timeout error]"];
+  }
   
   if(preg_match("/.?Exception in thread/",$exec_data["output"])==1)
     $runtime_error = true;
 
 	exec("rm -rf /tmp/$processname*");
-	
+	//compilation successful 
   if($compile_data["success"]==="true"&&$exec_data["success"]==="true"&&$compile_error==false&&$runtime_error==false) {
-      
+      $conn = mysqli_connect(host, user, pw, db);
+      $timestamp_a = $exec_data['timestamp'];
+      $output_a = $exec_data['output'];
+      $query = "INSERT INTO submissions (id, team, problem, time, subid, code, output, success, error) VALUES (NULL, '$team', '$problem_number','$timestamp_a','$processname','$data','$output_a', 'Yes', 'None')";
+
+      mysqli_query($conn, $query);
+      mysqli_close($conn);
       if(judge($file_output_data,$exec_data['output'])) {
         return ["success"=>"true","time"=>$exec_data['time']];
       } else {
         return ["success"=>"false", "error"=>"Your output was incorrect!".$exec_data];
       }
   }   
-    
-	else if ($compile_error)
+  //compile error
+	else if ($compile_error) {
+    $conn = mysqli_connect(host, user, pw, db);
+    $cur_time = date("Y-m-d H:i:s");
+    $output_a = $compile_data['output'];
+    $query = "INSERT INTO submissions (id, team, problem, time, subid, code, output, success, error) VALUES (NULL, '$team', '$problem_number','$cur_time','$processname','$data','$output_a', 'No', '')";
+
+    mysqli_query($conn, $query);
+    mysqli_close($conn);
     return ["success"=>"false", "error"=>"Your program was unable to compile! Please check for syntax errors and resubmit. [Syntax error]"];
-	else if ($runtime_error)
+  }
+  //runtime error
+	else if ($runtime_error) {
+    $conn = mysqli_connect(host, user, pw, db);
+    $cur_time = date("Y-m-d H:i:s");
+    $output_a = $exec_data['output'];
+    $query = "INSERT INTO submissions (id, team, problem, time, subid, code, output, success, error) VALUES (NULL, '$team', '$problem_number','$cur_time','$processname','$data','$output_a', 'No', 'Runtime')";
+
+    mysqli_query($conn, $query);
+    mysqli_close($conn);
     return ["success"=>"false", "error"=>"Your program encountered an error while running! Please check your program logic and resubmit. [Runtime error]"];
+  }
   else
     return ["success"=>"false", "error"=>"Unknown error, something huge has gone wrong!"];
 }

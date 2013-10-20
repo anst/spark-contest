@@ -1,6 +1,6 @@
 var io = require('socket.io').listen(8008);
 var mysql = require('mysql');
-
+var creds = {host: 'localhost',user: 'root',password: 'AwesomeSauce',database: 'thscs',port: 8889,_socket: '/var/run/mysqld/mysqld.sock',};
 io.set('log level', 1);
 
 function toObject(arr) {
@@ -14,14 +14,7 @@ io.sockets.on('connection', function (socket) {
 	socket.on('get_clars', function(data) {
 		team = data.team;
 		if(team!=undefined) {
-			var m = mysql.createConnection({
-			  host     : 'localhost',
-			  user     : 'root',
-			  password : 'AwesomeSauce',
-			  database : 'thscs',
-			  port     : 8889,
-			  _socket: '/var/run/mysqld/mysqld.sock',
-			});
+			var m = mysql.createConnection(creds);
 			m.query("SELECT * FROM clarifications WHERE (`from`="+m.escape(team)+" OR `global`='yes') ORDER BY `global`, `reply`='',`id` DESC", function(err, result, fields) {
 				if(err) {
 		            m.end();
@@ -35,14 +28,7 @@ io.sockets.on('connection', function (socket) {
 	});
 	
 	socket.on('clarification', function (data) {
-		var m = mysql.createConnection({
-		  host     : 'localhost',
-		  user     : 'root',
-		  password : 'AwesomeSauce',
-		  database : 'thscs',
-		  port     : 8889,
-		  _socket: '/var/run/mysqld/mysqld.sock',
-		});
+		var m = mysql.createConnection(creds);
 	    var post  = {from: data.from, problem: data.problem, message: data.message,reply:'', global: 'No'};
 		m.query('INSERT INTO clarifications SET ?', post, function(err, result) {
 			if(err) {
