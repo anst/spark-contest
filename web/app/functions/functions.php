@@ -89,59 +89,59 @@ function proc_timeout($start,$problem_timeout) { //check if program has timed ou
 }
 function proc_exec($cmd, $inputs, $type,$problem_timeout) {
 	$output = "";
-    $descriptorspec = array(
-        0 => array("pipe", "r"),
-        1 => array("pipe", "w"),
-        2 => array("pipe", "w")
-    );
-    $process = proc_open($cmd, $descriptorspec, $pipes, NULL, $_ENV);
-    $starttime = microtime(true);
-    if (is_resource($process)) {
+  $descriptorspec = array(
+      0 => array("pipe", "r"),
+      1 => array("pipe", "w"),
+      2 => array("pipe", "w")
+  );
+  $process = proc_open($cmd, $descriptorspec, $pipes, NULL, $_ENV);
+  $starttime = microtime(true);
+  if (is_resource($process)) {
 
-        list($in, $out, $err) = $pipes;
-        stream_set_blocking( $in, true ); 
-        stream_set_blocking( $out, false ); 
-        stream_set_blocking( $err, false ); 
-        if( strlen($inputs) > 0 ){
-           //pass stdin
-           foreach( explode("\n", $inputs) as $a ){
-               $inputlist = $a . "\n";
-               fwrite($in, $inputlist);
-           }
-        }
-        fclose($in);
-        //read output
-        $stdout = '';
-        while(!feof($out) && !proc_timeout($starttime,$problem_timeout)){ 
-           $stdout = fgets($out, 128); 
-           //$output .= nl2br(htmlentities($stdout));
-           $output .= $stdout;
-        }    
-        fclose($out);
-        $stderr = '';
-        while(!feof($err) && !proc_timeout($starttime,$problem_timeout)){ 
-           $stderr = fgets($err, 128); 
-           //$output .=  nl2br(htmlentities($stderr));
-           $output .= $stderr;
-        }
-        $error = false;
-        $error_message = "";
-        GLOBAL $processname;
-        while(true){ //check if process is still running
-           $status = proc_get_status( $process );
-           if($status['running'] && proc_timeout($starttime,$problem_timeout)){
-              $error_message = "Your program timed out. Please make sure you are under the time limit.";
-              $error = true;
-              proc_terminate($process);
-              break;
-              #$retval = proc_close($process);
-           }else if(!$status['running']){
-              break;
-           }
-           sleep(1);
-        }
-        $retval = proc_close($process);
-        return $error?["success"=>"false","error"=>$error_message]:["success"=>"true", "type"=>$type, "id"=>"lolwut", "timestamp"=>date("Y-m-d H:i:s"), "time"=>round(microtime(true)-$starttime,2), "output"=>$output];
+      list($in, $out, $err) = $pipes;
+      stream_set_blocking( $in, true ); 
+      stream_set_blocking( $out, false ); 
+      stream_set_blocking( $err, false ); 
+      if( strlen($inputs) > 0 ){
+         //pass stdin
+         foreach( explode("\n", $inputs) as $a ){
+             $inputlist = $a . "\n";
+             fwrite($in, $inputlist);
+         }
+      }
+      fclose($in);
+      //read output
+      $stdout = '';
+      while(!feof($out) && !proc_timeout($starttime,$problem_timeout)){ 
+         $stdout = fgets($out, 128); 
+         //$output .= nl2br(htmlentities($stdout));
+         $output .= $stdout;
+      }    
+      fclose($out);
+      $stderr = '';
+      while(!feof($err) && !proc_timeout($starttime,$problem_timeout)){ 
+         $stderr = fgets($err, 128); 
+         //$output .=  nl2br(htmlentities($stderr));
+         $output .= $stderr;
+      }
+      $error = false;
+      $error_message = "";
+      GLOBAL $processname;
+      while(true){ //check if process is still running
+         $status = proc_get_status( $process );
+         if($status['running'] && proc_timeout($starttime,$problem_timeout)){
+            $error_message = "Your program timed out. Please make sure you are under the time limit.";
+            $error = true;
+            proc_terminate($process);
+            break;
+            #$retval = proc_close($process);
+         }else if(!$status['running']){
+            break;
+         }
+         sleep(1);
+      }
+      $retval = proc_close($process);
+      return $error?["success"=>"false","error"=>$error_message]:["success"=>"true", "type"=>$type, "id"=>"lolwut", "timestamp"=>date("Y-m-d H:i:s"), "time"=>round(microtime(true)-$starttime,2), "output"=>$output];
     }
 }
 function judge($output, $correct){
@@ -177,7 +177,7 @@ function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $a
   #chdir(dirname(__FILE__));
 	#$exec_data = proc_exec("java -classpath ../classloader ContestJudge /tmp/$processname/ ".substr($classfile,0,strlen($classfile)-6), $inputs, "execute");
 
-  $exec_data = proc_exec("java -classpath $sourcedir $class $args", $inputs, "execute",$problem_timeout);
+  $exec_data = proc_exec("java -classpath $sourcedir $class $args 2>&1", $inputs, "execute",$problem_timeout);
 
   if ($exec_data["success"]==="false") {
     $conn = mysqli_connect(host, user, pw, db);

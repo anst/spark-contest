@@ -1,6 +1,6 @@
 var io = require('socket.io').listen(8008);
 var mysql = require('mysql');
-var creds = {host: 'localhost',user: 'root',password: 'AwesomeSauce',database: 'thscs',port: 8889,_socket: '/var/run/mysqld/mysqld.sock',};
+var creds = {host: 'localhost',user: 'root',password: 'AwesomeSauce',database: 'thscs',port: 3306,_socket: '/var/run/mysqld/mysqld.sock',};
 io.set('log level', 1);
 
 function toObject(arr) {
@@ -68,15 +68,9 @@ io.sockets.on('connection', function (socket) {
   	// dumps table
   	socket.on('recalculate', function (data) {
 		team = data.team;
+		console.log("hey recalc");
 		if(team) {
-			var m = mysql.createConnection({
-			  host     : 'localhost',
-			  user     : 'root',
-			  password : 'AwesomeSauce',
-			  database : 'thscs',
-			  port     : 8889,
-			  _socket: '/var/run/mysqld/mysqld.sock'
-			});
+			var m = mysql.createConnection(creds);
 			m.query("SELECT * FROM submissions WHERE `team`="+m.escape(team)+" ORDER BY `time`", function(err, result, fields) {
 				if(err) {
 		            m.end();
