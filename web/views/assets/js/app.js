@@ -35,9 +35,10 @@ function readBlob() {
 
     reader.onloadend = function(evt) {
       if (evt.target.readyState == FileReader.DONE) {
-      	$("#byte_content").fadeIn(600);
+      	$("#byte_content").fadeIn(0);
         $("#byte_content").text(evt.target.result);
         $("#code").val(evt.target.result);
+        $('.prettyprinted').removeClass('prettyprinted');
         prettyPrint();
         $("#compile_question_select").fadeOut(0);
         $("#upload_form").fadeOut(0);
@@ -66,7 +67,12 @@ window.onbeforeunload = function() {$('.btn').button('reset'); $('form').each(fu
 function onCompileResubmit() {
 	$('#compile').button('reset');
 	$('#upload').button('reset');
-	window.location.reload();	
+	$("input[type=text], textarea").val("");
+    $("#output_container").fadeOut(0);
+    $("#resubmit").fadeOut(0);
+    $('#upload').fadeIn(0);
+    $("#compile_question_select").fadeIn(0);
+    $("#upload_form").fadeIn(0);  
 }
 $('#compile').click(function(){
 	$('#compile').button('loading');
@@ -83,17 +89,17 @@ $('#compile').click(function(){
         	if(d.success!=undefined&&d.success=="true") {
         		//$("#output").text(d.exec.output);
 	    		prettyPrint();
-	    		$('#compile').fadeOut(0);
-	        	$("#output_container").fadeIn(600);
-	        	$("#resubmit").fadeIn(600);
-	        	$("#compile_success_alert").fadeIn(600).append("Your program ran for " + parseFloat(d.time) + "s.");
+                $('#compile').fadeOut(0);
+                $("#output_container").fadeIn(0);
+                $("#resubmit").fadeIn(0);
+	        	$("#compile_success_alert").fadeIn(0);
         	} else {
         		$('#compile').fadeOut(0);
-	        	$("#output_container").fadeIn(600);
-	        	$("#resubmit").fadeIn(600);
+	        	$("#output_container").fadeIn(0);
+	        	$("#resubmit").fadeIn(0);
 	        	$("#output").fadeOut(0);
 	        	$("#error_divider").fadeOut(0);
-	        	$("#compile_danger_alert").fadeIn(600).append(d.error);
+	        	$("#compile_danger_alert").fadeIn(0).append(d.error);
         	}
 	        	
         }
@@ -115,11 +121,11 @@ $("#register-form").submit(function(e){
     	$('#reg').button('reset');
     	var d = eval('('+data+')');
         if(d.error!=undefined) {
-        	$("#register_error_msg").fadeIn(600).html('<h4>Error!</h4>'+d.error);
+        	$("#register_error_msg").fadeIn(0).html('<h4>Error!</h4>'+d.error);
         } else {
-        	$("#register_error_msg").fadeOut(600);
-        	$("#register-form").fadeOut(600);
-        	$("#register_success_msg").fadeIn(600);
+        	$("#register_error_msg").fadeOut(0);
+        	$("#register-form").fadeOut(0);
+        	$("#register_success_msg").fadeIn(0);
         }	
 	});
 });
@@ -132,7 +138,7 @@ $("#login-form").submit(function(e){
     	$('#sign').button('reset');
     	var d = eval('('+data+')');
         if(d.error!=undefined) {
-        	$("#login_error_msg").fadeIn(600).html('<h4>Error!</h4>'+d.error);
+        	$("#login_error_msg").fadeIn(0).html('<h4>Error!</h4>'+d.error);
         } else {
         	location.reload();
         }	
@@ -155,18 +161,31 @@ if(navigator.userAgent.match(/MSIE/i)) {
 $.getJSON( "/api/user/team", function(data) {
   if(data.team!="null") {
     var socket = io.connect('http://'+document.domain+':8008');
+    socket.emit('team',{team:data.team});
     socket.emit('get_clars',{team:data.team});
+    socket.emit('get_subs',data.team);
     socket.on('clarifications', function(data){
         if(data.length!=0) 
             $('#clar_box').empty();
         $.each(data, function(key, value) {
             $('#clar_box').append('\
                 <div class="well submission" id="clar'+value.id+'"> \
-                <div class="noselect" style="width:100%;"><h4 style="display:inline">ID: <span class="run_id">'+value.id+' for Problem #'+value.problem+'</span><div class="'+(value.reply==""?"fail":"success")+'" style="float:right">'+(value.reply==""?"No Reply":"Replied"+(value.global=='yes'?" (GLOBAL)":""))+'</div></h4></div> \
+                <div class="noselect_clar" style="width:100%;"><h4 style="display:inline">ID #<span class="run_id">'+value.id+' for Problem #'+value.problem+'</span><div class="'+(value.reply==""?"fail":"success")+'" style="float:right">'+(value.reply==""?"No Reply":"Replied"+(value.global=='yes'?" (GLOBAL)":""))+'</div></h4></div> \
                 <div id="clar'+value.id+'detail" class="detail" style="display:none"><br><br><p>Your message:</p><blockquote>'+nl2br(value.message,false)+'</blockquote><p>Judge\'s response:</p><blockquote>'+(value.reply==""?"No Reply":value.reply)+'</blockquote></div></div> \
             ');
         });
-        $(".noselect").click(function() {
+        $(".noselect_clar").click(function() {
+            var a = "#"+$(this).parent().attr('id')+"detail";
+            $(a).toggle();
+        });
+    });
+    socket.on('submissions', function(data){
+        if(data.length!=0) 
+            $('#sub_box').empty();
+        $.each(data, function(key, value) {
+           $('#sub_box').append('<div class="well submission" id="sub'+value.subid+'"><div class="noselect_sub" style="width:100%;"><h4 style="display:inline">Problem #<span class="run_id">'+value.problem+' ('+value.subid+')</span><div class="'+(value.success=="Yes"?"success":"fail")+'" style="float:right">'+(value.success=="No"?value.error=="None"?"Incorrect":value.error:"Success")+'</div></h4></div><div id="sub'+value.subid+'detail" class="detail" style="display:none"><br><div class="row"><div class="col-lg-6"><legend style="font-size:16px">Your Output:</legend><pre id="sub'+value.subid+'toutput">'+(value.output==""?"Not available yet, contest is still running.":value.output)+'</pre></div><div class="col-lg-6"><legend style="font-size:16px">Judge\'s Output:</legend><pre id="sub'+value.subid+'routput">'+(value.real_output==""?"Not available yet, contest is still running.":value.real_output)+'</pre></div></div><br><legend></legend>'+(value.success=="Yes"?'<span style="color:#aaa;font-size:11px">You can\'t appeal, because you either got it right or you have already appealed.</span>':'<span style="color:#aaa;font-size:11px">Output matches judges output? Submit an </span><a href="/api/appeal/'+value.subid+'" class="btn btn-danger btn-small" disabled>Appeal</a></span></div>')+'</div>');
+        });
+        $(".noselect_sub").click(function() {
             var a = "#"+$(this).parent().attr('id')+"detail";
             $(a).toggle();
         });

@@ -2,15 +2,19 @@ var io = require('socket.io').listen(8008);
 var mysql = require('mysql');
 var creds = {host: 'localhost',user: 'root',password: 'AwesomeSauce',database: 'thscs',port: 3306,_socket: '/var/run/mysqld/mysqld.sock',};
 io.set('log level', 1);
-
+var clients = {};
+var teams = {};
 function toObject(arr) {
   var rv = {};
   for (var i = 0; i < arr.length; ++i)
     if (arr[i] !== undefined) rv[i] = arr[i];
   return rv;
 }
-
 io.sockets.on('connection', function (socket) {
+	socket.on('team', function(data) {
+		teams[data.team] = socket.id;
+		clients[socket.id] = socket;
+	});
 	socket.on('get_clars', function(data) {
 		team = data.team;
 		if(team!=undefined) {
@@ -21,12 +25,29 @@ io.sockets.on('connection', function (socket) {
 		            console.error(err);
 		            return;
 		        } else if (result.length  > 0) {
+		        	m.end();
 			        return socket.emit('clarifications', toObject(result));
 			    }
 			});
-		} else socket.emit('clarifications', {});
+		} else {m.end(); socket.emit('clarifications', {})};
 	});
-	
+	socket.on('get_subs', function(team) {
+		//don't forget to overwrite output if contest is running
+		if(team!=undefined) {
+			var m = mysql.createConnection(creds);
+			m.query("SELECT * FROM submissions WHERE `team`="+m.escape(team)+" ORDER BY `time` DESC", function(err, result, fields) {
+				if(err) {
+		            m.end();
+		            console.error(err);
+		            return;
+		        } else if (result.length  > 0) {
+		        	m.end();
+			        return clients[teams[team]].emit('submissions', toObject(result));
+			    }
+			});
+		} else {m.end(); return socket.emit('submissions',{})};
+	});
+
 	socket.on('clarification', function (data) {
 		var m = mysql.createConnection(creds);
 	    var post  = {from: data.from, problem: data.problem, message: data.message,reply:'', global: 'No'};
@@ -38,6 +59,7 @@ io.sockets.on('connection', function (socket) {
 	        }
 			console.log("New clarifiction from team" + data.from+ " about problem #"+data.problem+"\nMessage:\n"+data.message);
 			socket.emit('soft_refresh');
+			m.end();
 		});
   	});
 
@@ -59,10 +81,11 @@ io.sockets.on('connection', function (socket) {
 		            console.error(err);
 		            return;
 		        } else if (result.length  > 0) {
+		        	m.end();
 			        return socket.emit('scoreboard', toObject(result));
 			    }
 			});
-		} else socket.emit('scoreboard', {});
+		} else {m.end(); socket.emit('scoreboard', {})};
   	});
 
   	// dumps table
@@ -108,9 +131,10 @@ io.sockets.on('connection', function (socket) {
 						console.log("New clarifiction from team" + data.from+ " about problem #"+data.problem+"\nMessage:\n"+data.message);
 						socket.emit('soft_refresh');
 					});
+					m.end();
 			    	return socket.emit('recalculate', {score: sum});
 			    }
 			});
-		} else socket.emit('recalculate', {error:'needs team number'});
+		} else {m.end(); socket.emit('recalculate', {error:'needs team number'})};
   	});
 });

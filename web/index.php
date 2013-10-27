@@ -173,7 +173,7 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 				$fp = stream_socket_client("tcp://".$_SERVER['SERVER_ADDR'].":1337", $errno, $errstr, 30);
 				fwrite($fp, json_encode($send));
 				fclose($fp);
-				echo returnApiMessage(["success"=>"Queued for compile."]);
+				echo returnApiMessage(["success"=>"true"]);
 			}
 		} else {
 			echo returnApiMessage(["error"=>"You aren't logged in!"]);

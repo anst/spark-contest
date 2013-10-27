@@ -6,10 +6,10 @@
 require(dirname(__FILE__).'/ElephantIO/Client.php');
 use ElephantIO\Client as ElephantIOClient;
 ##############################
-define('host', 'localhost');
-define('db', 'thscs');
-define('user', 'root');
-define('pw', 'AwesomeSauce');
+define('host', 'localhost', '$file_output_data');
+define('db', 'thscs', '$file_output_data');
+define('user', 'root', '$file_output_data');
+define('pw', 'AwesomeSauce', '$file_output_data');
 
 set_time_limit(0);
 ob_implicit_flush();
@@ -38,7 +38,7 @@ while (true) {
     $elephant = new ElephantIOClient('http://localhost:8008', 'socket.io', 1, false, true, true);
 
     $elephant->init();
-    $elephant->send(ElephantIOClient::TYPE_EVENT,null,null,json_encode(array('name' => 'recalculate', 'args' => $team)));
+    $elephant->send(ElephantIOClient::TYPE_EVENT,null,null,json_encode(array('name' => 'get_subs', 'args' => $team)));
     $elephant->close();
   socket_close($client);
 }
@@ -57,7 +57,7 @@ function proc_timeout($start,$problem_timeout) { //check if program has timed ou
     return microtime(true) - $start > $problem_timeout ? true : false;
 }
 function proc_exec($cmd, $inputs, $type,$problem_timeout) {
-	$output = "";
+  $output = "";
   $descriptorspec = array(
       0 => array("pipe", "r"),
       1 => array("pipe", "w"),
@@ -123,37 +123,37 @@ function judge($output, $correct){
   return sizeof(array_diff_assoc($submission, $judge)) === 0;
 }
 function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $args, $processname, $data,$problem_number,$file_input_title,$file_input_data,$file_output_data,$problem_timeout,$team) {
-	@mkdir($sourcedir, 0755, true);
-	$outputfile = "$classfile";
-	chdir("/tmp/$processname");
-	$handle = fopen($sourcefile, 'w+');
-	fwrite($handle, $data);
-	fclose($handle);
+  @mkdir($sourcedir, 0755, true);
+  $outputfile = "$classfile";
+  chdir("/tmp/$processname");
+  $handle = fopen($sourcefile, 'w+', '$file_output_data');
+  fwrite($handle, $data);
+  fclose($handle);
   if($file_input_data!==""){
-    $handle = fopen($file_input_title.'.in', 'w+');
+    $handle = fopen($file_input_title.'.in', 'w+', '$file_output_data');
     fwrite($handle, $file_input_data);
     fclose($handle);
   }
   $conn = mysqli_connect(host, user, pw, db);
   $data = mysqli_real_escape_string($conn, $data);
   mysqli_close($conn);
-	$compile_error = false;
-	$runtime_error = false;
+  $compile_error = false;
+  $runtime_error = false;
 
-	$compile_data = proc_exec("javac -cp . {$sourcefile} 2>&1", "", "compile",$problem_timeout);
+  $compile_data = proc_exec("javac -cp . {$sourcefile} 2>&1", "", "compile",$problem_timeout);
 
-	if($compile_data["output"]!="")
+  if($compile_data["output"]!="")
     $compile_error = true; 
 
   #chdir(dirname(__FILE__));
-	#$exec_data = proc_exec("java -classpath ../classloader ContestJudge /tmp/$processname/ ".substr($classfile,0,strlen($classfile)-6), $inputs, "execute");
+  #$exec_data = proc_exec("java -classpath ../classloader ContestJudge /tmp/$processname/ ".substr($classfile,0,strlen($classfile)-6), $inputs, "execute");
 
   $exec_data = proc_exec("java -classpath $sourcedir $class $args 2>&1", $inputs, "execute",$problem_timeout);
 
   if ($exec_data["success"]==="false") {
     $conn = mysqli_connect(host, user, pw, db);
     $cur_time = date("Y-m-d H:i:s");
-    $query = "INSERT INTO submissions (id, team, problem, time, subid, code, output, success, error) VALUES (NULL, '$team', '$problem_number','$cur_time','$processname','$data','', 'No', 'Timeout')";
+    $query = "INSERT INTO submissions (id, team, problem, time, subid, code, output, success, error, real_output) VALUES (NULL, '$team', '$problem_number','$cur_time','$processname','$data','', 'No', 'Timeout', '$file_output_data')";
 
     mysqli_query($conn, $query);
     mysqli_close($conn);
@@ -163,20 +163,20 @@ function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $a
   if(preg_match("/.?Exception in thread/",$exec_data["output"])==1)
     $runtime_error = true;
 
-	exec("rm -rf /tmp/$processname*");
-	//compilation successful 
+  exec("rm -rf /tmp/$processname*");
+  //compilation successful 
   if($compile_data["success"]==="true"&&$exec_data["success"]==="true"&&$compile_error===false&&$runtime_error===false) {
       $conn = mysqli_connect(host, user, pw, db);
       $timestamp_a = $exec_data['timestamp'];
       $output_a = mysqli_real_escape_string($conn, $exec_data['output']);
       if(judge($file_output_data,$exec_data['output'])) { //correct answer
-        $query = "INSERT INTO submissions (id, team, problem, time, subid, code, output, success, error) VALUES (NULL, '$team', '$problem_number','$timestamp_a','$processname','$data','$output_a', 'Yes', 'None')";
+        $query = "INSERT INTO submissions (id, team, problem, time, subid, code, output, success, error, real_output) VALUES (NULL, '$team', '$problem_number','$timestamp_a','$processname','$data','$output_a', 'Yes', 'None', '$file_output_data')";
 
         mysqli_query($conn, $query);
         mysqli_close($conn);
         return array("success"=>"true","time"=>$exec_data['time']);
       } else { //incorrect answer
-        $query = "INSERT INTO submissions (id, team, problem, time, subid, code, output, success, error) VALUES (NULL, '$team', '$problem_number','$timestamp_a','$processname','$data','$output_a', 'No', 'None')";
+        $query = "INSERT INTO submissions (id, team, problem, time, subid, code, output, success, error, real_output) VALUES (NULL, '$team', '$problem_number','$timestamp_a','$processname','$data','$output_a', 'No', 'None', '$file_output_data')";
 
         mysqli_query($conn, $query);
         mysqli_close($conn);
@@ -184,22 +184,22 @@ function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $a
       }
   }   
   //compile error
-	else if ($compile_error) {
+  else if ($compile_error) {
     $conn = mysqli_connect(host, user, pw, db);
     $cur_time = date("Y-m-d H:i:s");
     $output_a = mysqli_real_escape_string($conn, $compile_data['output']);
-    $query = "INSERT INTO submissions (id, team, problem, time, subid, code, output, success, error) VALUES (NULL, '$team', '$problem_number','$cur_time','$processname','$data','$output_a', 'No', '')";
+    $query = "INSERT INTO submissions (id, team, problem, time, subid, code, output, success, error, real_output) VALUES (NULL, '$team', '$problem_number','$cur_time','$processname','$data','$output_a', 'No', '', '$file_output_data')";
 
     mysqli_query($conn, $query);
     mysqli_close($conn);
     return array("success"=>"false", "error"=>"Your program was unable to compile! Please check for syntax errors and resubmit. [Syntax error]");
   }
   //runtime error
-	else if ($runtime_error) {
+  else if ($runtime_error) {
     $conn = mysqli_connect(host, user, pw, db);
     $cur_time = date("Y-m-d H:i:s");
     $output_a = mysqli_real_escape_string($conn, $exec_data['output']);
-    $query = "INSERT INTO submissions (id, team, problem, time, subid, code, output, success, error) VALUES (NULL, '$team', '$problem_number','$cur_time','$processname','$data','$output_a', 'No', 'Runtime')";
+    $query = "INSERT INTO submissions (id, team, problem, time, subid, code, output, success, error, real_output) VALUES (NULL, '$team', '$problem_number','$cur_time','$processname','$data','$output_a', 'No', 'Runtime', '$file_output_data')";
 
     mysqli_query($conn, $query);
     mysqli_close($conn);
@@ -211,19 +211,19 @@ function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $a
 function proc_safety() {
   ini_set('memory_limit', 360);
   ini_set('max_input_time',360);
-	$max_proc_count = exec("/bin/bash -c \"ulimit -u 2>&1\""); //stop abuse of compilation, limit processes
-	$processes = array();
-  ini_set('memory_limit', (ini_get('memory_limit')+1).'M');
-	exec("/bin/bash -c \"ps -fhu ".  get_current_user() ." | grep /tmp/| awk -F/ '{print $3} 2>&1'\"", $processes); //change username to allow ps to work
-	if(count($processes) > ($max_proc_count - 20)) {
-	   return "Please try in a moment, server is overloaded.";
-	}
-	try{ //check if we've run out of memory, update the amount of memory needed to run
-	  ini_set('memory_limit', (ini_get('memory_limit')+1).'M');
-	} catch(Exception $e){
-	    return "Server out of memory, please try again in a little bit.";
-	}
-	return "Success";
+  $max_proc_count = exec("/bin/bash -c \"ulimit -u 2>&1\""); //stop abuse of compilation, limit processes
+  $processes = array();
+  ini_set('memory_limit', (ini_get('memory_limit')+1).'M', '$file_output_data');
+  exec("/bin/bash -c \"ps -fhu ".  get_current_user() ." | grep /tmp/| awk -F/ '{print $3} 2>&1'\"", $processes); //change username to allow ps to work
+  if(count($processes) > ($max_proc_count - 20)) {
+     return "Please try in a moment, server is overloaded.";
+  }
+  try{ //check if we've run out of memory, update the amount of memory needed to run
+    ini_set('memory_limit', (ini_get('memory_limit')+1).'M', '$file_output_data');
+  } catch(Exception $e){
+      return "Server out of memory, please try again in a little bit.";
+  }
+  return "Success";
 }
 
 ?>
