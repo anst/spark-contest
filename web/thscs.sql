@@ -9,7 +9,7 @@ CREATE TABLE `clarifications` (
   `reply` varchar(8219) NOT NULL,
   `global` enum('yes','no') NOT NULL DEFAULT 'no',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
 CREATE TABLE `pizza` (
   `team` int(3) NOT NULL,
@@ -29,15 +29,16 @@ CREATE TABLE `submissions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `team` int(3) NOT NULL,
   `problem` int(2) NOT NULL,
-  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `time` datetime NOT NULL,
   `subid` varchar(6) NOT NULL,
   `code` longtext NOT NULL,
   `output` longtext NOT NULL,
   `success` enum('Yes','No') NOT NULL DEFAULT 'Yes',
   `error` enum('None','Syntax','Runtime','Timeout') NOT NULL DEFAULT 'None',
-  `judged` enum('Yes','No') NOT NULL DEFAULT 'No',
+  `appealed` enum('Yes','No') NOT NULL DEFAULT 'No',
+  `real_output` longtext NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=16 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=18 ;
 
 CREATE TABLE `teams` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -49,7 +50,7 @@ CREATE TABLE `teams` (
   `member3` varchar(256) NOT NULL,
   `password` varchar(512) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
 CREATE TABLE `written` (
   `name` varchar(128) NOT NULL,

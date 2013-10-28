@@ -6,10 +6,10 @@
 require(dirname(__FILE__).'/ElephantIO/Client.php');
 use ElephantIO\Client as ElephantIOClient;
 ##############################
-define('host', 'localhost', '$file_output_data');
-define('db', 'thscs', '$file_output_data');
-define('user', 'root', '$file_output_data');
-define('pw', 'AwesomeSauce', '$file_output_data');
+define('host', 'localhost');
+define('db', 'thscs');
+define('user', 'root');
+define('pw', 'AwesomeSauce');
 
 set_time_limit(0);
 ob_implicit_flush();
@@ -188,7 +188,7 @@ function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $a
     $conn = mysqli_connect(host, user, pw, db);
     $cur_time = date("Y-m-d H:i:s");
     $output_a = mysqli_real_escape_string($conn, $compile_data['output']);
-    $query = "INSERT INTO submissions (id, team, problem, time, subid, code, output, success, error, real_output) VALUES (NULL, '$team', '$problem_number','$cur_time','$processname','$data','$output_a', 'No', '', '$file_output_data')";
+    $query = "INSERT INTO submissions (id, team, problem, time, subid, code, output, success, error, real_output) VALUES (NULL, '$team', '$problem_number','$cur_time','$processname','$data','$output_a', 'No', 'Syntax', '$file_output_data')";
 
     mysqli_query($conn, $query);
     mysqli_close($conn);

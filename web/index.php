@@ -170,7 +170,7 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 					"problem_number" => $problem_number
 				];
 				
-				$fp = stream_socket_client("tcp://".$_SERVER['SERVER_ADDR'].":1337", $errno, $errstr, 30);
+				$fp = fsockopen("localhost", 1337, $errno, $errstr, 30);
 				fwrite($fp, json_encode($send));
 				fclose($fp);
 				echo returnApiMessage(["success"=>"true"]);
