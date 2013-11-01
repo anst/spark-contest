@@ -1,0 +1,53 @@
+<html>
+<head>
+<?php require_once "head.html"; ?>	
+</head>
+
+<body>
+	<div class="container main">
+		<div class="col-lg-12">
+			<form action="/admin/login" method="post" enctype="multipart/form-data">
+				<div class="form-group" id="upload_form">
+					<input type="file" id="file_key"  style="display:none">
+					<textarea name="code" id="code" cols="30" rows="10" style="display:none"></textarea>
+					<div class="input-append">
+						<div class="input-group">
+					   		<input id="yo" class="form-control" onclick="$('input[id=file_key]').click();" type="text">
+					   		<span class="input-group-btn"><button type="button" class="btn btn-default" onclick="$('input[id=file_key]').click();">Browse</button></span>
+					   	</div>
+					</div>
+				</div>
+				<button type="submit" class="btn btn-block btn-default" id="login" tabindex="5" style="" data-loading-text="Log In...">Log In</button>
+			</form>	
+		</div>
+	</div>
+<?php require_once "js.html"; ?>
+<script>
+$('#file_key').change(function() {
+	$("#yo").val($(this).val());
+	readBlob(0, 0);
+});
+function readBlob() {
+    var files = document.getElementById('file_key').files;
+    if (!files.length) {
+      alert('Please select a file!');
+      return;
+    }
+    var file = files[0];
+    var start = 0;
+    var stop = file.size - 1;
+
+    var reader = new FileReader();
+
+    reader.onloadend = function(evt) {
+      if (evt.target.readyState == FileReader.DONE) {
+        $("#code").val(evt.target.result);
+      }
+    };
+
+    var blob = file.slice(start, stop + 1);
+    reader.readAsBinaryString(blob);
+}
+</script>
+</body>
+</html>

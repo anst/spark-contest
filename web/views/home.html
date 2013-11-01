@@ -43,48 +43,42 @@
 				</div>	
 			</div>
 		</div>
+		<?php require_once "info.html";?>
 		<div class="row">
 			<div class="col-lg-12" style="">
 				<div class="well section" style="">
 					<div class="row">
 						<div class="col-lg-7"  style="border-right:1px solid #d1d1d1">
 							<legend>Team Info</legend>
+							<div class="alert alert-success" style="">
+								Please raise your hand if you need to change your team information. 
+							</div>		
 							<div class="form-group">
-								<input type="text" class="form-control" value="Taylor High School" disabled>
+								<input type="text" class="form-control" value="<?=$info['school']?>" disabled>
 							</div>
 							<div class="form-group">
-								<input type="text" class="form-control" value="Advanced" disabled>
+								<input type="text" class="form-control" value="<?=$info['division']?>" disabled>
 							</div>
 							<div class="form-group">
 								<input type="text" class="form-control" value="Team Number <?=$t?>" disabled>
 							</div>
 							<div class="form-group">
-								<input type="text" class="form-control" value="Andy Sturzu" disabled>
+								<input type="text" class="form-control" value="<?=$info['member1']?>" disabled>
 							</div>
 							<div class="form-group">
-								<input type="text" class="form-control" value="Chufan Liang" disabled>
+								<input type="text" class="form-control" value="<?=($info['member2']===""?"N/A":$info['member2'])?>" disabled>
 							</div>
 							<div class="form-group">
-								<input type="text" class="form-control" value="Jonathan Zong" disabled>
-							</div>
-							<div class="alert alert-warning" style="">
-								Please raise your hand if you need to change your team information. 
-							</div>															
+								<input type="text" class="form-control" value="<?=($info['member3']===""?"N/A":$info['member3'])?>" disabled>
+							</div>													
 						</div>
 						<div class="col-lg-5">
-							<legend>Problems</legend>
+							<legend>Announcments</legend>
 							<div class="alert alert-info" style="">
-								<h4>Info!</h4>
-								Every problem is worth 60 points, each incorrect submission deducts 5 points if the problem ends up solved. Maximum possible score is 720 points. 
+								<h4>Contest Info!</h4>
+								Every problem is worth 60 points, each incorrect submission deducts 5 points if the problem ends up solved. Maximum possible score is 720 points. Problems are judged by an automatic grader. Each submission is queued until it is time to be judged. At the end of the contest you will be allowed to see your output and the expected output - you can then appeal if something doesn't look right.
 							</div>
-							<table class="table table-bordered table-condensed" id="preview_problems">
-								<tr><td class="success"><b>1.</b> Abstergo</td><td class="danger"><b>7.</b> The O'Really Factor</td></tr>
-								<tr><td class="warning"><b>2.</b> Secret Top Secret</td><td class="success"><b>8.</b> GNU Not Unix</td></tr>
-								<tr><td class="success"><b>3.</b> Solitary</td><td class="warning"><b>9.</b> Daniel's Tiling Company</td></tr>
-								<tr><td class="danger"><b>4.</b> Eboola</td><td class="success"><b>10.</b> Look and See</td></tr>
-								<tr><td class="success"><b>5.</b> Tick Tock</td><td class="danger"><b>11.</b> Ub3r Inj3c0r</td></tr>
-								<tr><td class="warning"><b>6.</b> Palindromida</td><td class="success"><b>12.</b> Game of  Life Redux</td></tr>
-							</table>
+							
 							
 						</div>
 					</div>
@@ -92,17 +86,11 @@
 						<div class="col-lg-7" style="padding-top:20px;border-top:1px solid #d1d1d1;border-right:1px solid #d1d1d1">
 							<legend>Written Scores</legend>
 							<table class="table table-bordered table-striped">
-								<tr><td>Andy</td><td>N/A</td></tr>
-								<tr><td>Chufan</td><td>N/A</td></tr>
-								<tr><td>Jonathan</td><td>240</td></tr>
-							</table>
-						</div>
-						<div class="col-lg-5">
-							<legend>Legend</legend>
-							<table class="table table-bordered table-condensed" id="preview_problems">
-								<tr><td class="success"><b>Correct</b></td></tr>
-								<tr><td class="danger"><b>Incorrect</b></td></tr>
-								<tr><td class="warning"><b>No Submission</b></td></tr>
+								<?php
+									for($i = 0; $i<count($written);$i++){
+										echo "<tr><td>".$written[$i]['name']." (ID: ".$written[$i]['id'].")</td><td>".$written[$i]['score']."</td></tr>";
+									}
+								?>
 							</table>
 						</div>
 					</div>
@@ -112,7 +100,7 @@
 		</div>
 		<div class="row">
 			<div class="col-lg-1"></div>
-			<div class="col-lg-10" style="margin-top:-21px !important;">
+			<div class="col-lg-10 disable_in" style="margin-top:-21px !important;">
 				<div class="well section" style="border-top-left-radius:0px !important;border-top-right-radius:0px !important;background:#eaeaea">
 					<div class="row">
 						<div class="col-lg-6">
@@ -120,47 +108,62 @@
 								<div class="col-lg-10">
 									<legend>Pizza</legend>				
 								</div>
+								<?php if ($pizza_ordered == false) { ?>
 								<div class="col-lg-2">
 									<legend>Total</legend>	
-								</div>
+								</div><?php }?>
 							</div>
-							<form id="pizzaform">
-								<div class="row">
-									<div class="col-lg-10">
-										<div class="form-group">
-											<div class="input-group">
-												<span class="input-group-addon">Cheese&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-												<input type="text" name="cheese" id="cheese" class="form-control" placeholder="Cheese Pizza Count">
-											</div>
-										</div>
-										<div class="form-group">
-											<div class="input-group">
-												<span class="input-group-addon">Sausage&nbsp;&nbsp;&nbsp;</span>
-												<input type="text" name="sausage" id="sausage" class="form-control" placeholder="Sausage Pizza Count">
-											</div>											
-										</div>
-										<div class="form-group">
-											<div class="input-group">
-												<span class="input-group-addon">Pepperoni&nbsp;</span>
-												<input type="text" name="pepperoni" id="pepperoni" class="form-control" placeholder="Pepperoni Pizza Count">
-											</div>											
-										</div>
-						
-									</div>
-									<div class="col-lg-2">
-										<span style="text-align:center"><h1 id="total" style="color:green;line-height:100px">$0</h1></span>
-									</div>
+							<div class="row" id="pizzaform">
+								<div style="padding:10px;">
+									<div id="pizza_success" class="alert alert-success" style="display:none;"></div>
+									<div id="pizza_error" class="alert alert-danger" style="display:none;"></div>			
 								</div>
-								<div class="row">
-									<div class="col-lg-12">
-										<blockquote style="color:#888;">By submitting this order, you agree to pay the quoted amount. </blockquote>
-										<div class="form-group">
-											<button class="btn btn-danger btn-block">Order</button>
+
+								<?php if ($pizza_ordered == false) { ?>
+								<div id="pizza_form" class="col-lg-10">
+									<div class="form-group">
+										<div class="input-group">
+											<span class="input-group-addon">Cheese&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+											<input type="text" name="cheese" id="cheese" class="form-control" placeholder="Cheese Pizza Count">
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="input-group">
+											<span class="input-group-addon">Sausage&nbsp;&nbsp;&nbsp;</span>
+											<input type="text" name="sausage" id="sausage" class="form-control" placeholder="Sausage Pizza Count">
 										</div>											
 									</div>
+									<div class="form-group">
+										<div class="input-group">
+											<span class="input-group-addon">Pepperoni&nbsp;</span>
+											<input type="text" name="pepperoni" id="pepperoni" class="form-control" placeholder="Pepperoni Pizza Count">
+										</div>											
+									</div>
+					
 								</div>
-	
-							</form>
+								<div id="cost_preview" class="col-lg-2">
+									<span style="text-align:center"><h1 id="total" style="color:green;line-height:100px">$0</h1></span>
+								</div>
+							</div>
+							<div class="row" id="order_div">
+								<div class="col-lg-12">
+									<blockquote style="color:#888;">By submitting this order, you agree to pay the quoted amount. </blockquote>
+									<div class="form-group">
+										<button id="order" class="btn btn-danger btn-block">Order</button>
+									</div>											
+								</div>
+							</div>
+							<?php } else { ?>
+							<div class="row">
+								<div class="col-lg-12" style="padding-left:30px">
+									<div id="pizza_success" class="alert alert-success" style="">
+										You've ordered successfully! Your team's ticket ID is: <?=$pizza_ordered?>. Go and pay now!
+									</div>
+								</div>	
+							</div>
+							</div>
+							<?php }; ?>
+
 						</div>
 						<div class="col-lg-6">
 							<legend id="helpbox">Help</legend>

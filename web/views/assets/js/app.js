@@ -150,20 +150,54 @@ $("#pizzaform input[type=text]").change(function () {
 	if( !isNaN(parseInt($(this).val())))
         str += parseInt($(this).val(),10)*11;
       });
-  $("#total").text("$"+str);
+  $("#total").text((str>55)?"$69":"$"+str);
 });
+$("#order").click(function() {
+    var dat = 'cheese='+encodeURIComponent($('#cheese').val()==""?0:parseInt($('#cheese').val()))
+    +'&pepperoni='+encodeURIComponent($('#pepperoni').val()==""?0:parseInt($('#pepperoni').val()))
+    +'&sausage='+encodeURIComponent($('#sausage').val()==""?0:parseInt($('#sausage').val()));
+    $.post('/api/pizza', dat, function(data) {
+        var d = eval('('+data+')');
+        if(d.error==undefined) {
+            $("#pizza_form").fadeOut(0);
+            $("#cost_preview").fadeOut(0);
+            $("#pizza_error").fadeOut(0);
+            $("#order_div").fadeOut(0);
+            $("#pizza_success").fadeIn(0).html('<h4>Success!</h4>'+d.success);
+        } else {
 
+            $("#pizza_error").fadeIn(0).html('<h4>Error!</h4>'+d.error);
+        }   
+    });
+});
 if(navigator.userAgent.match(/MSIE/i)) {
 	$(".main").remove();
 	$(".badbrowsermsg").fadeIn(0);
 }
-
+function msToTime(duration) {var milliseconds = parseInt((duration%1000)/100), seconds = parseInt((duration/1000)%60), minutes = parseInt((duration/(1000*60))%60), hours = parseInt((duration/(1000*60*60))%24);hours = (hours < 10) ? "" + hours : hours;minutes = (minutes < 10) ? "0" + minutes : minutes;seconds = (seconds < 10) ? "0" + seconds : seconds;return hours + ":" + minutes + ":" + seconds;}
 $.getJSON( "/api/user/team", function(data) {
   if(data.team!="null") {
     var socket = io.connect('http://'+document.domain+':8008');
     socket.emit('team',{team:data.team});
     socket.emit('get_clars',{team:data.team});
     socket.emit('get_subs',data.team);
+    socket.on('time', function(data) {
+        if(data.time==0&&data.status=="stopped") {
+            $('.disable_end').find('input, textarea, button, select').attr('disabled','disabled');
+        } else if (data.time==7200000&&data.status=="stopped") {
+            $('.disable_start').find('input, textarea, button, select').attr('disabled','disabled');
+        } else if(data.status=="paused") {
+            $('.disable_start').find('input, textarea, button, select').attr('disabled','disabled');
+            $('.disable_end').find('input, textarea, button, select').attr('disabled','disabled');
+            $('.disable_in').find('input, textarea, button, select').attr('disabled','disabled');
+        }
+        else {
+            $('.disable_start').find('input, textarea, button, select').removeAttr('disabled');
+            $('.disable_end').find('input, textarea, button, select').removeAttr('disabled');
+            $('.disable_in').find('input, textarea, button, select').attr('disabled','disabled');
+        }
+        $("#time").html(msToTime(data.time));
+    });
     socket.on('clarifications', function(data){
         if(data.length!=0) 
             $('#clar_box').empty();
@@ -183,7 +217,10 @@ $.getJSON( "/api/user/team", function(data) {
         if(data.length!=0) 
             $('#sub_box').empty();
         $.each(data, function(key, value) {
-           $('#sub_box').append('<div class="well submission" id="sub'+value.subid+'"><div class="noselect_sub" style="width:100%;"><h4 style="display:inline">Problem #<span class="run_id">'+value.problem+' ('+value.subid+')</span><div class="'+(value.success=="Yes"?"success":"fail")+'" style="float:right">'+(value.success=="No"?value.error=="None"?"Incorrect":value.error:"Success")+'</div></h4></div><div id="sub'+value.subid+'detail" class="detail" style="display:none"><br><div class="row"><div class="col-lg-6"><legend style="font-size:16px">Your Output:</legend><pre id="sub'+value.subid+'toutput">'+(value.output==""?"Not available yet, contest is still running.":value.output)+'</pre></div><div class="col-lg-6"><legend style="font-size:16px">Judge\'s Output:</legend><pre id="sub'+value.subid+'routput">'+(value.real_output==""?"Not available yet, contest is still running.":value.real_output)+'</pre></div></div><br><legend></legend>'+(value.success=="Yes"?'<span style="color:#aaa;font-size:11px">You can\'t appeal, because you either got it right or you have already appealed.</span>':'<span style="color:#aaa;font-size:11px">Output matches judges output? Submit an </span><a href="/api/appeal/'+value.subid+'" class="btn btn-danger btn-small" disabled>Appeal</a></span></div>')+'</div>');
+           $('#sub_box').append('<div class="well submission disable_start disable_in" id="sub'+value.subid+'"><div class="noselect_sub" style="width:100%;"><h4 style="display:inline">Problem #<span class="run_id">'+value.problem+' ('+value.subid+')</span><div class="'+(value.success=="Yes"?"success":"fail")+'" style="float:right">'+(value.success=="No"?value.error=="None"?"Incorrect":value.error:"Success")+'</div></h4></div><div id="sub'+value.subid+'detail" class="detail" style="display:none"><br><div class="row"><div class="col-lg-6"><legend style="font-size:16px">Your Output:</legend><pre id="sub'+value.subid+'toutput">'+(value.output==""?"Not available yet, contest is still running.":value.output)+'</pre></div><div class="col-lg-6"><legend style="font-size:16px">Judge\'s Output:</legend><pre id="sub'+value.subid+'routput">'+(value.real_output==""?"Not available yet, contest is still running.":value.real_output)+'</pre></div></div><br><legend></legend>'+(value.appealed=="Yes"?'<span style="color:#aaa;font-size:11px">You can\'t appeal, because you either got it right or you have already appealed.</span>':'<span style="color:#aaa;font-size:11px">Output matches judges output? Submit an </span><button class="btn btn-danger btn-small appeal_btn" id="'+value.subid+'">Appeal</button></span></div>')+'</div>');
+        });
+        $(".appeal_btn").click(function(){
+            socket.emit('appeal', {id:$(this).attr('id')});
         });
         $(".noselect_sub").click(function() {
             var a = "#"+$(this).parent().attr('id')+"detail";
@@ -191,18 +228,18 @@ $.getJSON( "/api/user/team", function(data) {
         });
     });
     socket.on('refresh', function (data) {
-        alert("ok");
         location.reload();
     });
     socket.on('soft_refresh', function (d) {
         socket.emit('get_clars',{team:data.team});
+        socket.emit('get_subs',data.team);
     });
     $(".clar_submit").click(function(){
         socket.emit('clarification', {from:data.team, problem:$("#clar_question_select").val(), message: $("#clarification_message").val()});
     });
-
   }
 });
+
 function nl2br (str, is_xhtml) {
     var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br ' + '/>' : '<br>';
     return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');

@@ -35,11 +35,12 @@
 			</ul>
 			<p class="navbar-text pull-right"><a href="/logout" style="text-decoration: none" class="navbar-link">Logout</a></p>
 		</div>
+		<?php require_once "info.html";?>
 		<div class="row">
 			<div class="col-lg-12" style="">
-				<div class="well section" style="">
+				<div class="well section" style="background:#f6f6f6">
 					<div class="row">
-						<div class="col-lg-7">
+						<div class="col-lg-7 disable_end disable_start">
 							<legend id="compile_legend">Compile</legend>
 							<form method="post" name="compile" id="compile_form" action="#" accept-charset="utf-8">
 								<pre id="byte_content" class="prettyprint linenums" style="display:none;"></pre>
@@ -81,7 +82,7 @@
 								</fieldset>
 							</form>
 						</div>
-						<div class="col-lg-5">
+						<div class="col-lg-5 disable_end disable_start">
 							<legend>Clarification</legend>
 							<div class="form-group">
 								<select class="form-control" name="clar_question_select" id="clar_question_select">

@@ -20,5 +20,6 @@ define('title', "Taylor High School Computer Science Contest 2013");
 define('contest_name', "THS Computer Science Contest 2013");
 define('navbar_title', "THSCS 2013");
 define('maximum_pizza_order', 50);
+define('global_admin_key',"a2d99befaf381755257420f5f46e8838"); // md5(admin.key)
 
 ?>

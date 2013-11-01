@@ -1,5 +1,11 @@
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+
 
 CREATE TABLE `clarifications` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -9,7 +15,7 @@ CREATE TABLE `clarifications` (
   `reply` varchar(8219) NOT NULL,
   `global` enum('yes','no') NOT NULL DEFAULT 'no',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
 
 CREATE TABLE `pizza` (
   `team` int(3) NOT NULL,
@@ -35,10 +41,10 @@ CREATE TABLE `submissions` (
   `output` longtext NOT NULL,
   `success` enum('Yes','No') NOT NULL DEFAULT 'Yes',
   `error` enum('None','Syntax','Runtime','Timeout') NOT NULL DEFAULT 'None',
-  `appealed` enum('Yes','No') NOT NULL DEFAULT 'No',
   `real_output` longtext NOT NULL,
+  `appealed` enum('No','Yes') NOT NULL DEFAULT 'No',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=18 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=19 ;
 
 CREATE TABLE `teams` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -50,10 +56,16 @@ CREATE TABLE `teams` (
   `member3` varchar(256) NOT NULL,
   `password` varchar(512) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
 
 CREATE TABLE `written` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(128) NOT NULL,
-  `school` varchar(256) NOT NULL,
-  `score` int(3) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `team` int(3) NOT NULL,
+  `score` int(3) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

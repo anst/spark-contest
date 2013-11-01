@@ -9,6 +9,7 @@ require_once dirname(__FILE__).'/app/functions/functions.php';
 
 session_start();
 session_regenerate_id();
+date_default_timezone_set('America/Chicago');
 
 $panel = new Panel('panel',false, 'logs/' . date('Y-m-d') . '.txt'); //include default routing engine with logs enabled
 
@@ -18,13 +19,29 @@ $panel->route('/', function($panel) { //index router, check for login
 		"title"=>title,
 		"contest_name"=>contest_name,
 		"schools"=>$schools,
-		"navbar_title"=>navbar_title,
 	]);
 	return $panel->render("home.html",[
 		"title"=>title,
 		"contest_name"=>contest_name,
 		"t"=>$_SESSION['team'],
+		"navbar_title"=>navbar_title,
+		"written"=>getTeamWritten(),
+		"info"=>getTeamInfo(),
+		"pizza_ordered"=>hasOrderedPizza($_SESSION['team']),
 	]);
+});
+$panel->route('/admin', function($panel) {
+	http_response_code(200);
+	if(adminIsLoggedIn()) return $panel->render("admin.html",[]);
+	return $panel->render("adminlogin.html",[]);
+});
+$panel->route('/admin/login', function($panel) {
+	if(md5($_POST["code"])===global_admin_key) {
+		startAdminSession();
+		return header("Location: /admin");
+	} else {
+		die("Don't hack, it's not good for your health.");
+	}
 });
 $panel->route('/submit', function($panel) {
 	http_response_code(200);
@@ -60,7 +77,15 @@ $panel->route('/temp', function($panel) {
 });
 $panel->route('/api/<string>/<string>', function($panel, $api_query, $type) {
 	http_response_code(200);
-
+	if($api_query==="time") {
+		if($api_query==="increment"&&md5($_POST['key'])===global_admin_key) {
+			incrementTime($_POST['time']);
+		} else if($api_query==="start"/*&&md5($_POST['key'])===global_admin_key*/) {
+			startTime();
+		} else if($api_query==="pause"&&md5($_POST['key'])===global_admin_key) {
+			pauseTime();
+		}
+	}
 	if($api_query==="user") {
 		if(isLoggedIn()) {
 			if($type==="team") {
@@ -81,19 +106,19 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 			if($teamselect=="1") {
 				if(preg_match("/^[a-zA-Z]+\s+([-a-zA-Z.'\s]|[0-9](nd|rd|th))+$/", $member1))
 					echo register($team,$password,$school,$division,['member1'=>$member1,'member2'=>$member2===""?NULL:$member2,'member3'=>$member3===""?NULL:$member3]);
-				else echo returnApiMessage(['error'=>'Don\'t mess with JS input validation. We\'re smarter than that.']);
+				else echo returnApiMessage(['error'=>'Please follow correct input guidelines.']);
 			} else if ($teamselect=="2") {
 				if (preg_match("/^[a-zA-Z]+\s+([-a-zA-Z.'\s]|[0-9](nd|rd|th))+$/", $member1)&&preg_match("/^[a-zA-Z]+\s+([-a-zA-Z.'\s]|[0-9](nd|rd|th))+$/", $member2))
 					echo register($team,$password,$school,$division,['member1'=>$member1,'member2'=>$member2===""?NULL:$member2,'member3'=>$member3===""?NULL:$member3]);
-				else echo returnApiMessage(['error'=>'Don\'t mess with JS input validation. We\'re smarter than that.']);
+				else echo returnApiMessage(['error'=>'Please follow correct input guidelines.']);
 			} else {
 				if (preg_match("/^[a-zA-Z]+\s+([-a-zA-Z.'\s]|[0-9](nd|rd|th))+$/", $member1)&&preg_match("/^[a-zA-Z]+\s+([-a-zA-Z.'\s]|[0-9](nd|rd|th))+$/", $member2)&&preg_match("/^[a-zA-Z]+\s+([-a-zA-Z.'\s]|[0-9](nd|rd|th))+$/", $member3))
 					echo register($team,$password,$school,$division,['member1'=>$member1,'member2'=>$member2===""?NULL:$member2,'member3'=>$member3===""?NULL:$member3]);
-				else echo returnApiMessage(['error'=>'Don\'t mess with JS input validation. We\'re smarter than that.']);
+				else echo returnApiMessage(['error'=>'Please follow correct input guidelines.']);
 			}
-		}
+		} 
 		else {
-			echo returnApiMessage(['error'=>'Don\'t mess with JS input validation. We\'re smarter than that.']);
+			echo returnApiMessage(['error'=>'Please follow correct input guidelines.']);
 		}
 	} 
 	else if($api_query==="login") {
@@ -102,7 +127,7 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 			echo returnApiMessage(login($team, $password));
 		}
 		else {
-			echo returnApiMessage(['error'=>'Don\'t mess with JS input validation. We\'re smarter than that.']);
+			echo returnApiMessage(['error'=>'Please follow correct input guidelines.']);
 		}
 	}
 	else if($api_query==="problems") {
@@ -113,8 +138,9 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 		}
 		return returnApiMessage($parsed);
 	}
-	else if($api_query==="scoreboard") {
-		return getScoreboard();
+	else if($api_query==="pizza") {
+		extract($_POST);
+		return returnApiMessage(orderPizza($_SESSION['team'],['pepe'=>$pepperoni,'ches'=>$cheese,'saus'=>$sausage]));
 	}
 	else if($api_query==="compile") {
 		if(isLoggedIn()) {
@@ -132,6 +158,7 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 			$source = preg_split("/(\n|;)/",$data);
 			$package = "";
 			$class = "";
+			$hack = false;
 			foreach($source as $line){
 				$line = trim($line);
 				$pattern = "/^package\s+(.*)/";
@@ -142,11 +169,22 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 				if(preg_match($pattern, $line, $matches )){
 					$class = trim($matches[3]);
 				}
+				$pattern = "/^(Runtime\\.exec)/";
+				if(preg_match($pattern, $line, $matches )){
+					$hack = trim($matches[1]);
+				}
 			}
 			$classerror = false;
 			$packageerror = false;
 			if(!strlen($class)) $classerror = true;
 			if(strlen($package)) $packageerror = true;
+			if($hack) {
+				echo returnApiMessage([
+						"success"=>"false",
+						"error"=>"Runtime.exec() not allowed! You have been reported."
+					]
+				);
+			}
 			if($classerror) {
 				echo returnApiMessage([
 						"success"=>"false",
@@ -169,8 +207,7 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 					"data" => $data,
 					"problem_number" => $problem_number
 				];
-				
-				$fp = fsockopen("localhost", 1337, $errno, $errstr, 30);
+				$fp = stream_socket_client("tcp://localhost:1337", $errno, $errorMessage);
 				fwrite($fp, json_encode($send));
 				fclose($fp);
 				echo returnApiMessage(["success"=>"true"]);

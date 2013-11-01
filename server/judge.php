@@ -5,6 +5,7 @@
 */
 require(dirname(__FILE__).'/ElephantIO/Client.php');
 use ElephantIO\Client as ElephantIOClient;
+
 ##############################
 define('host', 'localhost');
 define('db', 'thscs');
@@ -14,6 +15,7 @@ define('pw', 'AwesomeSauce');
 set_time_limit(0);
 ob_implicit_flush();
 error_reporting(E_ERROR);
+date_default_timezone_set('America/Chicago');
 
 $port = 1337;
 ##############################
@@ -45,13 +47,7 @@ while (true) {
 // Close the master sockets
 socket_close( $sock );
 
-function shutdown() { //terminate program, print the errors
-   $last_error = error_get_last();
-   if( $last_error != NULL ){
-      print_r ($last_error);
-      echo 'Unknown exception, please try again.';
-   }
-}
+
 
 function proc_timeout($start,$problem_timeout) { //check if program has timed out
     return microtime(true) - $start > $problem_timeout ? true : false;
@@ -126,11 +122,11 @@ function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $a
   @mkdir($sourcedir, 0755, true);
   $outputfile = "$classfile";
   chdir("/tmp/$processname");
-  $handle = fopen($sourcefile, 'w+', '$file_output_data');
+  $handle = fopen($sourcefile, 'w+');
   fwrite($handle, $data);
   fclose($handle);
   if($file_input_data!==""){
-    $handle = fopen($file_input_title.'.in', 'w+', '$file_output_data');
+    $handle = fopen($file_input_title.'.in', 'w+');
     fwrite($handle, $file_input_data);
     fclose($handle);
   }
@@ -208,22 +204,6 @@ function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $a
   //something terrible occured
   return array("success"=>"false", "error"=>"Unknown error, something huge has gone wrong!");
 }
-function proc_safety() {
-  ini_set('memory_limit', 360);
-  ini_set('max_input_time',360);
-  $max_proc_count = exec("/bin/bash -c \"ulimit -u 2>&1\""); //stop abuse of compilation, limit processes
-  $processes = array();
-  ini_set('memory_limit', (ini_get('memory_limit')+1).'M', '$file_output_data');
-  exec("/bin/bash -c \"ps -fhu ".  get_current_user() ." | grep /tmp/| awk -F/ '{print $3} 2>&1'\"", $processes); //change username to allow ps to work
-  if(count($processes) > ($max_proc_count - 20)) {
-     return "Please try in a moment, server is overloaded.";
-  }
-  try{ //check if we've run out of memory, update the amount of memory needed to run
-    ini_set('memory_limit', (ini_get('memory_limit')+1).'M', '$file_output_data');
-  } catch(Exception $e){
-      return "Server out of memory, please try again in a little bit.";
-  }
-  return "Success";
-}
+
 
 ?>

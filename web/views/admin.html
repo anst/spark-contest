@@ -1,0 +1,116 @@
+<html>
+<head>
+<?php require_once "head.html"; ?>	
+</head>
+
+<body>
+	<div class="container main">
+		<div class="row">
+			<div class="col-lg-12" style="">
+				<legend>Admin</legend>
+				<div class="well section" style="">
+					<legend style="font-size:16px;font-weight:bold">Contest</legend>
+					<h5>Contest Status:</h5>
+					<div class="small well">
+						<div style="width:120px;margin:0 auto">
+							<div class="btn-group">
+								<button type="button" id="start" class="btn btn-success">Start</button>
+								<button type="button" id="stop" class="btn btn-success">Stop</button>
+							</div>						
+						</div>
+					</div>
+					<h5>Time:</h5>
+					<div class="well small">
+						<div class="" id="time" style="font-size:72px;color:#d9534f;text-align:center">
+							00:00:00
+						</div>
+						<div class="row">
+						    <div style="width:235px;margin: 0 auto">
+						    	<div class="btn-group">
+									<button type="button" id="pause" class="btn btn-danger">Pause</button>
+									<button type="button" id="resume" class="btn btn-danger">Resume</button>
+									<button type="button" id="increment" class="btn btn-danger">Increment</button>
+								</div>
+						    </div>
+						</div>
+					</div>
+										
+				</div>
+				<div class="well section" style="">
+					<legend style="font-size:16px;font-weight:bold">Clarifications</legend>
+					<div class="" id="clar_box"></div>
+										
+				</div>
+
+			</div>
+			
+		</div>
+	</div>
+<div style="margin:0 auto;width:960px;text-align:center;color:rgba(0,0,0,0.5);font-size:11px"><a href="https://github.com/anst/thscs-panel" style="color:rgba(0,0,0,0.5);text-decoration:none">Created by Andy Sturzu. Contributions by Jonathan Zong.</a></div>
+<script src="http://code.jquery.com/jquery-2.0.3.min.js" type="text/javascript"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.js"></script>
+<script src="http://<?php echo $_SERVER['SERVER_NAME']; ?>:8008/socket.io/socket.io.js"></script>
+<script>
+	var socket = io.connect('http://'+document.domain+':8008');
+	setInterval(function(){
+  		//$.getJSON( "/api/time", function(data) {
+		//	$("#time").html(data.time);
+		//});		
+	}, 1000);
+	$("#start").click(function() {
+		socket.emit('start_time',{key:getCookie('admin')});
+	});
+	$("#pause").click(function() {
+		socket.emit('pause_time',{key:getCookie('admin')});
+	});
+	$("#resume").click(function() {
+		socket.emit('resume_time',{key:getCookie('admin')});
+	});
+	$("#increment").click(function() {
+		var time_in_minutes = prompt("Time in minutes: ","1");
+		socket.emit('increment_time',{key:getCookie('admin'),inc:parseInt(time_in_minutes)});
+	});
+	socket.on('time', function(data) {
+		$("#time").html(msToTime(data.time));
+	});
+	socket.on('time_error', function(data) {
+		console.log(data.error);
+	});
+	function getCookie(name) {
+		var parts = document.cookie.split(name + "=");
+		if (parts.length == 2) return parts.pop().split(";").shift();
+	}
+	socket.emit('admin',{key:getCookie('admin')});
+    socket.emit('get_admin_clars',{key:getCookie('admin')});
+    socket.on('admin_clarifications', function(data){
+        if(data.length!=0) 
+            $('#clar_box').empty();
+        $.each(data, function(key, value) {
+            $('#clar_box').append('\
+                <div class="well submission" id="clar'+value.id+'"> \
+                <div class="noselect_clar" style="width:100%;"><h4 style="display:inline">ID #<span class="run_id">'+value.id+' for Problem #'+value.problem+'</span><div class="'+(value.reply==""?"fail":"success")+'" style="float:right">'+(value.reply==""?"No Reply":"Replied"+(value.global=='yes'?" (GLOBAL)":""))+'</div></h4></div> \
+                <div id="clar'+value.id+'detail" class="detail" style="display:none"><br><br><p>Team\'s message:</p><blockquote>'+nl2br(value.message,false)+'</blockquote><p>Your response:</p><blockquote><textarea class="form-control" id="'+value.id+'reply"></textarea><br><div class="form-inline"><button type="button" class="reply_submit btn btn-default" id="'+value.id+'">Reply</button>  <div class="checkbox"><label><input id="'+value.id+'global" type="checkbox">Global</label></div></div></blockquote></div></div> \
+            ');
+        });
+        $(".noselect_clar").click(function() {
+            var a = "#"+$(this).parent().attr('id')+"detail";
+            $(a).toggle();
+        });
+        $(".reply_submit").click(function() {
+        	socket.emit('admin_clarification',{key:getCookie('admin'),global:($("#"+$(this).attr('id')+"global").is(':checked')?"Yes":"No"),reply:$("#"+$(this).attr('id')+"reply").val(),id:$(this).attr('id')});
+	    });
+    });
+    socket.on('soft_refresh', function (d) {
+        socket.emit('get_admin_clars',{key:getCookie('admin')});
+    });
+	function nl2br (str, is_xhtml) {
+    	var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br ' + '/>' : '<br>';
+    	return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
+	}
+	function msToTime(duration) {
+	    var milliseconds = parseInt((duration%1000)/100), seconds = parseInt((duration/1000)%60), minutes = parseInt((duration/(1000*60))%60), hours = parseInt((duration/(1000*60*60))%24);hours = (hours < 10) ? "" + hours : hours;minutes = (minutes < 10) ? "0" + minutes : minutes;seconds = (seconds < 10) ? "0" + seconds : seconds;return hours + ":" + minutes + ":" + seconds;
+	}
+</script>
+</body>
+</html>
