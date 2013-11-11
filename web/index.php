@@ -30,6 +30,19 @@ $panel->route('/', function($panel) { //index router, check for login
 		"pizza_ordered"=>hasOrderedPizza($_SESSION['team']),
 	]);
 });
+$panel->route('/scoreboard', function($panel) {
+	$schools = json_decode(file_get_contents(dirname(__FILE__)."/app/config/schools.json"), true);
+	http_response_code(200);
+	if(!isLoggedIn()) return $panel->render("login.html",[
+		"title"=>title,
+		"contest_name"=>contest_name,
+		"schools"=>$schools,
+	]);
+	return $panel->render("scoreboard.html",[
+		"title"=>title,
+		"contest_name"=>contest_name,
+	]);
+});
 $panel->route('/admin', function($panel) {
 	http_response_code(200);
 	if(adminIsLoggedIn()) return $panel->render("admin.html",[]);
@@ -44,12 +57,18 @@ $panel->route('/admin/login', function($panel) {
 	}
 });
 $panel->route('/submit', function($panel) {
+	$schools = json_decode(file_get_contents(dirname(__FILE__)."/app/config/schools.json"), true);
 	http_response_code(200);
 	$problems = json_decode(file_get_contents(dirname(dirname(__FILE__))."/server/problems/problems.json"), true);
 	$parsed = [];
 	foreach ($problems as $problem=>$a) {
 		$parsed[$problem]=[$problem=>$a["title"], "points"=>$a["info"]["points"], "timeout"=>$a["info"]["points"]];
 	}
+	if(!isLoggedIn()) return $panel->render("login.html",[
+		"title"=>title,
+		"contest_name"=>contest_name,
+		"schools"=>$schools,
+	]);
 	return $panel->render("submit.html",[
 		"title"=>title,
 		"contest_name"=>contest_name,
@@ -60,20 +79,6 @@ $panel->route('/submit', function($panel) {
 $panel->route('/logout', function($panel) {
 	http_response_code(200);
 	logout();
-});
-$panel->route('/compile', function($panel) {
-	http_response_code(200);
-	return $panel->render("compile_temp.html",[
-		"title"=>title,
-		"contest_name"=>contest_name,
-	]);
-});
-$panel->route('/temp', function($panel) {
-	http_response_code(200);
-	return $panel->render("clar.html",[
-		"title"=>title,
-		"contest_name"=>contest_name,
-	]);
 });
 $panel->route('/api/<string>/<string>', function($panel, $api_query, $type) {
 	http_response_code(200);
@@ -169,7 +174,7 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 				if(preg_match($pattern, $line, $matches )){
 					$class = trim($matches[3]);
 				}
-				$pattern = "/^(Runtime\\.exec)/";
+				$pattern = "/^(exec)/";
 				if(preg_match($pattern, $line, $matches )){
 					$hack = trim($matches[1]);
 				}
@@ -181,7 +186,7 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 			if($hack) {
 				echo returnApiMessage([
 						"success"=>"false",
-						"error"=>"Runtime.exec() not allowed! You have been reported."
+						"error"=>"exec() not allowed! You have been reported."
 					]
 				);
 			}

@@ -31,6 +31,7 @@
 				<li><a href="/">Home</a></li>
 				<li class="active"><a href="/submit">Submit</a></li>
 				<li><a href="/scoreboard">Scoreboard</a></li>
+				<li><a href="/SAMPLE_DATA.zip">Sample Data</a></li>
 				<li><a href="/#helpbox">Help</a></li>
 			</ul>
 			<p class="navbar-text pull-right"><a href="/logout" style="text-decoration: none" class="navbar-link">Logout</a></p>
@@ -70,13 +71,13 @@
 										<div class="input-append">
 											<div class="input-group">
 										   		<input id="real_file" class="form-control" onclick="$('input[id=files]').click();" type="text">
-										   		<span class="input-group-btn"><button type="button" class="btn btn-default" onclick="$('input[id=files]').click();">Browse</button></span>
+										   		<span class="input-group-btn"><button type="button" class="btn btn-primary" onclick="$('input[id=files]').click();">Browse</button></span>
 										   	</div>
 										</div>
 									</div>
 									<textarea name="code" id="code" cols="30" rows="10" style="display:none"></textarea>
 
-									<button type="button" class="btn btn-block btn-default" id="upload" tabindex="5" style="" data-loading-text="Uploading...">Upload</button>
+									<button type="button" class="btn btn-block btn-primary" id="upload" tabindex="5" style="" data-loading-text="Uploading...">Upload</button>
 									<button type="button" class="btn btn-block btn-success" id="compile" tabindex="5" style="display:none" data-loading-text="Judging...">Judge</button>
 									<button type="button" class="btn btn-block btn-primary" id="resubmit" tabindex="5" style="display:none" data-loading-text="Going Back..." onClick="onCompileResubmit()">OK</button>
 								</fieldset>

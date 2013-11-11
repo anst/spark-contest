@@ -21,6 +21,9 @@ function register($team,$pass,$school,$division,$members) {
   }
   $hash = md5($pass);
   extract($members);
+
+  $query = "INSERT IGNORE INTO scoreboard (team,score) VALUES ('$team','0');";
+  $result = mysqli_query($conn, $query);
   $query = "SELECT password FROM teams WHERE team = '$team';";
   $result = mysqli_query($conn, $query);
   if(mysqli_num_rows($result)===0) {
@@ -100,13 +103,13 @@ function orderPizza($team, $pizza) {
   $result = mysqli_query($link, "SELECT * FROM pizza WHERE team = '$team';");
   extract($pizza);
   foreach ($pizza as &$p) {
-      $p = mysqli_real_escape_string($conn, $p);
+      $p = mysqli_real_escape_string($link, $p);
   }
   $cost = ($pepe + $ches + $saus)*11;
   if(mysqli_num_rows($result)===0) {
     if(($pepe + $ches + $saus)*11>55) return ["error"=>"Maximum Pizza Order is $55!"];
     $ticket = generateRandomString();
-    $result = mysqli_query($link, "INSERT INTO pizza (`team`, `cheese`, `pepperoni`, `sausage`, `cost`,`ticket`) VALUES ('$team','$pepe','$ches','$saus','$cost','$ticket');");
+    $result = mysqli_query($link, "INSERT INTO pizza (`team`, `cheese`, `pepperoni`, `sausage`, `cost`,`ticket`) VALUES ('$team','$ches','$pepe','$saus','$cost','$ticket');");
     return ["success"=>"You've placed your order. Go pay for your pizza with your Order ID: ".$ticket."!"];
   }
   return ["error"=>"You've already ordered!"];

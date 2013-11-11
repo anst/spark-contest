@@ -35,13 +35,18 @@ while (true) {
   $problem_timeout = $problems[$problem_number]["info"]["timeout"];
   $file_input_data = $problems[$problem_number]["info"]["input"]==="null"?"":file_get_contents(dirname(__FILE__).'/problems/'.strtolower($file_input_title).'/'.$file_input_title.'.in', FILE_USE_INCLUDE_PATH);
   $file_output_data = file_get_contents(dirname(__FILE__).'/problems/'.strtolower($file_input_title).'/'.$file_input_title.'.out', FILE_USE_INCLUDE_PATH);
-
+  try {
   compileProgram("/tmp/$processname/$class.java", "/tmp/$processname/", "/tmp/$processname/$class.class", $class, $inputs, $args, $processname, $data,$problem_number,$file_input_title,$file_input_data,$file_output_data,$problem_timeout,$team);
     $elephant = new ElephantIOClient('http://localhost:8008', 'socket.io', 1, false, true, true);
 
     $elephant->init();
     $elephant->send(ElephantIOClient::TYPE_EVENT,null,null,json_encode(array('name' => 'get_subs', 'args' => $team)));
+    $elephant->send(ElephantIOClient::TYPE_EVENT,null,null,json_encode(array('name' => 'recalculate', 'args' => $team)));
     $elephant->close();
+  } catch (Exception $Exception) {
+
+  }
+  
   socket_close($client);
 }
 // Close the master sockets

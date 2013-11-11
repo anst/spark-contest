@@ -1,15 +1,4 @@
 {
-	"0": {
-		"title": "Wet Walk",
-		"file_title":"Wetwalk",
-		"info": {
-			"points":0,
-			"deduction":0,
-			"input": "wetwalk/Wetwalk.in",
-			"output": "wetwalk/Wetwalk.out",
-			"timeout":30
-		}
-	},
 	"1": {
 		"title": "Abstergo",
 		"file_title":"Abstergo",
