@@ -4,7 +4,7 @@
 */
 var io = require('socket.io').listen(8008);
 var mysql = require('mysql');
-var creds = {host: 'localhost',user: 'root',password: 'AwesomeSauce',database: 'thscs',port: 3306,_socket: '/var/run/mysqld/mysqld.sock',};
+var creds = {host: 'localhost',user: 'root',password: 'root',database: 'thscs',port: 3306,_socket: '/var/run/mysqld/mysqld.sock',};
 //io.set('log level', 1);
 var clients = {};
 var teams = {};
@@ -15,6 +15,7 @@ function toObject(arr) {
     if (arr[i] !== undefined) rv[i] = arr[i];
   return rv;
 }
+console.log("lejlf");
 io.sockets.on('connection', function (socket) {
 	socket.on('team', function(data) {
 		teams[data.team] = socket.id;
@@ -85,11 +86,7 @@ io.sockets.on('connection', function (socket) {
 						   result[o]['real_output']="Available after the contest!";
 						}
 		        	}
-		        		              try {
-				        	return clients[teams[team]].emit('submissions', toObject(result));
-				        } catch ( e) {
-
-				        }
+				    return clients[teams[team]].emit('submissions', toObject(result));
 			        
 			    }
 			});
@@ -152,11 +149,7 @@ io.sockets.on('connection', function (socket) {
 	        }
 	        admin.emit('soft_refresh');
 	        admin.emit('trigger_recalculate',{team:data.team});
-	        	              try {
-				        	clients[teams[data.team]].emit('soft_refresh');
-				        } catch ( e) {
-
-				        }
+			clients[teams[data.team]].emit('soft_refresh');
 			m.end();
 		});
   	});
@@ -173,11 +166,7 @@ io.sockets.on('connection', function (socket) {
 	        }
 	        admin.emit('soft_refresh');
 	        admin.emit('trigger_recalculate',{team:data.team});
-	              try {
-				        	clients[teams[data.team]].emit('soft_refresh');
-				        } catch ( e) {
-
-				        }
+	        clients[teams[data.team]].emit('soft_refresh');
 	        
 			m.end();
 		});
@@ -290,19 +279,11 @@ io.sockets.on('connection', function (socket) {
 				            console.error(err);
 				            return;
 				        }
-				        try {
-				        	clients[teams[team]].emit('soft_refresh');
-				        } catch ( e) {
-
-				        }
+				        clients[teams[team]].emit('soft_refresh');
 						
 					});
 					m.end();
-									        try {
-				        	return clients[teams[team]].emit('recalculate', {score: sum});
-				        } catch ( e) {
-
-				        }
+				    return clients[teams[team]].emit('recalculate', {score: sum});
 			    	
 			    }
 			});

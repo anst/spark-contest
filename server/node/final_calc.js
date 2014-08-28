@@ -1,5 +1,5 @@
 var mysql = require('mysql');
-var creds = {host: 'localhost',user: 'root',password: 'AwesomeSauce',database: 'thscs',port: 3306,_socket: '/var/run/mysqld/mysqld.sock',};
+var creds = {host: 'localhost',user: 'root',password: 'root',database: 'thscs',port: 3306,_socket: '/var/run/mysqld/mysqld.sock',};
 for (var team=1;team<=64;team++){
 	var m = mysql.createConnection(creds);
 	m.query("SELECT * FROM submissions WHERE `team`="+m.escape(team)+" ORDER BY `time`", function(err, result, fields) {

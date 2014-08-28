@@ -1,0 +1,10 @@
+{
+  "name": "thscs-panel",
+  "description": "Online High School Computer Science Contest Panel/Judger (Java, Python). ",
+  "author": "Andy Sturzu",
+  "dependencies": {
+    "mysql": ">= 2.4.3",
+    "socket.io": "0.8.7",
+    "socket.io-client":"0.8.7"
+  }
+}

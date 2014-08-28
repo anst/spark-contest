@@ -136,7 +136,7 @@ $("#login-form").submit(function(e){
     var dat = 'team='+encodeURIComponent($('#login-team').val())+'&password='+encodeURIComponent($('#login-password').val());
     $.post('/api/login', dat, function(data) {
         $('#sign').button('reset');
-        //console.log(data);
+        console.log(data);
         var d = eval('('+data+')');
         if(d.error!=undefined) {
             $("#login_error_msg").fadeIn(0).html('<h4>Error!</h4>'+d.error);

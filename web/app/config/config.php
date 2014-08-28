@@ -13,7 +13,7 @@ $APP_AUTHOR = "Andy Sturzu";
 define('host', 'localhost');
 define('db', 'thscs');
 define('user', 'root');
-define('pw', 'AwesomeSauce');
+define('pw', 'root');
 
 //---------- CONTEST CONFIG ------------------//
 define('title', "Taylor High School Computer Science Contest 2013");

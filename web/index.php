@@ -3,6 +3,7 @@
 ** CONTEST PORTAL v3 
 ** Created By Andy Sturzu (sturzu.org)
 */
+
 require_once dirname(__FILE__).'/app/config/config.php';
 require_once dirname(__FILE__).'/app/frameworks/panel.php';
 require_once dirname(__FILE__).'/app/functions/functions.php';
@@ -32,7 +33,6 @@ $panel->route('/', function($panel) { //index router, check for login
 });
 $panel->route('/scoreboard', function($panel) {
 	$schools = json_decode(file_get_contents(dirname(__FILE__)."/app/config/schools.json"), true);
-	http_response_code(200);
 	if(!isLoggedIn()) return $panel->render("login.html",[
 		"title"=>title,
 		"contest_name"=>contest_name,
@@ -44,7 +44,6 @@ $panel->route('/scoreboard', function($panel) {
 	]);
 });
 $panel->route('/admin', function($panel) {
-	http_response_code(200);
 	if(adminIsLoggedIn()) return $panel->render("admin.html",[]);
 	return $panel->render("adminlogin.html",[]);
 });
@@ -58,7 +57,6 @@ $panel->route('/admin/login', function($panel) {
 });
 $panel->route('/submit', function($panel) {
 	$schools = json_decode(file_get_contents(dirname(__FILE__)."/app/config/schools.json"), true);
-	http_response_code(200);
 	$problems = json_decode(file_get_contents(dirname(dirname(__FILE__))."/server/problems/problems.json"), true);
 	$parsed = [];
 	foreach ($problems as $problem=>$a) {
@@ -77,11 +75,10 @@ $panel->route('/submit', function($panel) {
 	]);
 });
 $panel->route('/logout', function($panel) {
-	http_response_code(200);
 	logout();
 });
 $panel->route('/api/<string>/<string>', function($panel, $api_query, $type) {
-	http_response_code(200);
+	
 	if($api_query==="time") {
 		if($api_query==="increment"&&md5($_POST['key'])===global_admin_key) {
 			incrementTime($_POST['time']);
@@ -104,7 +101,6 @@ $panel->route('/api/<string>/<string>', function($panel, $api_query, $type) {
 });
 $panel->route('/api/<string>', function($panel, $api_query) {
 	#header('Content-Type: application/json'); //we're returning JSON data
-	http_response_code(200);
 	if($api_query==="register") {
 		extract($_POST);
 		if(is_numeric($team)&&strlen($team)<=3&&strlen($password)<=64&&strlen($password)>=6&&$teamselect!=="null"&&$division==="Advanced"||$division==="Novice"&&$school!=="null") {

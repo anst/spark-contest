@@ -2,9 +2,6 @@
 
 namespace ElephantIO;
 
-require_once(__DIR__.'/Payload.php');
-
-
 /**
  * ElephantIOClient is a rough implementation of socket.io protocol.
  * It should ease you dealing with a socket.io server.
@@ -33,6 +30,8 @@ class Client {
     private $checkSslPeer = true;
     private $debug;
     private $handshakeTimeout = null;
+    private $callbacks = array();
+    private $handshakeQuery = '';
 
     public function __construct($socketIOUrl, $socketIOPath = 'socket.io', $protocol = 1, $read = true, $checkSslPeer = true, $debug = false) {
         $this->socketIOUrl = $socketIOUrl.'/'.$socketIOPath.'/'.(string)$protocol;
@@ -43,10 +42,22 @@ class Client {
     }
 
     /**
+     * Set query to be sent during handshake.
+     *
+     * @param array $query Query paramters as key => value
+     * @return Client
+     */
+    public function setHandshakeQuery(array $query) {
+        $this->handshakeQuery = '?' . http_build_query($query);
+
+        return $this;
+    }
+
+    /**
      * Initialize a new connection
      *
      * @param boolean $keepalive
-     * @return ElephantIOClient
+     * @return Client
      */
     public function init($keepalive = false) {
         $this->handshake();
@@ -66,7 +77,7 @@ class Client {
      * @todo work on callbacks
      */
     public function keepAlive() {
-        while(true) {
+        while (is_resource($this->fd)) {
             if ($this->session['heartbeat_timeout'] > 0 && $this->session['heartbeat_timeout']+$this->heartbeatStamp-5 < time()) {
                 $this->send(self::TYPE_HEARTBEAT);
                 $this->heartbeatStamp = time();
@@ -77,7 +88,23 @@ class Client {
 
             if (stream_select($r, $w, $e, 5) == 0) continue;
 
-            $this->read();
+            $res = $this->read();
+            $sess = explode(':', $res);
+            if ((int)$sess[0] === self::TYPE_EVENT) {
+                unset($sess[0], $sess[1], $sess[2]);
+
+                $response = json_decode(implode(':', $sess), true);
+                $name = $response['name'];
+                $data = $response['args'][0];
+
+                $this->stdout('debug', 'Receive event "' . $name . '" with data "' . $data . '"');
+
+                if (!empty($this->callbacks[$name])) {
+                    foreach ($this->callbacks[$name] as $callback) {
+                        call_user_func($callback, $data);
+                    }
+                }
+            }
         }
     }
 
@@ -119,6 +146,32 @@ class Client {
     }
 
     /**
+     * Attach an event handler function for a given event
+     *
+     * @access public
+     * @param string $event
+     * @param callable $callback
+     * @return string
+     */
+    public function on($event, $callback) {
+        if (!is_callable($callback)) {
+            throw new \InvalidArgumentException('ElephantIOClient::on() type callback must be callable.');
+        }
+
+        if (!isset($this->callbacks[$event])) {
+            $this->callbacks[$event] = array();
+        }
+
+        // @TODO Handle case where callback is a string
+        if (in_array($callback, $this->callbacks[$event])) {
+            $this->stdout('debug', 'Skip existing callback');
+            return;
+        }
+
+        $this->callbacks[$event][] = $callback;
+    }
+
+    /**
      * Send message to the websocket
      *
      * @access public
@@ -157,10 +210,11 @@ class Client {
      * @param array $args
      * @param string $endpoint
      * @param function $callback - ignored for the time being
+     * @return ElephantIO\Client
      * @todo work on callbacks
      */
-    public function emit($event, $args, $endpoint, $callback = null) {
-        $this->send(self::TYPE_EVENT, null, $endpoint, json_encode(array(
+    public function emit($event, $args, $endpoint = null, $callback = null) {
+        return $this->send(self::TYPE_EVENT, null, $endpoint, json_encode(array(
             'name' => $event,
             'args' => $args,
             )
@@ -174,7 +228,7 @@ class Client {
      */
     public function close()
     {
-        if ($this->fd) {
+        if (is_resource($this->fd)) {
             $this->send(self::TYPE_DISCONNECT);
             fclose($this->fd);
 
@@ -238,15 +292,35 @@ class Client {
      * @return bool
      */
     private function handshake() {
-        $ch = curl_init($this->socketIOUrl);
+        $url = $this->socketIOUrl;
+
+        if (!empty($this->handshakeQuery)) {
+            $url .= $this->handshakeQuery;
+        }
+
+        $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        if (!$this->checkSslPeer)
+        if (!$this->checkSslPeer) {
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        }
 
-        if (!is_null($this->handshakeTimeout)) {
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, $this->handshakeTimeout);
-            curl_setopt($ch, CURLOPT_TIMEOUT_MS, $this->handshakeTimeout);
+        if (null !== $this->handshakeTimeout) {
+            $timeout   = $this->handshakeTimeout;
+            $constants = array(CURLOPT_CONNECTTIMEOUT_MS, CURLOPT_TIMEOUT_MS);
+
+            $version = curl_version();
+            $version = $version['version'];
+
+            // CURLOPT_CONNECTTIMEOUT_MS and CURLOPT_TIMEOUT_MS were only implemented on curl 7.16.2
+            if (true === version_compare($version, '7.16.2', '<')) {
+                $timeout  /= 1000;
+                $constants = array(CURLOPT_CONNECTTIMEOUT, CURLOPT_TIMEOUT);
+            }
+
+            curl_setopt($ch, $constants[0], $timeout);
+            curl_setopt($ch, $constants[1], $timeout);
         }
 
         $res = curl_exec($ch);
@@ -342,5 +416,4 @@ class Client {
 
         return true;
     }
-
 }
