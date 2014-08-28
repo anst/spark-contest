@@ -34,7 +34,8 @@ function register($team,$pass,$school,$division,$members) {
         mysqli_query($conn, $querys);
       }
     }
-    $query = "INSERT INTO teams (id, team, school, division, member1, member2, member3, password) VALUES (NULL, '$team', '$school','$division','$member1', '$member2', '$member3', '$hash')";
+    $auth = md5($team.$school.$member1);
+    $query = "INSERT INTO teams (id, team, school, division, member1, member2, member3, password, auth) VALUES (NULL, '$team', '$school','$division','$member1', '$member2', '$member3', '$hash', '$auth')";
     mysqli_query($conn, $query);
     mysqli_close($conn);
 
@@ -58,7 +59,10 @@ function login($team, $pass) {
   } else if(mysqli_num_rows($result)===1){
     $passw = mysqli_fetch_array($result, MYSQL_ASSOC);
     if(md5($pass)===$passw['password']) {
-      startsession($team);
+      $query = "SELECT auth FROM teams WHERE team = '$team';";
+      $result = mysqli_query($conn, $query);
+      $auth = mysqli_fetch_array($result, MYSQL_ASSOC)['auth'];
+      startsession($team, $auth);
       return returnApiMessage(['success'=>'Logged In!']);
     } else {
       return returnApiMessage(['error'=>'Incorrect password!']);
@@ -122,12 +126,13 @@ function startAdminSession() {
   setcookie("admin", global_admin_key);
   $_SESSION['admin'] = global_admin_key;
 }
-function startsession($team) {
+function startsession($team, $auth) {
   $_SESSION['team'] = $team;
+  $_SESSION['auth'] = $auth;
 }
 function getTeamNumber() {
   if(isLoggedIn())
-    return ['team'=>intval($_SESSION['team'])];
+    return ['team'=>intval($_SESSION['team']),'auth'=>$_SESSION['auth']];
   return ['error'=> 'You are not logged in!'];
 }
 function getWrittenScores() {

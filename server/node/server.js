@@ -4,18 +4,23 @@
 */
 var io = require('socket.io').listen(8008);
 var mysql = require('mysql');
+
 var creds = {host: 'localhost',user: 'root',password: 'root',database: 'thscs',port: 3306,_socket: '/var/run/mysqld/mysqld.sock',};
 //io.set('log level', 1);
+
 var clients = {};
 var teams = {};
 var admin = null;
+
 function toObject(arr) {
   var rv = {};
   for (var i = 0; i < arr.length; ++i)
     if (arr[i] !== undefined) rv[i] = arr[i];
   return rv;
 }
-console.log("lejlf");
+// io.sockets.on('connection', function(socket) {
+	
+// });
 io.sockets.on('connection', function (socket) {
 	socket.on('team', function(data) {
 		teams[data.team] = socket.id;

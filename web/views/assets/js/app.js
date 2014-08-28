@@ -178,13 +178,34 @@ if(navigator.userAgent.match(/MSIE/i)) {
 function msToTime(duration) {var milliseconds = parseInt((duration%1000)/100), seconds = parseInt((duration/1000)%60), minutes = parseInt((duration/(1000*60))%60), hours = parseInt((duration/(1000*60*60))%24);hours = (hours < 10) ? "" + hours : hours;minutes = (minutes < 10) ? "0" + minutes : minutes;seconds = (seconds < 10) ? "0" + seconds : seconds;return hours + ":" + minutes + ":" + seconds;}
 $.getJSON( "/api/user/team", function(data) {
   if(data.team!="null") {
-    var socket = io.connect('http://'+document.domain+':8008');
-    socket.emit('team',{team:data.team});
-    socket.emit('get_clars',{team:data.team});
-    socket.emit('get_score', {team:data.team});
-    socket.emit('get_subs',data.team);
-    socket.emit('advanced_scoreboard',{});
-    socket.emit('novice_scoreboard',{});
+    var socket;
+    try {
+        socket = io.connect('http://'+document.domain+':8008');
+    } catch(E) {
+        alert("Unable to connect to server. You may still submit problems, but you will not receive a response until the server is back up. This means you shouldn't submit duplicate things.");
+    }
+    
+    setInterval(function() {
+        if(!socket.socket.connected) {
+            alert("Lost connection to the server. This page will attempt to connect every second.");
+            var a = function(b) {
+                socket.socket.reconnect();
+                b();
+            }
+
+        }
+    },1000);
+
+    socket.on('connect', function() {
+        socket.emit('team',{team:data.team, auth:data.auth});
+        socket.emit('get_clars',{team:data.team});
+        socket.emit('get_score', {team:data.team});
+        socket.emit('get_subs',data.team);
+        socket.emit('advanced_scoreboard',{});
+        socket.emit('novice_scoreboard',{});
+    });
+   
+
     socket.on('show_advanced_scoreboard', function(data) {
         $('#advanced_bdy').html();
         $.each(data, function(key, value,cnt) {
