@@ -185,22 +185,26 @@ $.getJSON( "/api/user/team", function(data) {
         alert("Unable to connect to server. You may still submit problems, but you will not receive a response until the server is back up. This means you shouldn't submit duplicate things.");
     }
     
+    team = data.team;
+    auth = data.auth;
+
     setInterval(function() {
         if(!socket.socket.connected) {
-            alert("Lost connection to the server. This page will attempt to connect every second.");
+            //alert("Lost connection to the server. This page will attempt to connect every second.");
             var a = function(b) {
                 socket.socket.reconnect();
                 b();
             }
+            a(function(){});
 
         }
     },1000);
 
     socket.on('connect', function() {
         socket.emit('team',{team:data.team, auth:data.auth});
-        socket.emit('get_clars',{team:data.team});
-        socket.emit('get_score', {team:data.team});
-        socket.emit('get_subs',data.team);
+        socket.emit('get_clars',{team:data.team, auth:data.auth});
+        socket.emit('get_score', {team:data.team, auth:data.auth});
+        socket.emit('get_subs',{team:data.team, auth:data.auth});
         socket.emit('advanced_scoreboard',{});
         socket.emit('novice_scoreboard',{});
     });
@@ -271,13 +275,13 @@ $.getJSON( "/api/user/team", function(data) {
            $('#sub_box').append('<div class="well submission disable_start disable_in" id="sub'+value.subid+'"><div class="noselect_sub" style="width:100%;"><h4 style="display:inline">Problem #<span class="run_id">'+value.problem+' ('+value.subid+')</span><div class="'+(value.success=="Yes"?"success":"fail")+'" style="float:right">'+(value.success=="No"?value.error=="None"?"Incorrect":value.error:"Success")+'</div></h4></div><div id="sub'+value.subid+'detail" class="detail" style="display:none"><br><div class="row"><div class="col-lg-6"><legend style="font-size:16px">Your Output:</legend><pre id="sub'+value.subid+'toutput">'+(value.output==""?"Not available yet, contest is still running.":value.output)+'</pre></div><div class="col-lg-6"><legend style="font-size:16px">Judge\'s Output:</legend><pre id="sub'+value.subid+'routput">'+(value.real_output==""?"Not available yet, contest is still running.":value.real_output)+'</pre></div></div><br><legend></legend>'+(value.appealed=="Yes"||value.success=="Yes"?'<span style="color:#aaa;font-size:11px">You can\'t appeal, because you either got it right or you have already appealed.</span>':'<span style="color:#aaa;font-size:11px">Output matches judges output? Submit an </span><button class="btn btn-danger btn-small appeal_btn" id="'+value.subid+'">Appeal</button></span></div>')+'</div>');
         });
         $(".appeal_btn").click(function(){
-            socket.emit('appeal', {id:$(this).attr('id')});
+            socket.emit('appeal', {team: team, auth:auth,id:$(this).attr('id')});
         });
         $(".noselect_sub").click(function() {
             var a = "#"+$(this).parent().attr('id')+"detail";
             $(a).toggle();
         });
-        socket.emit('get_score', {team:data.team});
+        socket.emit('get_score', {team:data.team, auth:data.auth});
     });
     socket.on('refresh', function (data) {
         location.reload();
@@ -286,14 +290,14 @@ $.getJSON( "/api/user/team", function(data) {
         $("#prog_score").html(data.score);
     });
     socket.on('soft_refresh', function (d) {
-        socket.emit('get_clars',{team:data.team});
-        socket.emit('get_subs',data.team);
-        socket.emit('get_score', {team:data.team});
+        socket.emit('get_clars',{team:data.team, auth:data.auth});
+        socket.emit('get_subs',{team:data.team, auth:data.auth});
+        socket.emit('get_score', {team:data.team, auth:data.auth});
         socket.emit('advanced_scoreboard',{});
         socket.emit('novice_scoreboard',{});
     });
     $(".clar_submit").click(function(){
-        socket.emit('clarification', {from:data.team, problem:$("#clar_question_select").val(), message: $("#clarification_message").val()});
+        socket.emit('clarification', {auth: data.auth,from:data.team, problem:$("#clar_question_select").val(), message: $("#clarification_message").val()});
     });
   }
 });

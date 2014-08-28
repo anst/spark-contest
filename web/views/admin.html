@@ -86,13 +86,13 @@
 		if (parts.length == 2) return parts.pop().split(";").shift();
 	}
 	$('#refresh').click(function (){
-		socket.emit('refresh');
+		socket.emit('refresh',{key:getCookie('admin')});
 	});
 	socket.emit('admin',{key:getCookie('admin')});
     socket.emit('get_admin_clars',{key:getCookie('admin')});
-    socket.emit('get_admin_appeals');
+    socket.emit('get_admin_appeals',{key:getCookie('admin')});
     socket.on('admin_appeals',function (data) {
-    	socket.emit('get_admin_appeals');
+    	socket.emit('get_admin_appeals',{key:getCookie('admin')});
     });
     socket.on('admin_appeals_list', function(data) {
     	if(data.length!=0) 
@@ -106,9 +106,12 @@
         });
         $(".accept_appeal").click(function() {
         	socket.emit('accept_appeal',{key:getCookie('admin'),id:$("."+$(this).attr('id')+"subid").attr('id'),team:$("."+$(this).attr('id')+"team").attr('id')});
+        	socket.emit('get_admin_appeals',{key:getCookie('admin')});
 	    });
 	    $(".deny_appeal").click(function() {
         	socket.emit('deny_appeal',{key:getCookie('admin'),id:$("."+$(this).attr('id')+"subid").attr('id'),team:$("."+$(this).attr('id')+"team").attr('id')});
+        	socket.emit('get_admin_appeals',{key:getCookie('admin')});
+
 	    });
     });
     socket.on('admin_clarifications', function(data){
@@ -130,8 +133,8 @@
 	    });
     });
     socket.on('soft_refresh', function (d) {
-        //socket.emit('get_admin_clars',{key:getCookie('admin')});
-        //socket.emit('get_admin_appeals');
+        socket.emit('get_admin_clars',{key:getCookie('admin')});
+        socket.emit('get_admin_appeals',{key:getCookie('admin')});
     });
 	function nl2br (str, is_xhtml) {
     	var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br ' + '/>' : '<br>';
