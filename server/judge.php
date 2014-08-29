@@ -36,8 +36,9 @@ while (true) {
   $problem_timeout = $problems[$problem_number]["info"]["timeout"];
   $file_input_data = $problems[$problem_number]["info"]["input"]==="null"?"":file_get_contents(dirname(__FILE__).'/problems/'.strtolower($file_input_title).'/'.$file_input_title.'.in', FILE_USE_INCLUDE_PATH);
   $file_output_data = file_get_contents(dirname(__FILE__).'/problems/'.strtolower($file_input_title).'/'.$file_input_title.'.out', FILE_USE_INCLUDE_PATH);
-
+  
   compileProgram("/tmp/$processname/$class.java", "/tmp/$processname/", "/tmp/$processname/$class.class", $class, $inputs, $args, $processname, $data,$problem_number,$file_input_title,$file_input_data,$file_output_data,$problem_timeout,$team);
+  
   $elephant = new ElephantIOClient('http://localhost:8008', 'socket.io', 1, false, true, true);
 
   $elephant->init();

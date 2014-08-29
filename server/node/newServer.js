@@ -6,6 +6,7 @@ io.set('log level', 1);
 GLOBAL_KEY = 'a2d99befaf381755257420f5f46e8838'; //MD5(admin.key)
 
 var creds = {
+	connectionLimit: 999,
 	host: 'localhost',
 	user: 'root',
 	password: 'root',
@@ -22,14 +23,16 @@ var clients = {};
 var teams = {};
 var admin = null;
 
-var m = mysql.createConnection(creds);
+//NODE MYSQL POOLING
 
 io.sockets.on('connection', function(socket) {
 	//HELPER FUNCTIONS
+	var pool  = mysql.createPool(creds);
 	var __authenticateUser = function(team, auth,cb) {
-		m.query("SELECT (auth) FROM teams WHERE (`team`="+m.escape(team)+")", function(err, result, fields) {
+		pool.query("SELECT (auth) FROM teams WHERE (`team`="+pool.escape(team)+")", function(err, result, fields) {
 			if(err) {
 		        console.error(err);
+		        
 		    } else if (result.length  > 0) {
 		    	if(result[0].auth===auth) {
 		    		teams[team] = socket.id;
@@ -38,6 +41,7 @@ io.sockets.on('connection', function(socket) {
 		    	} else {
 		    		console.error('Unable to authenticate user: '+ team);
 		    	}
+		    	
 		    }
 		});
 	}
@@ -102,7 +106,7 @@ io.sockets.on('connection', function(socket) {
 		}
 		return 1000*60*60*2 - (now_time.getTime() - start_time.getTime());
 	}
-	
+
 	//AUTHENTICATION FUNCTIONS 
 	socket.on('team', function(data) {
 		__authenticateUser(data.team, data.auth, function () {
@@ -122,8 +126,8 @@ io.sockets.on('connection', function(socket) {
 	socket.on('accept_appeal', function (data) {
   		if(!auth(data.key)) return;
 
-  		m = mysql.createConnection(creds);
-		m.query('UPDATE `submissions` SET `success`=\'Yes\',`error`=\'None\',`appealed`=\'No\' WHERE subid='+m.escape(data.id)+';', function(err, result) {
+  		
+		pool.query('UPDATE `submissions` SET `success`=\'Yes\',`error`=\'None\',`appealed`=\'No\' WHERE subid='+pool.escape(data.id)+';', function(err, result) {
 			if(err) {
 	            console.error(err);
 	            return;
@@ -138,30 +142,30 @@ io.sockets.on('connection', function(socket) {
 	socket.on('deny_appeal', function (data) {
   		if(!auth(data.key)){return;}
 
-  		m = mysql.createConnection(creds);
-		m.query('UPDATE `submissions` SET `appealed`=\'No\' WHERE subid='+m.escape(data.id)+';', function(err, result) {
-			if(err) {	
+  		
+		pool.query('UPDATE `submissions` SET `appealed`=\'No\' WHERE subid='+pool.escape(data.id)+';', function(err, result) {
+			if(err) {
 	            console.error(err);
 	            return;
 	        }
 	        admin.emit('soft_refresh');
 	        admin.emit('trigger_recalculate',{team:data.team});
 	        clients[teams[data.team]].emit('soft_refresh');
-	        
 		});
 
   	});
 	socket.on('get_admin_appeals', function (data) {
 		if(!auth(data.key)){return;}
 
-		m = mysql.createConnection(creds);
-  		m.query("SELECT * FROM submissions WHERE `appealed`='Yes'", function(err, result, fields) {
+		
+  		pool.query("SELECT * FROM submissions WHERE `appealed`='Yes'", function(err, result, fields) {
 			if(err) {
 		        console.error(err);
+		        
 		        return;
 		    } else if (result.length  > 0) {
+		    	
 		        return admin.emit('admin_appeals_list', toObject(result));
-		        
 		    }
 		});
 
@@ -169,25 +173,27 @@ io.sockets.on('connection', function(socket) {
   	socket.on('get_admin_clars', function(data) {
 		if(!auth(data.key)){return;}
 		
-		var m = mysql.createConnection(creds);
-		m.query("SELECT * FROM clarifications WHERE `reply`='' ORDER BY `id`", function(err, result, fields) {
+		pool.query("SELECT * FROM clarifications WHERE `reply`='' ORDER BY `id`", function(err, result, fields) {
 			if(err) {
+				
 	            console.error(err);
 	            return;
 	        } else if (result.length  > 0) {
-		        return admin.emit('admin_clarifications', toObject(result));
-		    } else return admin.emit('admin_clarifications',{});
+		         admin.emit('admin_clarifications', toObject(result));
+		         
+		    } else admin.emit('admin_clarifications',{});
+		    
 		});
 	});
 	socket.on('admin_clarification', function (data) {
 		if(!auth(data.key)){return;}
-
-		m = mysql.createConnection(creds);
-		m.query('UPDATE `clarifications` SET `reply`='+m.escape(data.reply)+', `global`='+m.escape(data.global)+' WHERE `id`='+m.escape(data.id), function(err, result) {
+		
+		
+		pool.query('UPDATE `clarifications` SET `reply`='+pool.escape(data.reply)+', `global`='+pool.escape(data.global)+' WHERE `id`='+pool.escape(data.id), function(err, result) {
 			if(err) {
+				
 	            console.error(err);
 	            return;
-	            
 	        }
 			socket.broadcast.emit('soft_refresh');
 			
@@ -201,8 +207,8 @@ io.sockets.on('connection', function(socket) {
 
 		if(team!=undefined) {
 			__authenticateUser(data.team, data.auth, function () {
-				m = mysql.createConnection(creds);
-				m.query("SELECT * FROM submissions WHERE `team`="+m.escape(team)+" ORDER BY `time` DESC", function(err, result, fields) {
+				
+				pool.query("SELECT * FROM submissions WHERE `team`="+pool.escape(team)+" ORDER BY `time` DESC", function(err, result, fields) {
 					if(err) {
 						
 			            console.error(err);
@@ -215,7 +221,7 @@ io.sockets.on('connection', function(socket) {
 							   result[o]['real_output']="Available after the contest!";
 							}
 			        	}
-					    return clients[teams[team]].emit('submissions', toObject(result));
+					    clients[teams[team]].emit('submissions', toObject(result));
 				        
 				    }
 				});
@@ -227,8 +233,8 @@ io.sockets.on('connection', function(socket) {
 		team = data.team;
 		if(team!=undefined) {
 			__authenticateUser(data.team, data.auth, function () {
-				m = mysql.createConnection(creds);
-				m.query("SELECT * FROM clarifications WHERE (`from`="+m.escape(team)+" OR `global`='yes') ORDER BY `global`, `reply`='',`id` DESC", function(err, result, fields) {
+				
+				pool.query("SELECT * FROM clarifications WHERE (`from`="+pool.escape(team)+" OR `global`='yes') ORDER BY `global`, `reply`='',`id` DESC", function(err, result, fields) {
 					if(err) {
 			            
 			            console.error(err);
@@ -238,7 +244,8 @@ io.sockets.on('connection', function(socket) {
 			        	if(admin!=null) {
 			        		admin.emit('soft_refresh',{key:'a2d99befaf381755257420f5f46e8838'});
 			        	}	
-				        return socket.emit('clarifications', toObject(result));
+				        socket.emit('clarifications', toObject(result));
+				        
 				    }
 				});
 			});
@@ -247,9 +254,10 @@ io.sockets.on('connection', function(socket) {
 	socket.on('clarification', function (data) {
 		__authenticateUser(data.from, data.auth, function () {
 			var post  = {from: data.from, problem: data.problem, message: data.message,reply:'', global: 'No'};
-			m = mysql.createConnection(creds);
-			m.query('INSERT INTO clarifications SET ?', post, function(err, result) {
+			
+			pool.query('INSERT INTO clarifications SET ?', post, function(err, result) {
 				if(err) {
+					
 		            console.error(err);
 		            return;
 		        }
@@ -261,9 +269,10 @@ io.sockets.on('connection', function(socket) {
   	});
   	socket.on('appeal', function (data) {
   		__authenticateUser(data.team, data.auth, function () {
-  			m = mysql.createConnection(creds);
-  			m.query('UPDATE `submissions` SET `appealed`=\'Yes\' WHERE subid='+m.escape(data.id)+';', function(err, result) {
+  			
+  			pool.query('UPDATE `submissions` SET `appealed`=\'Yes\' WHERE subid='+pool.escape(data.id)+';', function(err, result) {
 				if(err) {
+					
 		            console.error(err);
 		            return;
 		        }
@@ -275,8 +284,8 @@ io.sockets.on('connection', function(socket) {
   	});
   	socket.on('get_score', function(data) {
   		__authenticateUser(data.team, data.auth, function () {
-  			m = mysql.createConnection(creds);
-			m.query("SELECT * FROM scoreboard WHERE `team`="+m.escape(team), function(err, result, fields) {
+  			
+			pool.query("SELECT * FROM scoreboard WHERE `team`="+pool.escape(team), function(err, result, fields) {
 				if(err) {
 					
 		            console.error(err);
@@ -287,32 +296,32 @@ io.sockets.on('connection', function(socket) {
 					   dat_score = parseInt(result[o]['score']);
 					}
 					socket.emit('score',{score:dat_score});
+					
 			    }
 			});
 		});
   	});
   	socket.on('advanced_scoreboard', function (data) {
-  		m = mysql.createConnection(creds);
-		m.query("SELECT * FROM teams INNER JOIN scoreboard on teams.team = scoreboard.team WHERE teams.division = 'Advanced' ORDER BY scoreboard.score DESC", function(err, result, fields) {
+  		
+		pool.query("SELECT * FROM teams INNER JOIN scoreboard on teams.team = scoreboard.team WHERE teams.division = 'Advanced' ORDER BY scoreboard.score DESC", function(err, result, fields) {
 			if(err) {
 				
 	            console.error(err);
 	            return;
 	        } else if (result.length  > 0) {
-		        return socket.emit('show_advanced_scoreboard', toObject(result));
+		        socket.emit('show_advanced_scoreboard', toObject(result));
 		        
 		    }
 		});
   	});
   	socket.on('novice_scoreboard', function (data) {
-  		var m = mysql.createConnection(creds);
-		m.query("SELECT * FROM teams INNER JOIN scoreboard on teams.team = scoreboard.team WHERE teams.division = 'Novice' ORDER BY scoreboard.score DESC", function(err, result, fields) {
+		pool.query("SELECT * FROM teams INNER JOIN scoreboard on teams.team = scoreboard.team WHERE teams.division = 'Novice' ORDER BY scoreboard.score DESC", function(err, result, fields) {
 			if(err) {
 				
 	            console.error(err);
 	            return;
 	        } else if (result.length  > 0) {
-		        return socket.emit('show_novice_scoreboard', toObject(result));
+		        socket.emit('show_novice_scoreboard', toObject(result));
 		        
 		    }
 		});
@@ -320,8 +329,8 @@ io.sockets.on('connection', function(socket) {
   	socket.on('recalculate', function (data) {
 		team = data;
 		if(team) {
-			m = mysql.createConnection(creds);
-			m.query("SELECT * FROM submissions WHERE `team`="+m.escape(team)+" ORDER BY `time`", function(err, result, fields) {
+			
+			pool.query("SELECT * FROM submissions WHERE `team`="+pool.escape(team)+" ORDER BY `time`", function(err, result, fields) {
 				if(err) {
 					
 		            console.error(err);
@@ -349,15 +358,16 @@ io.sockets.on('connection', function(socket) {
 		        				sum += probs[x];
 		        		}
 		        	}
-		        	m.query('UPDATE scoreboard SET score='+sum+' WHERE team='+team+';', function(err, result) {
+		        	pool.query('UPDATE scoreboard SET score='+sum+' WHERE team='+team+';', function(err, result) {
 						if(err) {
+							
 				            console.error(err);
 				            return;
 				        }
 				        clients[teams[team]].emit('soft_refresh');
 						
 					});
-				    return clients[teams[team]].emit('recalculate', {score: sum});
+				    clients[teams[team]].emit('recalculate', {score: sum});
 			    	
 			    }
 			});
@@ -419,7 +429,7 @@ io.sockets.on('connection', function(socket) {
         } else if(data.inc){ // make sure inc is in minutes
             start_time = new Date(start_time.getTime() + data.inc*60*1000);
         }
-  	});
+  	}); 
 });
 
 

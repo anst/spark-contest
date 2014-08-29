@@ -153,66 +153,83 @@ $panel->route('/api/<string>', function($panel, $api_query) {
 			$data = preg_replace('/(\r\n|\r|\n)/s',"\n",$data);
 			$problem_number = $_POST['problem'];
 			$proccess_safety = proc_safety();
+
+			$language = @$_POST['language']; //remove @
+
 			if($proccess_safety!=="Success") return returnApiMessage(["error"=>$proccess_safety]);
 
 			register_shutdown_function('shutdown'); //before call to exit(), execute shutdown()
-			$source = preg_split("/(\n|;)/",$data);
-			$package = "";
-			$class = "";
-			$hack = false;
-			foreach($source as $line){
-				$line = trim($line);
-				$pattern = "/^package\s+(.*)/";
-				if(preg_match($pattern, $line, $matches )){
-					$package = preg_replace('/\./', "/", $matches[1]);
+
+			if($language === "Java") {
+				$source = preg_split("/(\n|;)/",$data);
+				$package = "";
+				$class = "";
+				$hack = false;
+
+				foreach($source as $line){
+					$line = trim($line);
+					$pattern = "/^package\s+(.*)/";
+					if(preg_match($pattern, $line, $matches )){
+						$package = preg_replace('/\./', "/", $matches[1]);
+					}
+					$pattern = "/^public(\s+)class(\s+)(\w+).*/";
+					if(preg_match($pattern, $line, $matches )){
+						$class = trim($matches[3]);
+					}
+					$pattern = "/^(exec)/";
+					if(preg_match($pattern, $line, $matches )){
+						$hack = trim($matches[1]);
+					}
 				}
-				$pattern = "/^public(\s+)class(\s+)(\w+).*/";
-				if(preg_match($pattern, $line, $matches )){
-					$class = trim($matches[3]);
+
+				$classerror = false;
+				$packageerror = false;
+
+				if(!strlen($class)) $classerror = true;
+				if(strlen($package)) $packageerror = true;
+
+				if($hack) {
+					echo returnApiMessage([
+							"success"=>"false",
+							"error"=>"exec() not allowed! You have been reported."
+						]
+					);
 				}
-				$pattern = "/^(exec)/";
-				if(preg_match($pattern, $line, $matches )){
-					$hack = trim($matches[1]);
+				if($classerror) {
+					echo returnApiMessage([
+							"success"=>"false",
+							"error"=>"At least one public class is required"
+						]
+					);
+				} else if ($packageerror) {
+					echo returnApiMessage([
+							"success"=>"false",
+							"error"=>"Packages are not allowed"
+						]
+					);
+				} else {
+					$send = [
+						"lang"=> "Java",
+						"team"=> getTeamNumber()['team'],
+						"class" => $class,
+						"inputs" => $inputs,
+						"args" => $args,
+						"processname" => $processname,
+						"data" => $data,
+						"problem_number" => $problem_number
+					];
+					$fp = stream_socket_client("tcp://localhost:1337", $errno, $errorMessage);
+					fwrite($fp, json_encode($send));
+					fclose($fp);
+					echo returnApiMessage(["success"=>"true"]);
 				}
+			} else if ($language === "Python") {
+
 			}
-			$classerror = false;
-			$packageerror = false;
-			if(!strlen($class)) $classerror = true;
-			if(strlen($package)) $packageerror = true;
-			if($hack) {
-				echo returnApiMessage([
-						"success"=>"false",
-						"error"=>"exec() not allowed! You have been reported."
-					]
-				);
-			}
-			if($classerror) {
-				echo returnApiMessage([
-						"success"=>"false",
-						"error"=>"At least one public class is required"
-					]
-				);
-			} else if ($packageerror) {
-				echo returnApiMessage([
-						"success"=>"false",
-						"error"=>"Packages are not allowed"
-					]
-				);
-			} else {
-				$send = [
-					"team"=> getTeamNumber()['team'],
-					"class" => $class,
-					"inputs" => $inputs,
-					"args" => $args,
-					"processname" => $processname,
-					"data" => $data,
-					"problem_number" => $problem_number
-				];
-				$fp = stream_socket_client("tcp://localhost:1337", $errno, $errorMessage);
-				fwrite($fp, json_encode($send));
-				fclose($fp);
-				echo returnApiMessage(["success"=>"true"]);
-			}
+
+
+
+			
 		} else {
 			echo returnApiMessage(["error"=>"You aren't logged in!"]);
 		}
