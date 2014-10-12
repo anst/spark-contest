@@ -11,6 +11,7 @@ Written by Andy Sturzu with contributions by Jonathan Zong.
 * problems.json (needs to follow folder and example format)
 
 ### To run a contest
+Import the database structure ``` thscs.sql ``` using any MySQL administration tool or through the command line.
 
 Use ONLY the shell script to start the servers. ``` sh run.sh ```
 
