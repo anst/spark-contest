@@ -1,4 +1,4 @@
-## Spark
+## Spark (spark-contest)
 ### About
 Complete contest panel. Features include team registration, pizza orders, compilation, judging, clarifications, and appeals.
 
