@@ -1,10 +1,11 @@
+#!/usr/bin/php
 <?php
 /*
-** CONTEST PORTAL v3 
+** CONTEST PORTAL v3
 ** Created By Andy Sturzu (sturzu.org)
 */
-require(dirname(__FILE__).'/ElephantIO/Client.php');
-require(dirname(__FILE__).'/ElephantIO/Payload.php');
+require('web/app/frameworks/ElephantIO/Client.php');
+require('web/app/frameworks/ElephantIO/Payload.php');
 use ElephantIO\Client as ElephantIOClient;
 
 ##############################
@@ -15,7 +16,7 @@ define('pw', 'root');
 
 set_time_limit(0);
 ob_implicit_flush();
-error_reporting(E_ALL); 
+error_reporting(E_ALL);
 date_default_timezone_set('America/Chicago');
 
 $port = 1337;
@@ -36,16 +37,15 @@ while (true) {
   $problem_timeout = $problems[$problem_number]["info"]["timeout"];
   $file_input_data = $problems[$problem_number]["info"]["input"]==="null"?"":file_get_contents(dirname(__FILE__).'/problems/'.strtolower($file_input_title).'/'.$file_input_title.'.in', FILE_USE_INCLUDE_PATH);
   $file_output_data = file_get_contents(dirname(__FILE__).'/problems/'.strtolower($file_input_title).'/'.$file_input_title.'.out', FILE_USE_INCLUDE_PATH);
-  
+
   compileProgram("/tmp/$processname/$class.java", "/tmp/$processname/", "/tmp/$processname/$class.class", $class, $inputs, $args, $processname, $data,$problem_number,$file_input_title,$file_input_data,$file_output_data,$problem_timeout,$team);
-  
-  $elephant = new ElephantIOClient('http://localhost:8008', 'socket.io', 1, false, true, true);
+  $elephant = new ElephantIOClient('http://127.0.0.1:8008', 'socket.io', 1, false, true, true);
 
   $elephant->init();
   $elephant->send(ElephantIOClient::TYPE_EVENT,null,null,json_encode(array('name' => 'get_subs', 'args' => $team)));
   $elephant->send(ElephantIOClient::TYPE_EVENT,null,null,json_encode(array('name' => 'recalculate', 'args' => $team)));
   $elephant->close();
-  
+
   socket_close($client);
 }
 // Close the master sockets
@@ -68,9 +68,9 @@ function proc_exec($cmd, $inputs, $type,$problem_timeout) {
   if (is_resource($process)) {
 
       list($in, $out, $err) = $pipes;
-      stream_set_blocking( $in, true ); 
-      stream_set_blocking( $out, false ); 
-      stream_set_blocking( $err, false ); 
+      stream_set_blocking( $in, true );
+      stream_set_blocking( $out, false );
+      stream_set_blocking( $err, false );
       if( strlen($inputs) > 0 ){
          //pass stdin
          foreach( explode("\n", $inputs) as $a ){
@@ -81,15 +81,15 @@ function proc_exec($cmd, $inputs, $type,$problem_timeout) {
       fclose($in);
       //read output
       $stdout = '';
-      while(!feof($out) && !proc_timeout($starttime,$problem_timeout)){ 
-         $stdout = fgets($out, 128); 
+      while(!feof($out) && !proc_timeout($starttime,$problem_timeout)){
+         $stdout = fgets($out, 128);
          //$output .= nl2br(htmlentities($stdout));
          $output .= $stdout;
-      }    
+      }
       fclose($out);
       $stderr = '';
-      while(!feof($err) && !proc_timeout($starttime,$problem_timeout)){ 
-         $stderr = fgets($err, 128); 
+      while(!feof($err) && !proc_timeout($starttime,$problem_timeout)){
+         $stderr = fgets($err, 128);
          //$output .=  nl2br(htmlentities($stderr));
          $output .= $stderr;
       }
@@ -143,7 +143,7 @@ function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $a
   $compile_data = proc_exec("javac -cp . {$sourcefile} 2>&1", "", "compile",$problem_timeout);
 
   if($compile_data["output"]!="")
-    $compile_error = true; 
+    $compile_error = true;
 
   #chdir(dirname(__FILE__));
   #$exec_data = proc_exec("java -classpath ../classloader ContestJudge /tmp/$processname/ ".substr($classfile,0,strlen($classfile)-6), $inputs, "execute");
@@ -159,12 +159,12 @@ function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $a
     mysqli_close($conn);
     return array("success"=>"false", "error"=>"Your program ran longer than the time alotted! Please make sure you don't go above the time limit. [Timeout error]");
   }
-  
+
   if(preg_match("/.?Exception in thread/",$exec_data["output"])==1)
     $runtime_error = true;
 
   exec("rm -rf /tmp/$processname*");
-  //compilation successful 
+  //compilation successful
   if($compile_data["success"]==="true"&&$exec_data["success"]==="true"&&$compile_error===false&&$runtime_error===false) {
       $conn = mysqli_connect(host, user, pw, db);
       $timestamp_a = $exec_data['timestamp'];
@@ -182,7 +182,7 @@ function compileProgram($sourcefile, $sourcedir, $classfile, $class, $inputs, $a
         mysqli_close($conn);
         return array("success"=>"false", "error"=>"Your output was incorrect!");
       }
-  }   
+  }
   //compile error
   else if ($compile_error) {
     $conn = mysqli_connect(host, user, pw, db);

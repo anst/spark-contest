@@ -25,7 +25,7 @@
     	</div>
 	</div>
 	<div class="container main">
-		<div class="navbar" style="background:#f7f7f7 !important">
+		<div class="navbar navbar-inverse">
 			<a class="navbar-brand" href="/"><?=navbar_title?></a>
 			<ul class="nav navbar-nav">
 				<li class="active"><a href="/">Home</a></li>
@@ -40,8 +40,8 @@
 			<div class="col-lg-12">
 				<div class="alert alert-success" style="">
 					<h4>Welcome!</h4>
-					This control panel can be used to submit problems, clarifications, and more. By registering, you agree to abide by all of the contest rules. All activity is being logged, and anti-tamper systems are in place. Please do not put us in a situation where your team would be disqualified. If you are ordering pizza, make sure to do so before the contest starts. To ensure that you do not experience any problems with the web control panel, use a modern, standards-compliant web browser such as Google Chrome or Mozilla Firefox, and make sure JavaScript is enabled. If you need help, raise your hand; someone will come to assist you. 
-				</div>	
+					This control panel can be used to submit problems, clarifications, and more. By registering, you agree to abide by all of the contest rules. All activity is being logged, and anti-tamper systems are in place. Please do not put us in a situation where your team would be disqualified. If you are ordering pizza, make sure to do so before the contest starts. To ensure that you do not experience any problems with the web control panel, use a modern, standards-compliant web browser such as Google Chrome or Mozilla Firefox, and make sure JavaScript is enabled. If you need help, raise your hand; someone will come to assist you.
+				</div>
 			</div>
 		</div>
 		<?php require_once "info.html";?>
@@ -52,8 +52,8 @@
 						<div class="col-lg-7"  style="border-right:1px solid #d1d1d1">
 							<legend>Team Info</legend>
 							<div class="alert alert-success" style="">
-								Please raise your hand if you need to change your team information. 
-							</div>		
+								Please raise your hand if you need to change your team information.
+							</div>
 							<div class="form-group">
 								<input type="text" class="form-control" value="<?=$info['school']?>" disabled>
 							</div>
@@ -71,7 +71,7 @@
 							</div>
 							<div class="form-group">
 								<input type="text" class="form-control" value="<?=($info['member3']===""?"N/A":$info['member3'])?>" disabled>
-							</div>													
+							</div>
 						</div>
 						<div class="col-lg-5">
 							<legend>Announcments</legend>
@@ -88,8 +88,8 @@
 									<li>Palindromida: read only the specified number of lines.</li>
 								</ul>
 							</div>
-							
-							
+
+
 						</div>
 					</div>
 					<div class="row">
@@ -106,7 +106,7 @@
 					</div>
 				</div>
 			</div>
-			
+
 		</div>
 		<div class="row">
 			<div class="col-lg-1"></div>
@@ -116,17 +116,17 @@
 						<div class="col-lg-6">
 							<div class="row">
 								<div class="col-lg-10">
-									<legend>Pizza</legend>				
+									<legend>Pizza</legend>
 								</div>
 								<?php if ($pizza_ordered == false) { ?>
 								<div class="col-lg-2">
-									<legend>Total</legend>	
+									<legend>Total</legend>
 								</div><?php }?>
 							</div>
 							<div class="row" id="pizzaform">
 								<div style="padding:10px;">
 									<div id="pizza_success" class="alert alert-success" style="display:none;"></div>
-									<div id="pizza_error" class="alert alert-danger" style="display:none;"></div>			
+									<div id="pizza_error" class="alert alert-danger" style="display:none;"></div>
 								</div>
 
 								<?php if ($pizza_ordered == false) { ?>
@@ -141,15 +141,15 @@
 										<div class="input-group">
 											<span class="input-group-addon">Sausage&nbsp;&nbsp;&nbsp;</span>
 											<input type="text" name="sausage" id="sausage" class="form-control" placeholder="Sausage Pizza Count">
-										</div>											
+										</div>
 									</div>
 									<div class="form-group">
 										<div class="input-group">
 											<span class="input-group-addon">Pepperoni&nbsp;</span>
 											<input type="text" name="pepperoni" id="pepperoni" class="form-control" placeholder="Pepperoni Pizza Count">
-										</div>											
+										</div>
 									</div>
-					
+
 								</div>
 								<div id="cost_preview" class="col-lg-2">
 									<span style="text-align:center"><h1 id="total" style="color:green;line-height:100px">$0</h1></span>
@@ -160,7 +160,7 @@
 									<blockquote style="color:#888;">By submitting this order, you agree to pay the quoted amount. </blockquote>
 									<div class="form-group">
 										<button id="order" class="btn btn-danger btn-block">Order</button>
-									</div>											
+									</div>
 								</div>
 							</div>
 							<?php } else { ?>
@@ -169,7 +169,7 @@
 									<div id="pizza_success" class="alert alert-success" style="">
 										You've ordered successfully! Your team's ticket ID is: <?=$pizza_ordered?>. Go and pay now!
 									</div>
-								</div>	
+								</div>
 							</div>
 							</div>
 							<?php }; ?>
@@ -205,14 +205,14 @@
 								<li>
 									<span data-toggle="collapse" class="btn btn-link btn-block navbar-link" style="text-align:left;cursor:pointer;outline:none;text-decoration:none" data-target="#q7">I have a question that is not here or something isn't working.</span>
 									<div id="q7" class="collapse">Submit a general clarification if the contest has started, or simply raise your hand if it hasn't.</div>
-								</li>								
+								</li>
 							</ol>
 						</div>
 					</div>
-					
-				</div>	
+
+				</div>
 			</div>
-			<div class="col-lg-1"></div>	
+			<div class="col-lg-1"></div>
 		</div>
 	</div>
 <?php require_once "js.html"; ?>

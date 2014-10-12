@@ -72,7 +72,7 @@ function onCompileResubmit() {
     $("#resubmit").fadeOut(0);
     $('#upload').fadeIn(0);
     $("#compile_question_select").fadeIn(0);
-    $("#upload_form").fadeIn(0);  
+    $("#upload_form").fadeIn(0);
 }
 $('#compile').click(function(){
     $('#compile').button('loading');
@@ -81,7 +81,7 @@ $('#compile').click(function(){
         type: "POST",
         url: "/api/compile",
         data: code,
-        success: function(data){    
+        success: function(data){
             $("#byte_content").fadeOut(0);
             $("#compile_legend").fadeOut(0);
             console.log(data);
@@ -101,7 +101,7 @@ $('#compile').click(function(){
                 $("#error_divider").fadeOut(0);
                 $("#compile_danger_alert").fadeIn(0).append(d.error);
             }
-                
+
         }
      });
 });
@@ -126,7 +126,7 @@ $("#register-form").submit(function(e){
             $("#register_error_msg").fadeOut(0);
             $("#register-form").fadeOut(0);
             $("#register_success_msg").fadeIn(0);
-        }   
+        }
     });
 });
 $("#login-form").submit(function(e){
@@ -142,7 +142,7 @@ $("#login-form").submit(function(e){
             $("#login_error_msg").fadeIn(0).html('<h4>Error!</h4>'+d.error);
         } else {
             location.reload();
-        }   
+        }
     });
 });
 $("#pizzaform input[type=text]").change(function () {
@@ -168,14 +168,14 @@ $("#order").click(function() {
         } else {
 
             $("#pizza_error").fadeIn(0).html('<h4>Error!</h4>'+d.error);
-        }   
+        }
     });
 });
 if(navigator.userAgent.match(/MSIE/i)) {
     $(".main").remove();
     $(".badbrowsermsg").fadeIn(0);
 }
-function msToTime(duration) {var milliseconds = parseInt((duration%1000)/100), seconds = parseInt((duration/1000)%60), minutes = parseInt((duration/(1000*60))%60), hours = parseInt((duration/(1000*60*60))%24);hours = (hours < 10) ? "" + hours : hours;minutes = (minutes < 10) ? "0" + minutes : minutes;seconds = (seconds < 10) ? "0" + seconds : seconds;return hours + ":" + minutes + ":" + seconds;}
+function msToTime(duration) {var milliseconds = parseInt((duration%1000)/100), seconds = parseInt((duration/1000)%60), minutes = parseInt((duration/(1000*60))%60), hours = parseInt((duration/(1000*60*60))%24);hours = (hours < 10) ? "0" + hours : hours;minutes = (minutes < 10) ? "0" + minutes : minutes;seconds = (seconds < 10) ? "0" + seconds : seconds;return hours + ":" + minutes + ":" + seconds;}
 $.getJSON( "/api/user/team", function(data) {
   if(data.team!="null") {
     var socket;
@@ -184,7 +184,7 @@ $.getJSON( "/api/user/team", function(data) {
     } catch(E) {
         alert("Unable to connect to server. You may still submit problems, but you will not receive a response until the server is back up. This means you shouldn't submit duplicate things.");
     }
-    
+
     team = data.team;
     auth = data.auth;
 
@@ -208,9 +208,10 @@ $.getJSON( "/api/user/team", function(data) {
         socket.emit('advanced_scoreboard',{});
         socket.emit('novice_scoreboard',{});
     });
-   
+
 
     socket.on('show_advanced_scoreboard', function(data) {
+        console.log(data);
         $('#advanced_bdy').html();
         $.each(data, function(key, value,cnt) {
             $('#advanced_bdy').append('<tr>\
@@ -254,7 +255,7 @@ $.getJSON( "/api/user/team", function(data) {
         $("#time").html(msToTime(data.time));
     });
     socket.on('clarifications', function(data){
-        if(data.length!=0) 
+        if(data.length!=0)
             $('#clar_box').empty();
         $.each(data, function(key, value) {
             $('#clar_box').append('\
@@ -269,7 +270,7 @@ $.getJSON( "/api/user/team", function(data) {
         });
     });
     socket.on('submissions', function(data){
-        if(data.length!=0) 
+        if(data.length!=0)
             $('#sub_box').empty();
         $.each(data, function(key, value) {
            $('#sub_box').append('<div class="well submission disable_start disable_in" id="sub'+value.subid+'"><div class="noselect_sub" style="width:100%;"><h4 style="display:inline">Problem #<span class="run_id">'+value.problem+' ('+value.subid+')</span><div class="'+(value.success=="Yes"?"success":"fail")+'" style="float:right">'+(value.success=="No"?value.error=="None"?"Incorrect":value.error:"Success")+'</div></h4></div><div id="sub'+value.subid+'detail" class="detail" style="display:none"><br><div class="row"><div class="col-lg-6"><legend style="font-size:16px">Your Output:</legend><pre id="sub'+value.subid+'toutput">'+(value.output==""?"Not available yet, contest is still running.":value.output)+'</pre></div><div class="col-lg-6"><legend style="font-size:16px">Judge\'s Output:</legend><pre id="sub'+value.subid+'routput">'+(value.real_output==""?"Not available yet, contest is still running.":value.real_output)+'</pre></div></div><br><legend></legend>'+(value.appealed=="Yes"||value.success=="Yes"?'<span style="color:#aaa;font-size:11px">You can\'t appeal, because you either got it right or you have already appealed.</span>':'<span style="color:#aaa;font-size:11px">Output matches judges output? Submit an </span><button class="btn btn-danger btn-small appeal_btn" id="'+value.subid+'">Appeal</button></span></div>')+'</div>');

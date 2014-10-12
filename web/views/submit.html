@@ -25,7 +25,7 @@
     	</div>
 	</div>
 	<div class="container main">
-		<div class="navbar" style="background:#f7f7f7 !important">
+		<div class="navbar navbar-inverse">
 			<a class="navbar-brand" href="/"><?=navbar_title?></a>
 			<ul class="nav navbar-nav">
 				<li><a href="/">Home</a></li>
@@ -64,7 +64,7 @@
 													echo '<option value="'.$num.'">'.$num.'. '.$a[$num].'</option>';
 												}
 											?>
-										</select>	
+										</select>
 									</div>
 									<div class="form-group" id="upload_form">
 										<input type="file" id="files" accept="text/plain" style="display:none">
@@ -92,7 +92,7 @@
 											echo '<option value="'.$num.'">'.$num.'. '.$a[$num].'</option>';
 										}
 									?>
-								</select>	
+								</select>
 							</div>
 							<div class="form-group">
 								<textarea id="clarification_message" value="clar_text" class="form-control" rows="5" placeholder="Message" style="resize: vertical;"></textarea>
@@ -102,7 +102,7 @@
 					</div>
 				</div>
 			</div>
-			
+
 		</div>
 		<div class="row">
 			<div class="col-lg-1"></div>
@@ -113,8 +113,8 @@
 							<legend>Clarifications</legend>
 							 <div id="clar_box">
 								<i style="color:#888;">No clarifications here.</i>
-								<br><br>							
-							</div> 
+								<br><br>
+							</div>
 						</div>
 					</div>
 					<div class="row">
@@ -123,13 +123,13 @@
 							<div id="sub_box">
 								<i style="color:#888;">No submissions here.</i>
 								<br><br>
-							</div>					
+							</div>
 						</div>
 					</div>
 				</div>
 
 			</div>
-			<div class="col-lg-1"></div>	
+			<div class="col-lg-1"></div>
 		</div>
 	</div>
 <?php require_once "js.html"; ?>
