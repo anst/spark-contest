@@ -46,7 +46,7 @@
     });
 
     $(document).on('keydown', 'input', function (e){
-        if(e.which == 9){
+        if(e.which == 9 || e.which == 13){
             if($(this).val()%1 == 0 && $(this).val()<=240 && $(this).val()>=-80){
                 $(this).parent().removeClass('has-success has-warning has-error');
                 $(this).parent().addClass('has-warning has-feedback');
@@ -58,9 +58,10 @@
                 $(this).parent().removeClass('has-success has-warning has-error');
                 $(this).parent().addClass('has-error has-feedback');
             }
+        }else{
+            $(this.parent()).removeClass('has-success has-warning has-error has-feedback');
         }
     });
-
 
 </script>
 </body>
