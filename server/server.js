@@ -221,9 +221,39 @@ io.sockets.on('connection', function(socket) {
 
 			});
 		});
-
   	});
+  	socket.on('get_all_written', function (data) {
+		if(!auth(data.key)){return;}
 
+		pool.getConnection(function(err, connection) {
+			connection.query("SELECT * FROM written ORDER BY `id`", function(err, result, fields) {
+				connection.destroy();
+				if(err) {
+			        console.error(err);
+	    	        return;
+	    	    } else if (result.length > 0) {
+			        socket.emit('written_scores', toObject(result));
+				} else {
+			        socket.emit('written_scores', {});
+				}
+			});
+		});
+  	});
+  	socket.on('set_written', function (data) {
+		if(!auth(data.key)){return;}
+
+		pool.getConnection(function(err, connection) {
+			connection.query('UPDATE `written` SET `score`='+pool.escape(data.score)+' WHERE `id`='+pool.escape(data.writtenid), function(err, result, fields) {
+				connection.destroy();
+				if(err) {
+		            console.error(err);
+		            return;
+		        } else {
+		        	socket.emit('written_set', {writtenid:data.writtenid, score:data.score});
+		    	}
+			});
+		});
+  	});
   	//USER/GLOBAL FUNCTIONS
   	socket.on('get_subs', function(data) {
   		team = data.team;

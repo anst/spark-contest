@@ -47,6 +47,10 @@ $panel->route('/admin', function($panel) {
 	if(adminIsLoggedIn()) return $panel->render("admin.html",[]);
 	return $panel->render("adminlogin.html",[]);
 });
+$panel->route('/admin/written', function($panel) {
+	if(adminIsLoggedIn()) return $panel->render("written.html",[]);
+	return $panel->render("adminlogin.html",[]);
+});
 $panel->route('/admin/login', function($panel) {
 	if(md5($_POST["code"])===global_admin_key) {
 		startAdminSession();

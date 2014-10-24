@@ -1,0 +1,67 @@
+<html>
+<head>
+<?php require_once "head.html"; ?>  
+</head>
+
+<body>
+    <div class="container main">
+        <div class="row">
+            <div class="col-lg-12" style="">
+                <table id="written_scores" class="table">
+                    <thead>
+                        <tr>
+                            <td>ID</td>
+                            <td>Name</td>
+                            <td>Team</td>
+                            <td>Score</td>
+                        </tr>
+                    </thead>
+                </table>
+          </div>
+       </div>
+    </div><!-- <script src="/views/assets/js/bootstrap.min.js"></script> -->
+<div style="margin:0 auto;width:960px;text-align:center;color:rgba(0,0,0,0.5);font-size:11px"><a href="https://github.com/anst/thscs-panel" style="color:rgba(0,0,0,0.5);text-decoration:none">Created by Andy Sturzu. Contributions by Jonathan Zong.</a></div>
+<script src="/views/assets/js/jquery-2.0.3.min.js" type="text/javascript"></script>
+<script src="/views/assets/js/bootstrap.min.js"></script>
+<script src="/views/assets/js/prettify.js"></script>
+<script src="http://<?php echo $_SERVER['SERVER_NAME']; ?>:8008/socket.io/socket.io.js"></script>
+<script>
+    var socket = io.connect('http://'+document.domain+':8008');
+    function getCookie(name) {
+        var parts = document.cookie.split(name + "=");
+        if (parts.length == 2) return parts.pop().split(";").shift();
+    }
+    socket.emit('admin',{key:getCookie('admin')});
+    socket.emit('get_all_written',{key:getCookie('admin')});
+    socket.on('written_scores', function(data) {
+        if(data.length!=0) 
+            $.each(data, function(key, value) {
+                var line = '<tr id="'+ value.id+ '"><td>'+value.id+'</td><td>'+value.name+'</td><td>'+value.team+'</td><td><div class="form-group form-group-sm"><input class="form-control input-sm" type="text" value="'+value.score+'" tabindex="'+value.id+'"</input></div></td></tr>';
+                $('#written_scores').append(line);
+            });
+    });
+    socket.on('written_set', function(data){
+        $($('#'+data.writtenid).children()[3]).children().removeClass('has-success has-warning has-error');
+        $($('#'+data.writtenid).children()[3]).children().addClass('has-success has-feedback');
+    });
+
+    $(document).on('keydown', 'input', function (e){
+        if(e.which == 9){
+            if($(this).val()%1 == 0 && $(this).val()<=240 && $(this).val()>=-80){
+                $(this).parent().removeClass('has-success has-warning has-error');
+                $(this).parent().addClass('has-warning has-feedback');
+                socket.emit('set_written',{key:getCookie('admin'),
+                    writtenid:$(this).parent().parent().parent().attr('id'),
+                    score:$(this).val()});
+
+            }else{
+                $(this).parent().removeClass('has-success has-warning has-error');
+                $(this).parent().addClass('has-error has-feedback');
+            }
+        }
+    });
+
+
+</script>
+</body>
+</html>
