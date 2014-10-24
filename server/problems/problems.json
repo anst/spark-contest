@@ -1,14 +1,200 @@
 {
 	"1": {
-		"title": "Shedding Some Light on Lenses",
-		"file_title":"Lenses",
+		"title": "Bureau",
+		"file_title":"Bureau",
 		"info": {
 			"points":60,
 			"deduction":5,
-			"input": "lenses/Lenses.in",
-			"output": "lenses/Lenses.out",
+			"input": "Bureau/bureau.in",
+			"output": "Bureau/bureau.out",
 			"timeout": 30
-		}		
-	}			
-	
+		}
+	},
+	"2": {
+		"title": "Census1",
+		"file_title":"Census1",
+		"info": {
+			"points":60,
+			"deduction":5,
+			"input": "Census1/census1.in",
+			"output": "Census1/census1.out",
+			"timeout": 30
+		}
+	},
+	"3": {
+		"title": "Census2",
+		"file_title":"Census2",
+		"info": {
+			"points":60,
+			"deduction":5,
+			"input": "Census2/census2.in",
+			"output": "Census2/census2.out",
+			"timeout": 30
+		}
+	},
+	"4": {
+		"title": "Census3",
+		"file_title":"Census3",
+		"info": {
+			"points":60,
+			"deduction":5,
+			"input": "Census3/census3.in",
+			"output": "Census3/census3.out",
+			"timeout": 30
+		}
+	},
+	"5": {
+		"title": "Dotetracontranary",
+		"file_title":"Dotetracontranary",
+		"info": {
+			"points":60,
+			"deduction":5,
+			"input": "Dotetracontranary/dotetracontranary.in",
+			"output": "Dotetracontranary/dotetracontranary.out",
+			"timeout": 30
+		}
+	},
+	"6": {
+		"title": "Doubleplusgood",
+		"file_title":"Doubleplusgood",
+		"info": {
+			"points":60,
+			"deduction":5,
+			"input": "Doubleplusgood/doubleplusgood.in",
+			"output": "Doubleplusgood/doubleplusgood.out",
+			"timeout": 30
+		}
+	},
+	"7": {
+		"title": "Equalcitizens",
+		"file_title":"Equalcitizens",
+		"info": {
+			"points":60,
+			"deduction":5,
+			"input": "Equalcitizens/equalcitizens.in",
+			"output": "Equalcitizens/equalcitizens.out",
+			"timeout": 30
+		}
+	},
+	"8": {
+		"title": "Glorytostroudonia",
+		"file_title":"Glorytostroudonia",
+		"info": {
+			"points":60,
+			"deduction":5,
+			"input": "Glorytostroudonia/Glorytostroudonia.in",
+			"output": "Glorytostroudonia/Glorytostroudonia.out",
+			"timeout": 30
+		}
+	},
+	"9": {
+		"title": "Hellocitizen",
+		"file_title":"Hellocitizen",
+		"info": {
+			"points":60,
+			"deduction":5,
+			"input": "Hellocitizen/hellocitizen.in",
+			"output": "Hellocitizen/hellocitizen.out",
+			"timeout": 30
+		}
+	},
+	"10": {
+		"title": "Hills",
+		"file_title":"Hills",
+		"info": {
+			"points":60,
+			"deduction":5,
+			"input": "Hills/hills.in",
+			"output": "Hills/hills.out",
+			"timeout": 30
+		}
+	},
+	"11": {
+		"title": "Moreglorytostroudonia",
+		"file_title":"Moreglorytostroudonia",
+		"info": {
+			"points":60,
+			"deduction":5,
+			"input": "Moreglorytostroudonia/moreglorytostroudonia.in",
+			"output": "Moreglorytostroudonia/moreglorytostroudonia.out",
+			"timeout": 30
+		}
+	},
+	"12": {
+		"title": "Rwbcs",
+		"file_title":"Rwbcs",
+		"info": {
+			"points":60,
+			"deduction":5,
+			"input": "Rwbcs/rwbcs.in",
+			"output": "Rwbcs/rwbcs.out",
+			"timeout": 30
+		}
+	},
+	"13": {
+		"title": "Stroudship1",
+		"file_title":"Stroudship1",
+		"info": {
+			"points":60,
+			"deduction":5,
+			"input": "Stroudship1/stroudship1.in",
+			"output": "Stroudship1/stroudship1.out",
+			"timeout": 30
+		}
+	},
+	"14": {
+		"title": "Stroudship2",
+		"file_title":"Stroudship2",
+		"info": {
+			"points":60,
+			"deduction":5,
+			"input": "Stroudship2/stroudship2.in",
+			"output": "Stroudship2/stroudship2.out",
+			"timeout": 30
+		}
+	},
+	"15": {
+		"title": "Stroudlikeness",
+		"file_title":"Stroudlikeness",
+		"info": {
+			"points":60,
+			"deduction":5,
+			"input": "Stroudlikeness/stroudlikeness.in",
+			"output": "Stroudlikeness/stroudlikeness.out",
+			"timeout": 30
+		}
+	},
+	"16": {
+		"title": "Stroudstroud2014",
+		"file_title":"Stroudstroud2014",
+		"info": {
+			"points":60,
+			"deduction":5,
+			"input": "Stroudstroud2014/stroudstroud2014.in",
+			"output": "Stroudstroud2014/stroudstroud2014.out",
+			"timeout": 30
+		}
+	},
+	"17": {
+		"title": "War",
+		"file_title":"War",
+		"info": {
+			"points":60,
+			"deduction":5,
+			"input": "War/war.in",
+			"output": "War/war.out",
+			"timeout": 30
+		}
+	},
+	"18": {
+		"title": "Compress",
+		"file_title":"Compress",
+		"info": {
+			"points":60,
+			"deduction":5,
+			"input": "Compress/compress.in",
+			"output": "Compress/compress.out",
+			"timeout": 30
+		}
+	}
 }
