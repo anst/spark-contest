@@ -1,6 +1,6 @@
 <?php
 /*
-** CONTEST PORTAL v3 
+** CONTEST PORTAL v3
 ** Created By Andy Sturzu (sturzu.org)
 */
 function isLoggedIn() {
@@ -142,6 +142,7 @@ function getScoreboard() {
   return [];
 }
 function returnApiMessage($message) {
+  http_response_code(200);
 	return json_encode($message);
 }
 function proc_safety() {
