@@ -1,0 +1,130 @@
+<html>
+<head>
+<?php require_once "head.html"; ?>  
+</head>
+
+<body>
+    <div class="container main">
+        <div class="row">
+            <div class="col-lg-12">
+                <table id="total_pizza" class="table">
+                    <thead>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>Total Cheese</td>
+                            <td>Total Pepperoni</td>
+                            <td>Total Sausage</td>
+                            <td>Total Cost</td>
+                        </tr>
+                    </thead>
+                </table>                
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <table id="pizza_orders" class="table">
+                    <thead>
+                        <tr>
+                            <td>Team</td>
+                            <td>Cheese</td>
+                            <td>Pepperoni</td>
+                            <td>Sausage</td>
+                            <td>Cost</td>
+                            <td>Ticket</td>
+                            <td>Paid</td>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div><!-- <script src="/views/assets/js/bootstrap.min.js"></script> -->
+<div style="margin:0 auto;width:960px;text-align:center;color:rgba(0,0,0,0.5);font-size:11px"><a href="https://github.com/anst/thscs-panel" style="color:rgba(0,0,0,0.5);text-decoration:none">Created by Andy Sturzu. Contributions by Jonathan Zong.</a></div>
+<script src="/views/assets/js/jquery-2.0.3.min.js" type="text/javascript"></script>
+<script src="/views/assets/js/bootstrap.min.js"></script>
+<script src="/views/assets/js/prettify.js"></script>
+<script src="http://<?php echo $_SERVER['SERVER_NAME']; ?>:8008/socket.io/socket.io.js"></script>
+<script>
+    var socket = io.connect('http://'+document.domain+':8008');
+    function getCookie(name) {
+        var parts = document.cookie.split(name + "=");
+        if (parts.length == 2) return parts.pop().split(";").shift();
+    }
+    socket.emit('admin',{key:getCookie('admin')});
+    socket.emit('get_all_pizza',{key:getCookie('admin')});
+    socket.on('pizza_orders', function(data) {
+        var total_cheese = 0;
+        var total_pepperoni = 0;
+        var total_sausage = 0;
+        var total_cost = 0;
+        var paid_cheese = 0;
+        var paid_pepperoni = 0;
+        var paid_sausage = 0;
+        var paid_cost = 0;
+        if(data.length!=0) 
+            $.each(data, function(key, value) {
+                var line = '<tr id="'+ value.team+ '"><td>'+value.team+'</td><td>'+value.cheese+'</td><td>'+value.pepperoni+'</td><td>'+value.sausage+'</td><td>$'+value.cost+'</td><td>'+value.ticket+'</td>';
+                if(value.paid == 'yes'){
+                    line += '<td><button type="button" class="btn btn-xs btn-success">Paid</button></td></tr>';
+                    paid_cheese += value.cheese;
+                    paid_pepperoni += value.pepperoni;
+                    paid_sausage += value.sausage;
+                    paid_cost += value.cost;
+                }else{
+                    line += '<td><button type="button" class="btn btn-xs btn-default">Paid</button></td></tr>';
+                }
+                $('#pizza_orders').append(line);
+                total_cheese += value.cheese;
+                total_pepperoni += value.pepperoni;
+                total_sausage += value.sausage;
+                total_cost += value.cost;
+        });
+        $('#total_pizza').append('<tr><td>All Orders</td><td>'+total_cheese+'</td><td>'+total_pepperoni+'</td><td>'+total_sausage+'</td><td>$'+total_cost+'</td><td></tr><tr><td>Paid Orders</td><td>'+paid_cheese+'</td><td>'+paid_pepperoni+'</td><td>'+paid_sausage+'</td><td>$'+paid_cost+'</td></tr>');
+    });
+    socket.on('pizza_paid_set', function(data){
+        if(data.paid == true){
+            var line = $('#'+data.team)
+            $(line.children()[6]).children().removeClass('btn-warning').addClass('btn-success');
+            totalline = $($($('#total_pizza').children()[1]).children()[1])
+            var paid_cheese = parseInt($(totalline.children()[1]).text());
+            var paid_pepperoni = parseInt($(totalline.children()[2]).text());
+            var paid_sausage = parseInt($(totalline.children()[3]).text());
+            var paid_cost = parseInt($(totalline.children()[4]).text().substring(1));
+            paid_cheese += parseInt($(line.children()[1]).text());
+            paid_pepperoni += parseInt($(line.children()[2]).text());
+            paid_sausage += parseInt($(line.children()[3]).text());
+            paid_cost += parseInt($(line.children()[4]).text().substring(1));
+            $(totalline.children()[1]).text(paid_cheese);
+            $(totalline.children()[2]).text(paid_pepperoni);
+            $(totalline.children()[3]).text(paid_sausage);
+            $(totalline.children()[4]).text('$'+paid_cost);
+        }else{
+            var line = $('#'+data.team);
+            $(line.children()[6]).children().removeClass('btn-warning').addClass('btn-default');
+            totalline = $($($('#total_pizza').children()[1]).children()[1])
+            var paid_cheese = parseInt($(totalline.children()[1]).text());
+            var paid_pepperoni = parseInt($(totalline.children()[2]).text());
+            var paid_sausage = parseInt($(totalline.children()[3]).text());
+            var paid_cost = parseInt($(totalline.children()[4]).text().substring(1));
+            paid_cheese -= parseInt($(line.children()[1]).text());
+            paid_pepperoni -= parseInt($(line.children()[2]).text());
+            paid_sausage -= parseInt($(line.children()[3]).text());
+            paid_cost -= parseInt($(line.children()[4]).text().substring(1));
+            $(totalline.children()[1]).text(paid_cheese);
+            $(totalline.children()[2]).text(paid_pepperoni);
+            $(totalline.children()[3]).text(paid_sausage);
+            $(totalline.children()[4]).text('$'+paid_cost);
+        }
+    });
+
+    $(document).on('click', 'button', function (e){
+        socket.emit('set_pizza_paid',{key:getCookie('admin'),
+            team:$(this).parent().parent().attr('id'),
+            paid:!($(this).hasClass('btn-success'))
+        });
+        $(this).removeClass('btn-default btn-success').addClass('btn-warning');
+    });
+
+
+</script>
+</body>
+</html>

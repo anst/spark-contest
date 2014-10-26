@@ -48,7 +48,8 @@ CREATE TABLE `pizza` (
   `pepperoni` int(1) NOT NULL,
   `sausage` int(1) NOT NULL,
   `cost` int(2) NOT NULL,
-  `ticket` longtext NOT NULL
+  `ticket` longtext NOT NULL,
+  `paid` enum('yes','no') NOT NULL DEFAULT 'no'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 

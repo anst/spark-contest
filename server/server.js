@@ -254,6 +254,46 @@ io.sockets.on('connection', function(socket) {
 			});
 		});
   	});
+  	socket.on('get_all_pizza', function (data) {
+		if(!auth(data.key)){return;}
+
+		pool.getConnection(function(err, connection) {
+
+			connection.query("SELECT * FROM pizza ORDER BY `team`", function(err, result, fields) {
+				connection.destroy();
+				if(err) {
+			        console.error(err);
+	    	        return;
+	    	    } else if (result.length > 0) {
+			        socket.emit('pizza_orders', toObject(result));
+				} else {
+			        socket.emit('pizza_orders', {});
+				}
+			});
+		});
+  	});
+  	socket.on('set_pizza_paid', function (data) {
+		if(!auth(data.key)){return;}
+
+		var query = '';
+		if(data.paid == true){
+			query = 'UPDATE `pizza` SET `paid`=\'yes\' WHERE `team`='+pool.escape(data.team);
+		}else{
+			query = 'UPDATE `pizza` SET `paid`=\'no\' WHERE `team`='+pool.escape(data.team);
+		}
+
+		pool.getConnection(function(err, connection) {
+			connection.query(query, function(err, result, fields) {
+				connection.destroy();
+				if(err) {
+		            console.error(err);
+		            return;
+		        } else {
+		        	socket.emit('pizza_paid_set', {team:data.team, paid:data.paid});
+		    	}
+			});
+		});
+  	});
   	//USER/GLOBAL FUNCTIONS
   	socket.on('get_subs', function(data) {
   		team = data.team;
